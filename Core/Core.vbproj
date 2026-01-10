@@ -81,6 +81,41 @@
     <Compile Include="Main\ApiClient.vb" />
     <Compile Include="Main\ApiEndpoints.vb" />
     <Compile Include="Main\VscuStarter.vb" />
+    <Compile Include="Models\BaseResponse.vb" />
+    <Compile Include="Models\Branch\BranchInfoRequest.vb" />
+    <Compile Include="Models\Branch\BranchInfoResponse.vb" />
+    <Compile Include="Models\Code\CodeClassMap.vb" />
+    <Compile Include="Models\Code\CodeDataEntry.vb" />
+    <Compile Include="Models\Code\CodeDataRequest.vb" />
+    <Compile Include="Models\Code\CodeDataResponse.vb" />
+    <Compile Include="Models\Item\Classification\ItemClassificationEntry.vb" />
+    <Compile Include="Models\Item\Classification\ItemClassificationRequest.vb" />
+    <Compile Include="Models\Item\Classification\ItemClassificationResponse.vb" />
+    <Compile Include="Models\Import\ImportedItemRequest.vb" />
+    <Compile Include="Models\Import\ImportedItemResponse.vb" />
+    <Compile Include="Models\Init\InitInfoRequest.vb" />
+    <Compile Include="Models\Init\InitInfoResponse.vb" />
+    <Compile Include="Models\Item\Info\ItemInfoEntry.vb" />
+    <Compile Include="Models\Item\Product\ItemSaveRequest.vb" />
+    <Compile Include="Models\Item\Product\ItemSaveResponse.vb" />
+    <Compile Include="Models\Item\Product\Product.vb" />
+    <Compile Include="Models\Item\Stock\StockInfoRequest.vb" />
+    <Compile Include="Models\Item\Stock\StockInfoResponse.vb" />
+    <Compile Include="Models\Item\Stock\StockSaveRequest.vb" />
+    <Compile Include="Models\Item\Stock\StockSaveResponse.vb" />
+    <Compile Include="Models\Purchase\PurchaseInfoRequest.vb" />
+    <Compile Include="Models\Purchase\PurchaseInfoResponse.vb" />
+    <Compile Include="Models\Purchase\PurchaseRequest.vb" />
+    <Compile Include="Models\Purchase\PurchaseResponse.vb" />
+    <Compile Include="Models\Receipt\Receipt.vb" />
+    <Compile Include="Models\Sale\Invoice\InvoiceMaster.vb" />
+    <Compile Include="Repo\SalesRepository.vb" />
+    <Compile Include="Models\Sale\SalesRequest.vb" />
+    <Compile Include="Models\Sale\SalesResponse.vb" />
+    <Compile Include="Repo\ProductRepository.vb" />
+    <Compile Include="Repo\ItemInfoRepository.vb" />
+    <Compile Include="Models\Item\Info\ItemInfoRequest.vb" />
+    <Compile Include="Models\Item\Info\ItemInfoResponse.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -96,6 +131,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Repo\CodeDetailRepository.vb" />
+    <Compile Include="Repo\CodeLookupRepository.vb" />
+    <Compile Include="Repo\CodeMappedRepository.vb" />
+    <Compile Include="Repo\CodeRepository.vb" />
+    <Compile Include="Repo\ItemClassificationRepository.vb" />
     <Compile Include="Services\VSCUIntegrator.vb" />
     <Compile Include="Utils\JsonUtil.vb" />
   </ItemGroup>
@@ -119,8 +159,6 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

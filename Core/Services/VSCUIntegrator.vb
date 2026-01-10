@@ -3,6 +3,16 @@ Imports Core.Config
 Imports Core.Enums
 Imports Core.Logging
 Imports Core.Main
+Imports Core.Models.Branch
+Imports Core.Models.Code
+Imports Core.Models.Import
+Imports Core.Models.Init
+Imports Core.Models.Item.Classification
+Imports Core.Models.Item.Info
+Imports Core.Models.Item.Product
+Imports Core.Models.Item.Stock
+Imports Core.Models.Purchase
+Imports Core.Models.Sale
 Imports Core.Utils
 
 Namespace Services
@@ -135,7 +145,7 @@ Namespace Services
             Dim fallback As New CodeDataResponse With {
                 .resultCd = "Error",
                 .resultMsg = "VSCU error: failed to call CodeData",
-                .Data = New CodeDataRoot With {
+                .data = New CodeDataRoot With {
                     .clsList = New List(Of CodeClass)()
                 }
             }
@@ -183,7 +193,7 @@ Namespace Services
         ' 4b) Item  Information (POST)
         '------------------------
         Public Async Function GetItemAsync(query As ItemInfoRequest) As Task(Of ItemInfoResponse)
-            Dim endpoint = Core.ApiEndpoints.ITEM_SELECT
+            Dim endpoint = ApiEndpoints.ITEM_SELECT
             Dim resp = Await SendAndDeserializeAsync(Of ItemInfoResponse)(endpoint, query, isGet:=False)
             If resp IsNot Nothing Then Return resp
             ' Fallback if API call fails
@@ -210,7 +220,7 @@ Namespace Services
         ' 5) Imported Item (POST)
         ' -----------------------
         Public Async Function SendImportedItemAsync(req As ImportedItemRequest) As Task(Of ImportedItemResponse)
-            Dim endpoint = Core.ApiEndpoints.IMPORTED_ITEM_UPDATE
+            Dim endpoint = ApiEndpoints.IMPORTED_ITEM_UPDATE
             Dim resp = Await SendAndDeserializeAsync(Of ImportedItemResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
 
@@ -223,7 +233,7 @@ Namespace Services
         ' 5b) Imported Items GET
         ' -----------------------
         Public Async Function GetImportedItemsAsync(Optional query As String = Nothing) As Task(Of ImportedItemResponse)
-            Dim endpoint = Core.ApiEndpoints.IMPORTED_ITEM_SELECT
+            Dim endpoint = ApiEndpoints.IMPORTED_ITEM_SELECT
             Dim target = endpoint
             If Not String.IsNullOrEmpty(query) Then
                 target &= "?" & query
@@ -256,7 +266,7 @@ Namespace Services
         ' 7) Purchase (POST)
         ' -----------------------
         Public Async Function SendPurchaseAsync(req As PurchaseRequest) As Task(Of PurchaseResponse)
-            Dim endpoint = Core.ApiEndpoints.PURCHASE
+            Dim endpoint = ApiEndpoints.PURCHASE
             Dim resp = Await SendAndDeserializeAsync(Of PurchaseResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
 
@@ -269,7 +279,7 @@ Namespace Services
         ' 7b) Purchase GET
         ' -----------------------
         Public Async Function GetPurchaseAsync(query As PurchaseInfoRequest) As Task(Of PurchaseInfoResponse)
-            Dim endpoint = Core.ApiEndpoints.PURCHASE
+            Dim endpoint = ApiEndpoints.PURCHASE
 
             Dim resp = Await SendAndDeserializeAsync(Of PurchaseInfoResponse)(endpoint, query, isGet:=False)
 
@@ -289,7 +299,7 @@ Namespace Services
         ' 8) Stock (POST)
         ' -----------------------
         Public Async Function SendStockAsync(req As StockSaveRequest) As Task(Of StockSaveResponse)
-            Dim endpoint = Core.ApiEndpoints.STOCK_SAVE
+            Dim endpoint = ApiEndpoints.STOCK_SAVE
             Dim resp = Await SendAndDeserializeAsync(Of StockSaveResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
 
@@ -304,7 +314,7 @@ Namespace Services
         ' 8 a) Stock Request(POST)
         ' -----------------------
         Public Async Function GetStockAsync(req As StockInfoRequest) As Task(Of StockInfoResponse)
-            Dim endpoint = Core.ApiEndpoints.STOCK_SAVE
+            Dim endpoint = ApiEndpoints.STOCK_SAVE
             Dim resp = Await SendAndDeserializeAsync(Of StockInfoResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
 
