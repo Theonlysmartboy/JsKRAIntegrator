@@ -8,17 +8,17 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("JsKRAIntegrator")>
+<Assembly: AssemblyTitle("Core")>
 <Assembly: AssemblyDescription("")>
 <Assembly: AssemblyCompany("")>
-<Assembly: AssemblyProduct("JsKRAIntegrator")>
+<Assembly: AssemblyProduct("Core")>
 <Assembly: AssemblyCopyright("Copyright ©  2026")>
 <Assembly: AssemblyTrademark("")>
 
 <Assembly: ComVisible(False)>
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("cc75fedf-3577-43c4-9a78-0ad07c525216")>
+<Assembly: Guid("8abe617b-58eb-43c6-9f6b-c8eeaa22ad8d")>
 
 ' Version information for an assembly consists of the following four values:
 '
