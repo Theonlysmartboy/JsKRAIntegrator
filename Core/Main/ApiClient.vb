@@ -27,16 +27,16 @@ Namespace Main
             End If
         End Function
 
-        '=======================================================================
-        ' Returns the full URL for logging / diagnostics.
-        '=======================================================================
+        ''' <summary>
+        ''' Returns the full URL for logging / diagnostics.
+        ''' </summary>
         Public Function FullUrl(endpoint As String) As String
             Return BuildUrl(endpoint)
         End Function
 
-        '=======================================================================
-        ' POST JSON payload to endpoint and return raw response body.
-        '=======================================================================
+        ''' <summary>
+        ''' POST JSON payload to endpoint and return raw response body.
+        ''' </summary>
         Public Async Function SendAsync(endpoint As String, json As String) As Task(Of String)
             Dim url = BuildUrl(endpoint)
             Dim content = New StringContent(json, Encoding.UTF8, "application/json")
@@ -45,9 +45,9 @@ Namespace Main
             Return Await resp.Content.ReadAsStringAsync()
         End Function
 
-        '=======================================================================
-        ' GET endpoint and return raw response body.
-        '=======================================================================
+        ''' <summary>
+        ''' GET endpoint and return raw response body.
+        ''' </summary>
         Public Async Function GetAsync(endpoint As String) As Task(Of String)
             Dim url = BuildUrl(endpoint)
             Dim resp = Await _http.GetAsync(url)

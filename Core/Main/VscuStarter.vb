@@ -1,8 +1,5 @@
 ﻿Imports System.IO
-Imports IntegratorCore.Config
-Imports IntegratorCore.Enums
-Imports IntegratorCore.Logging
-Namespace Core
+Namespace Main
 
     Public Class VscuStarter
         Private _connString As String
