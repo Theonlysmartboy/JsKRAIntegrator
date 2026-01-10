@@ -44,6 +44,10 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MySql.Data, Version=6.6.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\MySQL\MySQL Connector Net 6.6.4\Assemblies\v4.0\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -64,6 +68,13 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\IntegratorSettings.vb" />
+    <Compile Include="Config\SettingsManager.vb" />
+    <Compile Include="Enums\LogLevel.vb" />
+    <Compile Include="Enums\VSCURequestType.vb" />
+    <Compile Include="Logging\LogEntry.vb" />
+    <Compile Include="Logging\Logger.vb" />
+    <Compile Include="Logging\LogRepository.vb" />
     <Compile Include="Main\ApiClient.vb" />
     <Compile Include="Main\ApiEndpoints.vb" />
     <Compile Include="Main\VscuStarter.vb" />
