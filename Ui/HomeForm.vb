@@ -151,12 +151,6 @@ Public Class HomeForm
         Await _settingsManager.SetSettingAsync("vat_type", info.vatTyCd)
     End Function
 
-    Private Sub StockToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DataMgtToolStripMenuItem.Click
-        Dim dataForm As New DataManagement(_conn)
-        dataForm.ShowDialog()
-
-    End Sub
-
     Private Sub ProductManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ProductManagementToolStripMenuItem.Click
         Dim productsForm As New ProductManagement(_conn)
         productsForm.ShowDialog()
@@ -177,4 +171,18 @@ Public Class HomeForm
         starter.StopVscuByPort(8088)
     End Sub
 
+    Private Sub SyncToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SyncToolStripMenuItem.Click
+        Dim dataForm As New DataManagement(_conn)
+        dataForm.ShowDialog()
+    End Sub
+
+    Private Sub ItemClassificationsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ItemClassificationsToolStripMenuItem.Click
+        Dim itemClassForm As New ItemClassification(_conn)
+        itemClassForm.ShowDialog()
+    End Sub
+
+    Private Sub NoticesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles NoticesToolStripMenuItem.Click
+        Dim noticeForm As New Notices(_conn)
+        noticeForm.ShowDialog()
+    End Sub
 End Class

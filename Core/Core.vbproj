@@ -109,11 +109,8 @@
     <Compile Include="Models\Purchase\PurchaseResponse.vb" />
     <Compile Include="Models\Receipt\Receipt.vb" />
     <Compile Include="Models\Sale\Invoice\InvoiceMaster.vb" />
-    <Compile Include="Repo\SalesRepository.vb" />
     <Compile Include="Models\Sale\SalesRequest.vb" />
     <Compile Include="Models\Sale\SalesResponse.vb" />
-    <Compile Include="Repo\ProductRepository.vb" />
-    <Compile Include="Repo\ItemInfoRepository.vb" />
     <Compile Include="Models\Item\Info\ItemInfoRequest.vb" />
     <Compile Include="Models\Item\Info\ItemInfoResponse.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -131,11 +128,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Repo\CodeDetailRepository.vb" />
-    <Compile Include="Repo\CodeLookupRepository.vb" />
-    <Compile Include="Repo\CodeMappedRepository.vb" />
-    <Compile Include="Repo\CodeRepository.vb" />
-    <Compile Include="Repo\ItemClassificationRepository.vb" />
     <Compile Include="Services\VSCUIntegrator.vb" />
     <Compile Include="Utils\JsonUtil.vb" />
   </ItemGroup>

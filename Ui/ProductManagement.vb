@@ -2,9 +2,9 @@
 Imports Core.Logging
 Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
-Imports Core.Repo
 Imports Core.Services
 Imports Ui.Helpers
+Imports Ui.Repo
 
 Public Class ProductManagement
     Private _settingsManager As SettingsManager

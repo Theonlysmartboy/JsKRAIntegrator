@@ -48,6 +48,10 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MySql.Data, Version=6.6.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\MySQL\MySQL Connector Net 6.6.4\Assemblies\v4.0\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -86,6 +90,18 @@
       <DependentUpon>DataManagement.vb</DependentUpon>
     </Compile>
     <Compile Include="DataManagement.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataManagement\ItemClassification.Designer.vb">
+      <DependentUpon>ItemClassification.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DataManagement\ItemClassification.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataManagement\Notices.Designer.vb">
+      <DependentUpon>Notices.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DataManagement\Notices.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Helpers\CustomAlert.Designer.vb">
@@ -143,6 +159,14 @@
     <Compile Include="Purchases.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Repo\CodeDetailRepository.vb" />
+    <Compile Include="Repo\CodeLookupRepository.vb" />
+    <Compile Include="Repo\CodeMappedRepository.vb" />
+    <Compile Include="Repo\CodeRepository.vb" />
+    <Compile Include="Repo\ItemClassificationRepository.vb" />
+    <Compile Include="Repo\ItemInfoRepository.vb" />
+    <Compile Include="Repo\ProductRepository.vb" />
+    <Compile Include="Repo\SalesRepository.vb" />
     <Compile Include="Sales.Designer.vb">
       <DependentUpon>Sales.vb</DependentUpon>
     </Compile>
@@ -157,6 +181,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DataManagement.resx">
+      <DependentUpon>DataManagement.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataManagement\ItemClassification.resx">
+      <DependentUpon>ItemClassification.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataManagement\Notices.resx">
+      <DependentUpon>Notices.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Helpers\CustomAlert.resx">
       <DependentUpon>CustomAlert.vb</DependentUpon>
     </EmbeddedResource>
@@ -207,8 +240,6 @@
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DataManagement\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

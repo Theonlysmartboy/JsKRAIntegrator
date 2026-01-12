@@ -1,17 +1,15 @@
 ﻿Imports Core.Config
 Imports Core.Logging
-Imports Core.Models.Code
-Imports Core.Repo
+Imports Core.Models.Item.Classification
 Imports Core.Services
-Imports Ui.Repo
+Imports Ui.Repo.Item.Classification
 
-Public Class DataManagement
+Public Class ItemClassification
     Private _settingsManager As SettingsManager
     Private _integrator As VSCUIntegrator
     Private _logger As Logger
     Private _conn As String
     Private OriginalTables As New Dictionary(Of DataGridView, DataTable)
-
     Public Sub New(connectionString As String)
         InitializeComponent()
         _conn = connectionString
@@ -40,77 +38,111 @@ Public Class DataManagement
                                                                                                          _integrator = New VSCUIntegrator(settings, _logger)
                                                                                                      End Sub)
     End Sub
-
-    Private Sub DataManagementForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Add placeholder text
-        SetPlaceholder(TxtSearchCodes, "Start typing to search...")
-        ' Attach placeholder handlers
-        AddHandler TxtSearchCodes.Enter, AddressOf TextBox_Enter
-        AddHandler TxtSearchCodes.Leave, AddressOf TextBox_Leave
+    Private Sub ItemClassification_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        SetPlaceholder(TxtSearchItemClass, "Start typing to search...")
+        AddHandler TxtSearchItemClass.Enter, AddressOf TextBox_Enter
+        AddHandler TxtSearchItemClass.Leave, AddressOf TextBox_Leave
     End Sub
+    Private Sub TxtSearchItemClass_TextChanged(sender As Object, e As EventArgs)
+        If TxtSearchItemClass.ForeColor = Color.Gray Then Exit Sub
 
-    Private Sub TxtSearchCodes_TextChanged(sender As Object, e As EventArgs)
-        If TxtSearchCodes.ForeColor = Color.Gray Then Exit Sub
-        FilterGrid(DataGridViewCodes, TxtSearchCodes.Text)
+        FilterGrid(DataGridViewItemClassification, TxtSearchItemClass.Text)
     End Sub
-    Private Async Sub ButtonSyncCodes_Click(sender As Object, e As EventArgs)
+    Private Async Sub BtnSyncItemClassification_Click(sender As Object, e As EventArgs) Handles BtnSyncItemClassification.Click
         Try
-            ButtonSyncCodes.Enabled = False
-            ButtonSyncCodes.Text = "Syncing..."
+            BtnSyncItemClassification.Enabled = False
+            BtnSyncItemClassification.Text = "Syncing..."
+
             ' 1) Load required settings
             Dim tin = Await _settingsManager.GetSettingAsync("pin")
             Dim bhfId = Await _settingsManager.GetSettingAsync("branch_id")
-            Dim lastReqDt = Await _settingsManager.GetSettingAsync("last_code_sync")
+            Dim lastReqDt = Await _settingsManager.GetSettingAsync("last_itemcls_sync")
+
             If String.IsNullOrWhiteSpace(lastReqDt) Then
-                lastReqDt = "20000000000000"
+                lastReqDt = "20180520000000"
             End If
+
             ' 2) Build request payload
-            Dim req As New CodeDataRequest With {
+            Dim req As New ItemClassificationRequest With {
             .tin = tin,
             .bhfId = bhfId,
             .lastReqDt = lastReqDt
         }
+
             ' 3) Call VSCU endpoint
-            Dim resp = Await _integrator.GetCodeDataAsync(req)
-            ' 3.1) Authority check
+            Dim resp = Await _integrator.SendItemClassificationInfoAsync(req)
+
+            ' 1) Authority check
             If resp Is Nothing OrElse resp.resultCd <> "000" Then
                 Dim msg As String = If(resp IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(resp.resultMsg), resp.resultMsg, "Integrator error")
+
                 MessageBox.Show(msg, "Error")
                 Return
             End If
-            ' 3.2) Data availability check
-            If resp.data Is Nothing OrElse resp.data.clsList Is Nothing OrElse resp.data.clsList.Count = 0 Then
-                MessageBox.Show("No new codes returned.", "Information")
+
+            ' 2) Data availability check
+            If resp.data Is Nothing OrElse resp.data.itemClsList Is Nothing OrElse resp.data.itemClsList.Count = 0 Then
+                MessageBox.Show("No new Item classifications found.", "Information")
                 Return
             End If
-            Dim mappedRepo As New CodeMappedRepository(_conn)
-            For Each cls In resp.data.clsList
-                For Each dt In cls.dtlList
-                    Await mappedRepo.SaveAsync(cls, dt)
-                Next
+
+            ' 4) Flatten response → convert itemClsList → ItemClassificationEntry list
+            Dim flatList As New List(Of ItemClassificationEntry)
+            For Each cls In resp.data.itemClsList
+                flatList.Add(New ItemClassificationEntry With {
+                    .Code = cls.itemClsCd,
+                    .Name = cls.itemClsNm,
+                    .Level = cls.itemClsLvl,
+                    .TaxTypeCode = If(cls.taxTyCd, ""),
+                    .MajorTag = If(cls.mjrTgYn, ""),
+                    .UseYn = If(cls.useYn, "N")
+                })
             Next
-            Await _settingsManager.SetSettingAsync("last_code_sync", DateTime.Now.ToString("yyyyMMddHHmmss"))
-            CustomAlert.ShowAlert(Me, "Codes synced successfully!", "Success", CustomAlert.AlertType.Success)
+
+            ' 5) Save to MySQL
+            Dim repo As New ItemClassificationRepository(_conn)
+
+            ' Optional: clear old classifications before insert
+            Await repo.ClearAsync()
+
+            For Each r In flatList
+                Try
+                    Await repo.SaveAsync(r)
+                Catch ex As Exception
+                    CustomAlert.ShowAlert(DataManagement.ActiveForm, $"Failed saving classification: {r.Code} - {r.Name}. Error: {ex.Message}",
+                                          "Error", CustomAlert.AlertType.Error)
+                End Try
+            Next
+
+            ' 6) Save new sync timestamp
+            Await _settingsManager.SetSettingAsync("last_itemcls_sync", DateTime.Now.ToString("yyyyMMddHHmmss"))
+
+            ' 7) Refresh Grid or UI
+            Await LoadItemClassificationIntoGridAsync()
+
+            CustomAlert.ShowAlert(DataManagement.ActiveForm, "Item classification data synced successfully!",
+                                  "Success", CustomAlert.AlertType.Success)
+
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Sync Error: " & ex.Message, "Error", CustomAlert.AlertType.Error)
+            CustomAlert.ShowAlert(DataManagement.ActiveForm, "Error during item classification sync: " & ex.Message,
+                                  "Error", CustomAlert.AlertType.Error)
         Finally
-            ButtonSyncCodes.Enabled = True
-            ButtonSyncCodes.Text = "Sync Codes"
+            BtnSyncItemClassification.Enabled = True
+            BtnSyncItemClassification.Text = "Sync Item Classification"
         End Try
     End Sub
 
-    Private Async Sub BtnLoadLocalCodes_Click(sender As Object, e As EventArgs)
-        Await LoadCodesIntoGridAsync()
+    Private Async Sub BtnLoadStoredItemClassifications_Click(sender As Object, e As EventArgs) Handles BtnLoadStoredItemClassifications.Click
+        Await LoadItemClassificationIntoGridAsync()
     End Sub
 
-    Private Async Function LoadCodesIntoGridAsync() As Task
-        Dim repo As New CodeLookupRepository(_conn)
-
-        Dim dt = Await repo.LoadAllFlattenedAsync()
-        OriginalTables(DataGridViewCodes) = dt
-        DataGridViewCodes.DataSource = dt
+    'Helpers
+    Private Async Function LoadItemClassificationIntoGridAsync() As Task
+        Dim repo As New ItemClassificationRepository(_conn)
+        Dim dt = Await repo.LoadAllAsync()
+        OriginalTables(DataGridViewItemClassification) = dt
+        DataGridViewItemClassification.DataSource = dt
     End Function
-
     Private Sub FilterGrid(grid As DataGridView, search As String)
         If Not OriginalTables.ContainsKey(grid) Then Exit Sub
         Dim dt As DataTable = OriginalTables(grid)
