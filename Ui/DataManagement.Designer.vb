@@ -19,10 +19,8 @@ Partial Class DataManagement
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.TxtSearchCodes = New System.Windows.Forms.TextBox()
-        Me.BtnLoadLocalCodes = New System.Windows.Forms.Button()
-        Me.DataGridViewCodes = New System.Windows.Forms.DataGridView()
-        Me.ButtonSyncCodes = New System.Windows.Forms.Button()
-        CType(Me.DataGridViewCodes, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.DgvCodes = New System.Windows.Forms.DataGridView()
+        CType(Me.DgvCodes, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TxtSearchCodes
@@ -32,34 +30,16 @@ Partial Class DataManagement
         Me.TxtSearchCodes.Size = New System.Drawing.Size(259, 20)
         Me.TxtSearchCodes.TabIndex = 8
         '
-        'BtnLoadLocalCodes
+        'DgvCodes
         '
-        Me.BtnLoadLocalCodes.Location = New System.Drawing.Point(607, 8)
-        Me.BtnLoadLocalCodes.Name = "BtnLoadLocalCodes"
-        Me.BtnLoadLocalCodes.Size = New System.Drawing.Size(125, 30)
-        Me.BtnLoadLocalCodes.TabIndex = 7
-        Me.BtnLoadLocalCodes.Text = "Load Local Codes"
-        Me.BtnLoadLocalCodes.UseVisualStyleBackColor = True
-        '
-        'DataGridViewCodes
-        '
-        Me.DataGridViewCodes.AllowUserToAddRows = False
-        Me.DataGridViewCodes.AllowUserToDeleteRows = False
-        Me.DataGridViewCodes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridViewCodes.Location = New System.Drawing.Point(12, 44)
-        Me.DataGridViewCodes.Name = "DataGridViewCodes"
-        Me.DataGridViewCodes.ReadOnly = True
-        Me.DataGridViewCodes.Size = New System.Drawing.Size(741, 394)
-        Me.DataGridViewCodes.TabIndex = 6
-        '
-        'ButtonSyncCodes
-        '
-        Me.ButtonSyncCodes.Location = New System.Drawing.Point(12, 8)
-        Me.ButtonSyncCodes.Name = "ButtonSyncCodes"
-        Me.ButtonSyncCodes.Size = New System.Drawing.Size(94, 30)
-        Me.ButtonSyncCodes.TabIndex = 5
-        Me.ButtonSyncCodes.Text = "Sync Codes"
-        Me.ButtonSyncCodes.UseVisualStyleBackColor = True
+        Me.DgvCodes.AllowUserToAddRows = False
+        Me.DgvCodes.AllowUserToDeleteRows = False
+        Me.DgvCodes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DgvCodes.Location = New System.Drawing.Point(12, 44)
+        Me.DgvCodes.Name = "DgvCodes"
+        Me.DgvCodes.ReadOnly = True
+        Me.DgvCodes.Size = New System.Drawing.Size(741, 394)
+        Me.DgvCodes.TabIndex = 6
         '
         'DataManagement
         '
@@ -67,20 +47,16 @@ Partial Class DataManagement
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(765, 450)
         Me.Controls.Add(Me.TxtSearchCodes)
-        Me.Controls.Add(Me.BtnLoadLocalCodes)
-        Me.Controls.Add(Me.DataGridViewCodes)
-        Me.Controls.Add(Me.ButtonSyncCodes)
+        Me.Controls.Add(Me.DgvCodes)
         Me.MaximizeBox = False
         Me.Name = "DataManagement"
         Me.Text = "Data Management"
-        CType(Me.DataGridViewCodes, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DgvCodes, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
 
     Friend WithEvents TxtSearchCodes As TextBox
-    Friend WithEvents BtnLoadLocalCodes As Button
-    Friend WithEvents DataGridViewCodes As DataGridView
-    Friend WithEvents ButtonSyncCodes As Button
+    Friend WithEvents DgvCodes As DataGridView
 End Class
