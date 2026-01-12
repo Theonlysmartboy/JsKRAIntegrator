@@ -27,8 +27,35 @@ Partial Class HomeForm
         Me.InitializeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.DataMgtToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SyncToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.ItemClassificationsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.TaxTypesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SalesReceiptTypeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ProductTypesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TransactionTypeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PurchaseReceiptTypeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.StockInOutTypeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.RegistrationTypeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CountriesCodesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PaymentTypesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PurchaseStatusToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TaxpayerStatusToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ImportItemStatusToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.BranchStatusToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
+        Me.UnitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PackagingUnitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TransactionProgressToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.InventoryAdjustmentReasonToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CreditNoteReasonToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CurrenciesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.BanksToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TaxOfficesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.LocalesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CategoryLevelsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ProductManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SalesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PurchasesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -36,33 +63,6 @@ Partial Class HomeForm
         Me.ToolStripLogs = New System.Windows.Forms.ToolStripMenuItem()
         Me.NoticesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LblStatus = New System.Windows.Forms.Label()
-        Me.CountriesCodesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.PaymentTypesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.BranchStatusToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.UnitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.PackagingUnitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.TransactionProgressToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.TransactionTypeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.TaxpayerStatusToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ProductTypesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
-        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
-        Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
-        Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
-        Me.StockInOutTypeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ImportItemStatusToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.RegistrationTypeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CreditNoteReasonToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CurrenciesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.PurchaseStatusToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.InventoryAdjustmentReasonToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.BanksToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.SalesReceiptTypeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.PurchaseReceiptTypeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.TaxOfficesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.LocalesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CategoryLevelsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -98,20 +98,177 @@ Partial Class HomeForm
         'SyncToolStripMenuItem
         '
         Me.SyncToolStripMenuItem.Name = "SyncToolStripMenuItem"
-        Me.SyncToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.SyncToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
         Me.SyncToolStripMenuItem.Text = "Sync Codes"
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(227, 6)
         '
         'ItemClassificationsToolStripMenuItem
         '
         Me.ItemClassificationsToolStripMenuItem.Name = "ItemClassificationsToolStripMenuItem"
-        Me.ItemClassificationsToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.ItemClassificationsToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
         Me.ItemClassificationsToolStripMenuItem.Text = "Item Classifications"
+        '
+        'ToolStripSeparator2
+        '
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(227, 6)
         '
         'TaxTypesToolStripMenuItem
         '
         Me.TaxTypesToolStripMenuItem.Name = "TaxTypesToolStripMenuItem"
-        Me.TaxTypesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.TaxTypesToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
         Me.TaxTypesToolStripMenuItem.Text = "Tax Types"
+        '
+        'SalesReceiptTypeToolStripMenuItem
+        '
+        Me.SalesReceiptTypeToolStripMenuItem.Name = "SalesReceiptTypeToolStripMenuItem"
+        Me.SalesReceiptTypeToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.SalesReceiptTypeToolStripMenuItem.Text = "Sales Receipt Type"
+        '
+        'ProductTypesToolStripMenuItem
+        '
+        Me.ProductTypesToolStripMenuItem.Name = "ProductTypesToolStripMenuItem"
+        Me.ProductTypesToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.ProductTypesToolStripMenuItem.Text = "Product Types"
+        '
+        'TransactionTypeToolStripMenuItem
+        '
+        Me.TransactionTypeToolStripMenuItem.Name = "TransactionTypeToolStripMenuItem"
+        Me.TransactionTypeToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.TransactionTypeToolStripMenuItem.Text = "Transaction Types"
+        '
+        'PurchaseReceiptTypeToolStripMenuItem
+        '
+        Me.PurchaseReceiptTypeToolStripMenuItem.Name = "PurchaseReceiptTypeToolStripMenuItem"
+        Me.PurchaseReceiptTypeToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.PurchaseReceiptTypeToolStripMenuItem.Text = "Purchase Receipt Type"
+        '
+        'StockInOutTypeToolStripMenuItem
+        '
+        Me.StockInOutTypeToolStripMenuItem.Name = "StockInOutTypeToolStripMenuItem"
+        Me.StockInOutTypeToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.StockInOutTypeToolStripMenuItem.Text = "Stock In out type"
+        '
+        'RegistrationTypeToolStripMenuItem
+        '
+        Me.RegistrationTypeToolStripMenuItem.Name = "RegistrationTypeToolStripMenuItem"
+        Me.RegistrationTypeToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.RegistrationTypeToolStripMenuItem.Text = "Registration Type"
+        '
+        'ToolStripSeparator4
+        '
+        Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(227, 6)
+        '
+        'CountriesCodesToolStripMenuItem
+        '
+        Me.CountriesCodesToolStripMenuItem.Name = "CountriesCodesToolStripMenuItem"
+        Me.CountriesCodesToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.CountriesCodesToolStripMenuItem.Text = "Countries Codes"
+        '
+        'PaymentTypesToolStripMenuItem
+        '
+        Me.PaymentTypesToolStripMenuItem.Name = "PaymentTypesToolStripMenuItem"
+        Me.PaymentTypesToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.PaymentTypesToolStripMenuItem.Text = "Payment Methods"
+        '
+        'PurchaseStatusToolStripMenuItem
+        '
+        Me.PurchaseStatusToolStripMenuItem.Name = "PurchaseStatusToolStripMenuItem"
+        Me.PurchaseStatusToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.PurchaseStatusToolStripMenuItem.Text = "Purchase Status"
+        '
+        'TaxpayerStatusToolStripMenuItem
+        '
+        Me.TaxpayerStatusToolStripMenuItem.Name = "TaxpayerStatusToolStripMenuItem"
+        Me.TaxpayerStatusToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.TaxpayerStatusToolStripMenuItem.Text = "Taxpayer Status"
+        '
+        'ImportItemStatusToolStripMenuItem
+        '
+        Me.ImportItemStatusToolStripMenuItem.Name = "ImportItemStatusToolStripMenuItem"
+        Me.ImportItemStatusToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.ImportItemStatusToolStripMenuItem.Text = "Import Item Status"
+        '
+        'BranchStatusToolStripMenuItem
+        '
+        Me.BranchStatusToolStripMenuItem.Name = "BranchStatusToolStripMenuItem"
+        Me.BranchStatusToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.BranchStatusToolStripMenuItem.Text = "Branch Status"
+        '
+        'ToolStripSeparator3
+        '
+        Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(227, 6)
+        '
+        'UnitToolStripMenuItem
+        '
+        Me.UnitToolStripMenuItem.Name = "UnitToolStripMenuItem"
+        Me.UnitToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.UnitToolStripMenuItem.Text = "Unit of Quantity"
+        '
+        'PackagingUnitToolStripMenuItem
+        '
+        Me.PackagingUnitToolStripMenuItem.Name = "PackagingUnitToolStripMenuItem"
+        Me.PackagingUnitToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.PackagingUnitToolStripMenuItem.Text = "Packaging Unit"
+        '
+        'TransactionProgressToolStripMenuItem
+        '
+        Me.TransactionProgressToolStripMenuItem.Name = "TransactionProgressToolStripMenuItem"
+        Me.TransactionProgressToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.TransactionProgressToolStripMenuItem.Text = "Transaction Progress"
+        '
+        'InventoryAdjustmentReasonToolStripMenuItem
+        '
+        Me.InventoryAdjustmentReasonToolStripMenuItem.Name = "InventoryAdjustmentReasonToolStripMenuItem"
+        Me.InventoryAdjustmentReasonToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.InventoryAdjustmentReasonToolStripMenuItem.Text = "Inventory Adjustment Reason"
+        '
+        'CreditNoteReasonToolStripMenuItem
+        '
+        Me.CreditNoteReasonToolStripMenuItem.Name = "CreditNoteReasonToolStripMenuItem"
+        Me.CreditNoteReasonToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.CreditNoteReasonToolStripMenuItem.Text = "Credit Note Reason"
+        '
+        'ToolStripSeparator5
+        '
+        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(227, 6)
+        '
+        'CurrenciesToolStripMenuItem
+        '
+        Me.CurrenciesToolStripMenuItem.Name = "CurrenciesToolStripMenuItem"
+        Me.CurrenciesToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.CurrenciesToolStripMenuItem.Text = "Currencies"
+        '
+        'BanksToolStripMenuItem
+        '
+        Me.BanksToolStripMenuItem.Name = "BanksToolStripMenuItem"
+        Me.BanksToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.BanksToolStripMenuItem.Text = "Banks"
+        '
+        'TaxOfficesToolStripMenuItem
+        '
+        Me.TaxOfficesToolStripMenuItem.Name = "TaxOfficesToolStripMenuItem"
+        Me.TaxOfficesToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.TaxOfficesToolStripMenuItem.Text = "Tax offices"
+        '
+        'LocalesToolStripMenuItem
+        '
+        Me.LocalesToolStripMenuItem.Name = "LocalesToolStripMenuItem"
+        Me.LocalesToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.LocalesToolStripMenuItem.Text = "Locales"
+        '
+        'CategoryLevelsToolStripMenuItem
+        '
+        Me.CategoryLevelsToolStripMenuItem.Name = "CategoryLevelsToolStripMenuItem"
+        Me.CategoryLevelsToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
+        Me.CategoryLevelsToolStripMenuItem.Text = "Category Levels"
         '
         'ProductManagementToolStripMenuItem
         '
@@ -158,163 +315,6 @@ Partial Class HomeForm
         Me.LblStatus.Name = "LblStatus"
         Me.LblStatus.Size = New System.Drawing.Size(0, 20)
         Me.LblStatus.TabIndex = 7
-        '
-        'CountriesCodesToolStripMenuItem
-        '
-        Me.CountriesCodesToolStripMenuItem.Name = "CountriesCodesToolStripMenuItem"
-        Me.CountriesCodesToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
-        Me.CountriesCodesToolStripMenuItem.Text = "Countries Codes"
-        '
-        'PaymentTypesToolStripMenuItem
-        '
-        Me.PaymentTypesToolStripMenuItem.Name = "PaymentTypesToolStripMenuItem"
-        Me.PaymentTypesToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
-        Me.PaymentTypesToolStripMenuItem.Text = "Payment Methods"
-        '
-        'BranchStatusToolStripMenuItem
-        '
-        Me.BranchStatusToolStripMenuItem.Name = "BranchStatusToolStripMenuItem"
-        Me.BranchStatusToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
-        Me.BranchStatusToolStripMenuItem.Text = "Branch Status"
-        '
-        'UnitToolStripMenuItem
-        '
-        Me.UnitToolStripMenuItem.Name = "UnitToolStripMenuItem"
-        Me.UnitToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
-        Me.UnitToolStripMenuItem.Text = "Unit of Quantity"
-        '
-        'PackagingUnitToolStripMenuItem
-        '
-        Me.PackagingUnitToolStripMenuItem.Name = "PackagingUnitToolStripMenuItem"
-        Me.PackagingUnitToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
-        Me.PackagingUnitToolStripMenuItem.Text = "Packaging Unit"
-        '
-        'TransactionProgressToolStripMenuItem
-        '
-        Me.TransactionProgressToolStripMenuItem.Name = "TransactionProgressToolStripMenuItem"
-        Me.TransactionProgressToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
-        Me.TransactionProgressToolStripMenuItem.Text = "Transaction Progress"
-        '
-        'TransactionTypeToolStripMenuItem
-        '
-        Me.TransactionTypeToolStripMenuItem.Name = "TransactionTypeToolStripMenuItem"
-        Me.TransactionTypeToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
-        Me.TransactionTypeToolStripMenuItem.Text = "Transaction Types"
-        '
-        'TaxpayerStatusToolStripMenuItem
-        '
-        Me.TaxpayerStatusToolStripMenuItem.Name = "TaxpayerStatusToolStripMenuItem"
-        Me.TaxpayerStatusToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
-        Me.TaxpayerStatusToolStripMenuItem.Text = "Taxpayer Status"
-        '
-        'ProductTypesToolStripMenuItem
-        '
-        Me.ProductTypesToolStripMenuItem.Name = "ProductTypesToolStripMenuItem"
-        Me.ProductTypesToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
-        Me.ProductTypesToolStripMenuItem.Text = "Product Types"
-        '
-        'ToolStripSeparator1
-        '
-        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(179, 6)
-        '
-        'ToolStripSeparator2
-        '
-        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(179, 6)
-        '
-        'ToolStripSeparator3
-        '
-        Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
-        Me.ToolStripSeparator3.Size = New System.Drawing.Size(179, 6)
-        '
-        'ToolStripSeparator4
-        '
-        Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(179, 6)
-        '
-        'StockInOutTypeToolStripMenuItem
-        '
-        Me.StockInOutTypeToolStripMenuItem.Name = "StockInOutTypeToolStripMenuItem"
-        Me.StockInOutTypeToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
-        Me.StockInOutTypeToolStripMenuItem.Text = "Stock In out type"
-        '
-        'ImportItemStatusToolStripMenuItem
-        '
-        Me.ImportItemStatusToolStripMenuItem.Name = "ImportItemStatusToolStripMenuItem"
-        Me.ImportItemStatusToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.ImportItemStatusToolStripMenuItem.Text = "Import Item Status"
-        '
-        'RegistrationTypeToolStripMenuItem
-        '
-        Me.RegistrationTypeToolStripMenuItem.Name = "RegistrationTypeToolStripMenuItem"
-        Me.RegistrationTypeToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.RegistrationTypeToolStripMenuItem.Text = "Registration Type"
-        '
-        'CreditNoteReasonToolStripMenuItem
-        '
-        Me.CreditNoteReasonToolStripMenuItem.Name = "CreditNoteReasonToolStripMenuItem"
-        Me.CreditNoteReasonToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.CreditNoteReasonToolStripMenuItem.Text = "Credit Note Reason"
-        '
-        'CurrenciesToolStripMenuItem
-        '
-        Me.CurrenciesToolStripMenuItem.Name = "CurrenciesToolStripMenuItem"
-        Me.CurrenciesToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.CurrenciesToolStripMenuItem.Text = "Currencies"
-        '
-        'PurchaseStatusToolStripMenuItem
-        '
-        Me.PurchaseStatusToolStripMenuItem.Name = "PurchaseStatusToolStripMenuItem"
-        Me.PurchaseStatusToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.PurchaseStatusToolStripMenuItem.Text = "Purchase Status"
-        '
-        'InventoryAdjustmentReasonToolStripMenuItem
-        '
-        Me.InventoryAdjustmentReasonToolStripMenuItem.Name = "InventoryAdjustmentReasonToolStripMenuItem"
-        Me.InventoryAdjustmentReasonToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.InventoryAdjustmentReasonToolStripMenuItem.Text = "Inventory Adjustment Reason"
-        '
-        'BanksToolStripMenuItem
-        '
-        Me.BanksToolStripMenuItem.Name = "BanksToolStripMenuItem"
-        Me.BanksToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.BanksToolStripMenuItem.Text = "Banks"
-        '
-        'SalesReceiptTypeToolStripMenuItem
-        '
-        Me.SalesReceiptTypeToolStripMenuItem.Name = "SalesReceiptTypeToolStripMenuItem"
-        Me.SalesReceiptTypeToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.SalesReceiptTypeToolStripMenuItem.Text = "Sales Receipt Type"
-        '
-        'PurchaseReceiptTypeToolStripMenuItem
-        '
-        Me.PurchaseReceiptTypeToolStripMenuItem.Name = "PurchaseReceiptTypeToolStripMenuItem"
-        Me.PurchaseReceiptTypeToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.PurchaseReceiptTypeToolStripMenuItem.Text = "Purchase Receipt Type"
-        '
-        'TaxOfficesToolStripMenuItem
-        '
-        Me.TaxOfficesToolStripMenuItem.Name = "TaxOfficesToolStripMenuItem"
-        Me.TaxOfficesToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.TaxOfficesToolStripMenuItem.Text = "Tax offices"
-        '
-        'LocalesToolStripMenuItem
-        '
-        Me.LocalesToolStripMenuItem.Name = "LocalesToolStripMenuItem"
-        Me.LocalesToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.LocalesToolStripMenuItem.Text = "Locales"
-        '
-        'CategoryLevelsToolStripMenuItem
-        '
-        Me.CategoryLevelsToolStripMenuItem.Name = "CategoryLevelsToolStripMenuItem"
-        Me.CategoryLevelsToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
-        Me.CategoryLevelsToolStripMenuItem.Text = "Category Levels"
-        '
-        'ToolStripSeparator5
-        '
-        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
-        Me.ToolStripSeparator5.Size = New System.Drawing.Size(227, 6)
         '
         'HomeForm
         '
