@@ -73,6 +73,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataManagement.Designer.vb">
+      <DependentUpon>DataManagement.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DataManagement.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Helpers\CustomAlert.Designer.vb">
       <DependentUpon>CustomAlert.vb</DependentUpon>
     </Compile>
@@ -115,6 +121,24 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ProductManagement.Designer.vb">
+      <DependentUpon>ProductManagement.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ProductManagement.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Purchases.Designer.vb">
+      <DependentUpon>Purchases.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Purchases.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sales.Designer.vb">
+      <DependentUpon>Sales.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Sales.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Settings.Designer.vb">
       <DependentUpon>Settings.vb</DependentUpon>
     </Compile>
@@ -125,6 +149,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Helpers\CustomAlert.resx">
       <DependentUpon>CustomAlert.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -168,6 +195,9 @@
       <Project>{BE6B732F-95DE-4CDF-BA7B-55F358EED18E}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataManagement\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
