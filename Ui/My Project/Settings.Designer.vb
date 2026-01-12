@@ -113,6 +113,18 @@ Namespace My
                 Me("db_port") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property db_prefix() As String
+            Get
+                Return CType(Me("db_prefix"),String)
+            End Get
+            Set
+                Me("db_prefix") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

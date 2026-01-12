@@ -5,7 +5,7 @@ Imports Core.Models.Init
 Imports Core.Services
 Imports Ui.Helpers
 
-Public Class Main
+Public Class HomeForm
 
     Private _integrator As VSCUIntegrator
     Private ReadOnly _logRepo As LogRepository
@@ -39,18 +39,25 @@ Public Class Main
         Dim branchIdTask = _settingsManager.GetSettingAsync("branch_id")
         Dim deviceSerialTask = _settingsManager.GetSettingAsync("device_serial")
         Dim timeoutTask = _settingsManager.GetSettingAsync("timeout")
-
-        Task.WhenAll(baseUrlTask, pinTask, branchIdTask, deviceSerialTask, timeoutTask).ContinueWith(Sub(t)
-                                                                                                         Dim settings As New IntegratorSettings With {
-                                                                                                             .BaseUrl = baseUrlTask.Result,
-                                                                                                             .Pin = pinTask.Result,
-                                                                                                             .BranchId = branchIdTask.Result,
-                                                                                                             .DeviceSerial = deviceSerialTask.Result,
-                                                                                                             .Timeout = If(Integer.TryParse(timeoutTask.Result, Nothing), CInt(timeoutTask.Result), 30)
-                                                                                                         }
-                                                                                                         _integrator = New VSCUIntegrator(settings, _logger)
-                                                                                                     End Sub)
     End Sub
+
+    Public Async Function InitializeAsync() As Task
+        Dim baseUrl = Await _settingsManager.GetSettingAsync("base_url")
+        Dim pin = Await _settingsManager.GetSettingAsync("pin")
+        Dim branch = Await _settingsManager.GetSettingAsync("branch_id")
+        Dim deviceSerial = Await _settingsManager.GetSettingAsync("device_serial")
+        Dim timeout = Await _settingsManager.GetSettingAsync("timeout")
+
+        Dim settings As New IntegratorSettings With {
+        .BaseUrl = baseUrl,
+        .Pin = pin,
+        .BranchId = branch,
+        .DeviceSerial = deviceSerial,
+        .Timeout = Integer.Parse(timeout)
+    }
+
+        _integrator = New VSCUIntegrator(settings, _logger)
+    End Function
 
     Private Sub ToolStripSettings_Click(sender As Object, e As EventArgs) Handles ToolStripSettings.Click
         If String.IsNullOrEmpty(_conn) Then Return
@@ -84,7 +91,7 @@ Public Class Main
 
             If resp IsNot Nothing Then
                 If resp.resultCd = "ERROR" Then
-                    CustomAlert.ShowAlert(Main.ActiveForm,
+                    CustomAlert.ShowAlert(HomeForm.ActiveForm,
                                           resp.resultMsg,
                                           "Error", CustomAlert.AlertType.Error)
                     LblStatus.Text = $"Code: {resp.resultCd}, Message: {resp.resultMsg}"
@@ -92,20 +99,20 @@ Public Class Main
                 ElseIf resp.data IsNot Nothing AndAlso resp.data.info IsNot Nothing Then
                     Dim info = resp.data.info
                     Await SaveInitInfoAsync(info)
-                    CustomAlert.ShowAlert(Main.ActiveForm,
+                    CustomAlert.ShowAlert(HomeForm.ActiveForm,
                                           $"Code: {resp.resultCd}, Message: {resp.resultMsg} TIN: {info.tin}, Device: {info.dvcId}, Branch: {info.bhfNm}",
                                           "Success", CustomAlert.AlertType.Success)
                     LblStatus.Text = $"Code: {resp.resultCd}, Message: {resp.resultMsg} TIN: {info.tin}, Device: {info.dvcId}, Branch: {info.bhfNm}"
                     LblStatus.ForeColor = Color.Green
                 Else
-                    CustomAlert.ShowAlert(Main.ActiveForm,
+                    CustomAlert.ShowAlert(HomeForm.ActiveForm,
                                           $"Code: {resp.resultCd}, Message: {resp.resultMsg}",
                                           "Success", CustomAlert.AlertType.Info)
                     LblStatus.Text = $"Code: {resp.resultCd}, Message: {resp.resultMsg}"
                     LblStatus.ForeColor = Color.Green
                 End If
             Else
-                CustomAlert.ShowAlert(Main.ActiveForm,
+                CustomAlert.ShowAlert(HomeForm.ActiveForm,
                                       "No response from VSCU",
                                       "Error", CustomAlert.AlertType.Error)
                 LblStatus.Text = "No response from VSCU"
@@ -113,7 +120,7 @@ Public Class Main
             End If
 
         Catch ex As Exception
-            CustomAlert.ShowAlert(Main.ActiveForm,
+            CustomAlert.ShowAlert(HomeForm.ActiveForm,
                                   "Initialization failed: " & ex.Message,
                                   "Error", CustomAlert.AlertType.Error)
             LblStatus.Text = $"Initialization failed: {ex.Message}"
@@ -165,8 +172,7 @@ Public Class Main
         purchasesForm.ShowDialog()
     End Sub
 
-    Private Sub Main_FormClosing(sender As Object, e As FormClosingEventArgs) _
-    Handles Me.FormClosing
+    Private Sub Main_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         Dim starter As New VscuStarter(_conn)
         starter.StopVscuByPort(8088)
     End Sub

@@ -113,8 +113,7 @@ Partial Class Logs
         Me.ClientSize = New System.Drawing.Size(1000, 600)
         Me.Controls.Add(Me.GridLogs)
         Me.Controls.Add(Me.PanelTop)
-        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
-        Me.Name = "LogsForm"
+        Me.Name = "Logs"
         Me.Text = "Logs"
         Me.PanelTop.ResumeLayout(False)
         Me.PanelTop.PerformLayout()

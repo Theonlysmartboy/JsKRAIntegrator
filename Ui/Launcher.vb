@@ -69,10 +69,12 @@ Public Class Launcher
         Dim integrator As New VSCUIntegrator(intSettings, logger)
 
         ' Store form for later
-        _nextForm = New Main(integrator, logRepo)
+        _nextForm = New HomeForm(integrator, logRepo)
+        Await _nextForm.InitializeAsync()
+
     End Function
 
-    Private _nextForm As Form
+    Private _nextForm As HomeForm
 
     '===========================
     '       ANIMATION LOGIC

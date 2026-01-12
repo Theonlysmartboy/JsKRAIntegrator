@@ -15,7 +15,7 @@ Namespace Repo
                 Dim sql As String = "SELECT ProductCode, ItemCode, ProductName, Product_Cost_Price, HSCode, ItemTyCd, ItemStdNm, OrgNatCd," &
                                     "SupplierPacking, ProductUnit, SupplyUnit, Product_VAT_Code, TagPrice, Product_Selling_Price," &
                                     "Product_Wholelsale_Price, Product_Custom_Price1, Product_Custom_Price2, ReOrd_Level, IsrcAplcbYn," &
-                                    "isActive, CreatedBy, ModifiedBy FROM testproductmaster WHERE isActive = 1"
+                                    "isActive, CreatedBy, ModifiedBy FROM productmaster WHERE isActive = 1"
                 Using cmd As New MySqlCommand(sql, conn)
                     Using reader As MySqlDataReader = cmd.ExecuteReader()
                         While reader.Read()
