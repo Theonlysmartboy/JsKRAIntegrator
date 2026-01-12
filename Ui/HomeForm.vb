@@ -1,9 +1,11 @@
 ﻿Imports Core.Config
 Imports Core.Logging
 Imports Core.Main
+Imports Core.Models.Code
 Imports Core.Models.Init
 Imports Core.Services
 Imports Ui.Helpers
+Imports Ui.Repo
 
 Public Class HomeForm
 
@@ -151,12 +153,6 @@ Public Class HomeForm
         Await _settingsManager.SetSettingAsync("vat_type", info.vatTyCd)
     End Function
 
-    Private Sub StockToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DataMgtToolStripMenuItem.Click
-        Dim dataForm As New DataManagement(_conn)
-        dataForm.ShowDialog()
-
-    End Sub
-
     Private Sub ProductManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ProductManagementToolStripMenuItem.Click
         Dim productsForm As New ProductManagement(_conn)
         productsForm.ShowDialog()
@@ -177,4 +173,64 @@ Public Class HomeForm
         starter.StopVscuByPort(8088)
     End Sub
 
+    Private Async Sub SyncToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SyncToolStripMenuItem.Click
+        Try
+            SyncToolStripMenuItem.Enabled = False
+            SyncToolStripMenuItem.Text = "Syncing..."
+            ' 1) Load required settings
+            Dim tin = Await _settingsManager.GetSettingAsync("pin")
+            Dim bhfId = Await _settingsManager.GetSettingAsync("branch_id")
+            Dim lastReqDt = Await _settingsManager.GetSettingAsync("last_code_sync")
+            If String.IsNullOrWhiteSpace(lastReqDt) Then
+                lastReqDt = "20000000000000"
+            End If
+            ' 2) Build request payload
+            Dim req As New CodeDataRequest With {
+            .tin = tin,
+            .bhfId = bhfId,
+            .lastReqDt = lastReqDt
+        }
+            ' 3) Call VSCU endpoint
+            Dim resp = Await _integrator.GetCodeDataAsync(req)
+            ' 3.1) Authority check
+            If resp Is Nothing OrElse resp.resultCd <> "000" Then
+                Dim msg As String = If(resp IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(resp.resultMsg), resp.resultMsg, "Integrator error")
+                MessageBox.Show(msg, "Error")
+                Return
+            End If
+            ' 3.2) Data availability check
+            If resp.data Is Nothing OrElse resp.data.clsList Is Nothing OrElse resp.data.clsList.Count = 0 Then
+                MessageBox.Show("No new codes returned.", "Information")
+                Return
+            End If
+            Dim mappedRepo As New CodeMappedRepository(_conn)
+            For Each cls In resp.data.clsList
+                For Each dt In cls.dtlList
+                    Await mappedRepo.SaveAsync(cls, dt)
+                Next
+            Next
+            Await _settingsManager.SetSettingAsync("last_code_sync", DateTime.Now.ToString("yyyyMMddHHmmss"))
+            CustomAlert.ShowAlert(Me, "Codes synced successfully!", "Success", CustomAlert.AlertType.Success)
+        Catch ex As Exception
+            CustomAlert.ShowAlert(Me, "Sync Error: " & ex.Message, "Error", CustomAlert.AlertType.Error)
+        Finally
+            SyncToolStripMenuItem.Enabled = True
+            SyncToolStripMenuItem.Text = "Sync Codes"
+        End Try
+    End Sub
+
+    Private Sub ItemClassificationsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ItemClassificationsToolStripMenuItem.Click
+        Dim itemClassForm As New ItemClassification(_conn)
+        itemClassForm.ShowDialog()
+    End Sub
+
+    Private Sub NoticesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles NoticesToolStripMenuItem.Click
+        Dim noticeForm As New Notices(_conn)
+        noticeForm.ShowDialog()
+    End Sub
+
+    Private Sub TaxTypesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TaxTypesToolStripMenuItem.Click
+        Dim taxTypeForm As New DataManagement(_conn, 4)
+        taxTypeForm.ShowDialog()
+    End Sub
 End Class

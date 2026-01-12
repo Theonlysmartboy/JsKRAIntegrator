@@ -26,18 +26,22 @@ Partial Class HomeForm
         Me.InitializationToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.InitializeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.DataMgtToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SyncToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ItemClassificationsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ProductManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SalesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PurchasesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSettings = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripLogs = New System.Windows.Forms.ToolStripMenuItem()
+        Me.NoticesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LblStatus = New System.Windows.Forms.Label()
+        Me.TaxTypesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'MenuStrip1
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializationToolStripMenuItem, Me.DataMgtToolStripMenuItem, Me.ProductManagementToolStripMenuItem, Me.SalesToolStripMenuItem, Me.PurchasesToolStripMenuItem, Me.ToolStripSettings, Me.ToolStripLogs})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializationToolStripMenuItem, Me.DataMgtToolStripMenuItem, Me.ProductManagementToolStripMenuItem, Me.SalesToolStripMenuItem, Me.PurchasesToolStripMenuItem, Me.ToolStripSettings, Me.ToolStripLogs, Me.NoticesToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Size = New System.Drawing.Size(800, 24)
@@ -59,9 +63,22 @@ Partial Class HomeForm
         '
         'DataMgtToolStripMenuItem
         '
+        Me.DataMgtToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SyncToolStripMenuItem, Me.ItemClassificationsToolStripMenuItem, Me.TaxTypesToolStripMenuItem})
         Me.DataMgtToolStripMenuItem.Name = "DataMgtToolStripMenuItem"
         Me.DataMgtToolStripMenuItem.Size = New System.Drawing.Size(117, 20)
         Me.DataMgtToolStripMenuItem.Text = "Data Management"
+        '
+        'SyncToolStripMenuItem
+        '
+        Me.SyncToolStripMenuItem.Name = "SyncToolStripMenuItem"
+        Me.SyncToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.SyncToolStripMenuItem.Text = "Sync Codes"
+        '
+        'ItemClassificationsToolStripMenuItem
+        '
+        Me.ItemClassificationsToolStripMenuItem.Name = "ItemClassificationsToolStripMenuItem"
+        Me.ItemClassificationsToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.ItemClassificationsToolStripMenuItem.Text = "Item Classifications"
         '
         'ProductManagementToolStripMenuItem
         '
@@ -93,6 +110,12 @@ Partial Class HomeForm
         Me.ToolStripLogs.Size = New System.Drawing.Size(44, 20)
         Me.ToolStripLogs.Text = "Logs"
         '
+        'NoticesToolStripMenuItem
+        '
+        Me.NoticesToolStripMenuItem.Name = "NoticesToolStripMenuItem"
+        Me.NoticesToolStripMenuItem.Size = New System.Drawing.Size(59, 20)
+        Me.NoticesToolStripMenuItem.Text = "Notices"
+        '
         'LblStatus
         '
         Me.LblStatus.AutoSize = True
@@ -103,7 +126,13 @@ Partial Class HomeForm
         Me.LblStatus.Size = New System.Drawing.Size(0, 20)
         Me.LblStatus.TabIndex = 7
         '
-        'Main
+        'TaxTypesToolStripMenuItem
+        '
+        Me.TaxTypesToolStripMenuItem.Name = "TaxTypesToolStripMenuItem"
+        Me.TaxTypesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.TaxTypesToolStripMenuItem.Text = "Tax Types"
+        '
+        'HomeForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -111,7 +140,7 @@ Partial Class HomeForm
         Me.Controls.Add(Me.LblStatus)
         Me.Controls.Add(Me.MenuStrip1)
         Me.MainMenuStrip = Me.MenuStrip1
-        Me.Name = "Main"
+        Me.Name = "HomeForm"
         Me.Text = "Dashboard"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.MenuStrip1.ResumeLayout(False)
@@ -130,4 +159,8 @@ Partial Class HomeForm
     Friend WithEvents LblStatus As Label
     Friend WithEvents ProductManagementToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PurchasesToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents SyncToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ItemClassificationsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents NoticesToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents TaxTypesToolStripMenuItem As ToolStripMenuItem
 End Class
