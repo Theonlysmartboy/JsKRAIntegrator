@@ -1,10 +1,10 @@
 # JsKRAIntegrator
 
 ## Project Summary
-JsKRAIntegrator is a .NET application that integrates with the KRA (Kenya Revenue Authority) JavaScript-based API flows. The project is split into two primary parts:
+JsKRAIntegrator is a .NET application that integrates with the KRA (Kenya Revenue Authority) API flows. The project is split into two primary parts:
 
-- **`Core`** — The main module containing the production business logic, integration code, models, and services. This is the primary codebase to review and extend.
-- **`UI`** — A lightweight Windows Forms-based user interface used for manual testing, debugging, and demonstration. It is not intended as the production front-end.
+- **`Core`** â€” The main module containing the production business logic, integration code, models, and services. This is the primary codebase to review and extend.
+- **`UI`** â€” A lightweight Windows Forms-based user interface used for manual testing, debugging, and demonstration. It is not intended as the production front-end.
 
 Repository: [JsKRAIntegrator GitHub Repository](https://github.com/Theonlysmartboy/JsKRAIntegrator) (branch: V1)
 
@@ -45,7 +45,7 @@ Thanks for contributing! Please follow these guidelines to keep the codebase con
 - **Reviews**: Request at least one reviewer. Address review comments promptly.
 
 ## Development Notes
-- The `UI` project is a convenience tool for manual testing only — avoid shipping UI changes as part of production features unless explicitly required.
+- The `UI` project is a convenience tool for manual testing only â€” avoid shipping UI changes as part of production features unless explicitly required.
 - Keep business logic inside `Core`. The UI should only call into `Core` APIs.
 
 ## Contact / Maintainers
