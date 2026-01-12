@@ -233,4 +233,114 @@ Public Class HomeForm
         Dim taxTypeForm As New DataManagement(_conn, 4)
         taxTypeForm.ShowDialog()
     End Sub
+
+    Private Sub CountriesCodesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CountriesCodesToolStripMenuItem.Click
+        Dim countriesForm As New DataManagement(_conn, 5)
+        countriesForm.ShowDialog()
+    End Sub
+
+    Private Sub PaymentTypesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PaymentTypesToolStripMenuItem.Click
+        Dim paymentMethodForm As New DataManagement(_conn, 7)
+        paymentMethodForm.ShowDialog()
+    End Sub
+
+    Private Sub BranchStatusToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BranchStatusToolStripMenuItem.Click
+        Dim branchForm As New DataManagement(_conn, 9)
+        branchForm.ShowDialog()
+    End Sub
+
+    Private Sub UnitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles UnitToolStripMenuItem.Click
+        Dim uoqForm As New DataManagement(_conn, 10)
+        uoqForm.ShowDialog()
+    End Sub
+
+    Private Sub TransactionProgressToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TransactionProgressToolStripMenuItem.Click
+        Dim tpForm As New DataManagement(_conn, 11)
+        tpForm.ShowDialog()
+    End Sub
+
+    Private Sub StockInOutTypeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StockInOutTypeToolStripMenuItem.Click
+        Dim sInOutForm As New DataManagement(_conn, 12)
+        sInOutForm.ShowDialog()
+    End Sub
+
+    Private Sub TransactionTypeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TransactionTypeToolStripMenuItem.Click
+        Dim tTypeForm As New DataManagement(_conn, 14)
+        tTypeForm.ShowDialog()
+    End Sub
+
+    Private Sub TaxpayerStatusToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TaxpayerStatusToolStripMenuItem.Click
+        Dim tPayerSForm As New DataManagement(_conn, 15)
+        tPayerSForm.ShowDialog()
+    End Sub
+
+    Private Sub PackagingUnitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PackagingUnitToolStripMenuItem.Click
+        Dim puForm As New DataManagement(_conn, 17)
+        puForm.ShowDialog()
+    End Sub
+
+    Private Sub ProductTypesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ProductTypesToolStripMenuItem.Click
+        Dim productTypeForm As New DataManagement(_conn, 24)
+        productTypeForm.ShowDialog()
+    End Sub
+
+    Private Sub ImportItemStatusToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ImportItemStatusToolStripMenuItem.Click
+        Dim importItemSForm As New DataManagement(_conn, 26)
+        importItemSForm.ShowDialog()
+    End Sub
+
+    Private Sub RegistrationTypeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RegistrationTypeToolStripMenuItem.Click
+        Dim rTypeForm As New DataManagement(_conn, 31)
+        rTypeForm.ShowDialog()
+    End Sub
+
+    Private Sub CreditNoteReasonToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CreditNoteReasonToolStripMenuItem.Click
+        Dim cNoteReasonForm As New DataManagement(_conn, 32)
+        cNoteReasonForm.ShowDialog()
+    End Sub
+
+    Private Sub CurrenciesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CurrenciesToolStripMenuItem.Click
+        Dim currencyForm As New DataManagement(_conn, 33)
+        currencyForm.ShowDialog()
+    End Sub
+
+    Private Sub PurchaseStatusToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PurchaseStatusToolStripMenuItem.Click
+        Dim purchaseSForm As New DataManagement(_conn, 34)
+        purchaseSForm.ShowDialog()
+    End Sub
+
+    Private Sub InventoryAdjustmentReasonToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InventoryAdjustmentReasonToolStripMenuItem.Click
+        Dim invenAdjReasonForm As New DataManagement(_conn, 35)
+        invenAdjReasonForm.ShowDialog()
+    End Sub
+
+    Private Sub BanksToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BanksToolStripMenuItem.Click
+        Dim bankForm As New DataManagement(_conn, 36)
+        bankForm.ShowDialog()
+    End Sub
+
+    Private Sub SalesReceiptTypeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SalesReceiptTypeToolStripMenuItem.Click
+        Dim salesTypeForm As New DataManagement(_conn, 37)
+        salesTypeForm.ShowDialog()
+    End Sub
+
+    Private Sub PurchaseReceiptTypeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PurchaseReceiptTypeToolStripMenuItem.Click
+        Dim purchaseReceiptTypeForm As New DataManagement(_conn, 38)
+        purchaseReceiptTypeForm.ShowDialog()
+    End Sub
+
+    Private Sub TaxOfficesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TaxOfficesToolStripMenuItem.Click
+        Dim taxOfficesForm As New DataManagement(_conn, 45)
+        taxOfficesForm.ShowDialog()
+    End Sub
+
+    Private Sub LocalesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LocalesToolStripMenuItem.Click
+        Dim localesForm As New DataManagement(_conn, 48)
+        localesForm.ShowDialog()
+    End Sub
+
+    Private Sub CategoryLevelsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CategoryLevelsToolStripMenuItem.Click
+        Dim catLevelsForm As New DataManagement(_conn, 49)
+        catLevelsForm.ShowDialog()
+    End Sub
 End Class
