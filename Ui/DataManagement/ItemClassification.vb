@@ -38,10 +38,11 @@ Public Class ItemClassification
                                                                                                          _integrator = New VSCUIntegrator(settings, _logger)
                                                                                                      End Sub)
     End Sub
-    Private Sub ItemClassification_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Async Sub ItemClassification_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SetPlaceholder(TxtSearchItemClass, "Start typing to search...")
         AddHandler TxtSearchItemClass.Enter, AddressOf TextBox_Enter
         AddHandler TxtSearchItemClass.Leave, AddressOf TextBox_Leave
+        Await LoadItemClassificationIntoGridAsync()
     End Sub
     Private Sub TxtSearchItemClass_TextChanged(sender As Object, e As EventArgs)
         If TxtSearchItemClass.ForeColor = Color.Gray Then Exit Sub
@@ -109,8 +110,7 @@ Public Class ItemClassification
                 Try
                     Await repo.SaveAsync(r)
                 Catch ex As Exception
-                    CustomAlert.ShowAlert(Me, $"Failed saving classification: {r.Code} - {r.Name}. Error: {ex.Message}",
-                                          "Error", CustomAlert.AlertType.Error)
+                    CustomAlert.ShowAlert(Me, $"Failed saving classification: {r.Code} - {r.Name}. Error: {ex.Message}", "Error", CustomAlert.AlertType.Error)
                 End Try
             Next
 
@@ -120,20 +120,14 @@ Public Class ItemClassification
             ' 7) Refresh Grid or UI
             Await LoadItemClassificationIntoGridAsync()
 
-            CustomAlert.ShowAlert(Me, "Item classification data synced successfully!",
-                                  "Success", CustomAlert.AlertType.Success)
+            CustomAlert.ShowAlert(Me, "Item classification data synced successfully!", "Success", CustomAlert.AlertType.Success)
 
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Error during item classification sync: " & ex.Message,
-                                  "Error", CustomAlert.AlertType.Error)
+            CustomAlert.ShowAlert(Me, "Error during item classification sync: " & ex.Message, "Error", CustomAlert.AlertType.Error)
         Finally
             BtnSyncItemClassification.Enabled = True
             BtnSyncItemClassification.Text = "Sync Item Classification"
         End Try
-    End Sub
-
-    Private Async Sub BtnLoadStoredItemClassifications_Click(sender As Object, e As EventArgs) Handles BtnLoadStoredItemClassifications.Click
-        Await LoadItemClassificationIntoGridAsync()
     End Sub
 
     'Helpers
