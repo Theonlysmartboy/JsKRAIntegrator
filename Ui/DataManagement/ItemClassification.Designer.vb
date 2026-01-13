@@ -23,7 +23,6 @@ Partial Class ItemClassification
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.TxtSearchItemClass = New System.Windows.Forms.TextBox()
-        Me.BtnLoadStoredItemClassifications = New System.Windows.Forms.Button()
         Me.DataGridViewItemClassification = New System.Windows.Forms.DataGridView()
         Me.BtnSyncItemClassification = New System.Windows.Forms.Button()
         CType(Me.DataGridViewItemClassification, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -35,15 +34,6 @@ Partial Class ItemClassification
         Me.TxtSearchItemClass.Name = "TxtSearchItemClass"
         Me.TxtSearchItemClass.Size = New System.Drawing.Size(269, 20)
         Me.TxtSearchItemClass.TabIndex = 9
-        '
-        'BtnLoadStoredItemClassifications
-        '
-        Me.BtnLoadStoredItemClassifications.Location = New System.Drawing.Point(551, 8)
-        Me.BtnLoadStoredItemClassifications.Name = "BtnLoadStoredItemClassifications"
-        Me.BtnLoadStoredItemClassifications.Size = New System.Drawing.Size(181, 30)
-        Me.BtnLoadStoredItemClassifications.TabIndex = 8
-        Me.BtnLoadStoredItemClassifications.Text = "Load Local Item Classifications"
-        Me.BtnLoadStoredItemClassifications.UseVisualStyleBackColor = True
         '
         'DataGridViewItemClassification
         '
@@ -71,7 +61,6 @@ Partial Class ItemClassification
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(764, 441)
         Me.Controls.Add(Me.TxtSearchItemClass)
-        Me.Controls.Add(Me.BtnLoadStoredItemClassifications)
         Me.Controls.Add(Me.DataGridViewItemClassification)
         Me.Controls.Add(Me.BtnSyncItemClassification)
         Me.Name = "ItemClassification"
@@ -83,7 +72,6 @@ Partial Class ItemClassification
     End Sub
 
     Friend WithEvents TxtSearchItemClass As TextBox
-    Friend WithEvents BtnLoadStoredItemClassifications As Button
     Friend WithEvents DataGridViewItemClassification As DataGridView
     Friend WithEvents BtnSyncItemClassification As Button
 End Class
