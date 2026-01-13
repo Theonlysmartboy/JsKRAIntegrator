@@ -101,12 +101,3 @@ Thanks for contributing! Please follow these guidelines to keep the codebase con
 
 ## Contact / Maintainers
 - Repository owner: [Theonlysmartboy](https://github.com/Theonlysmartboy)
-
-## License
-- If a license is required, add a `LICENSE` file to the repository. Otherwise, include license details here.
-
-### Changes Made:
-1. **Integration of New Content**: Added a comprehensive section on the `UI` project, detailing its purpose, architecture, runtime settings, dependencies, and testing guidance.
-2. **Clarity and Structure**: Enhanced clarity by organizing the new content into well-defined subsections, making it easier for users to navigate.
-3. **Consistency**: Ensured consistent terminology and formatting throughout the document, particularly in the new sections.
-4. **Flow Improvement**: Improved the overall flow of the document by logically placing the `UI` section after the `Build & Run` section, allowing users to understand the testing harness after learning how to set up the project.
