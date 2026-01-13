@@ -50,12 +50,3 @@ Thanks for contributing! Please follow these guidelines to keep the codebase con
 
 ## Contact / Maintainers
 - Repository owner: [Theonlysmartboy](https://github.com/Theonlysmartboy)
-
-## License
-- If a license is required, add a `LICENSE` file to the repository. Otherwise, include license details here.
-
-### Changes Made:
-1. **Formatting**: Improved formatting for better readability, such as using bold for section titles and code blocks for commands.
-2. **Links**: Made the repository link clickable for easier access.
-3. **Clarity**: Enhanced clarity in the contributing section by adding emphasis on the importance of following guidelines.
-4. **Consistency**: Ensured consistent use of terminology and formatting throughout the document.
