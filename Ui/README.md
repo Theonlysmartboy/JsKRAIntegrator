@@ -9,25 +9,25 @@ The `Ui` project is a lightweight Windows Forms test harness for manual testing,
 
 Key forms and examples
 - `Sales` (`Ui\Sales.vb`): Demonstrates sending an invoice via `Core.VSCUIntegrator`, rendering a thermal-style receipt preview, QR generation, and printing. This form:
-  - Loads invoice master and detail rows from the local repository (`Ui.Repo.SalesRepository`).
-  - Builds a `Core.Models.Sale.SalesRequest` and calls `VSCUIntegrator.SendSalesAsync`.
-  - Persists VSCU response values (CU serial, receipt number, QR URL) back to the invoice master.
-  - Renders a long receipt bitmap for scrollable preview and thermal-style printing.
+	- Loads invoice master and detail rows from the local repository (`Ui.Repo.SalesRepository`).
+	- Builds a `Core.Models.Sale.SalesRequest` and calls `VSCUIntegrator.SendSalesAsync`.
+	- Persists VSCU response values (CU serial, receipt number, QR URL) back to the invoice master.
+	- Renders a long receipt bitmap for scrollable preview and thermal-style printing.
 
 ## Runtime settings and dependencies
-- Settings are persisted in the project's settings store and loaded via `Core.Config.SettingsManager`.
-  Required keys used by the UI (examples):
-  - `base_url` — integrator base URL
-  - `pin` — business PIN (TIN)
-  - `branch_id` — branch identifier
-  - `device_serial` — (optional) device serial
-  - `timeout` — HTTP timeout in seconds (defaults to 30)
-  - `qr_code_base_url` — base URL used to build QR payload displayed on receipts
+	- Settings are persisted in the project's settings store and loaded via `Core.Config.SettingsManager`.
+	Required keys used by the UI (examples):
+	- `base_url` — integrator base URL
+	- `pin` — business PIN (TIN)
+	- `branch_id` — branch identifier
+	- `device_serial` — (optional) device serial
+	- `timeout` — HTTP timeout in seconds (defaults to 30)
+	- `qr_code_base_url` — base URL used to build QR payload displayed on receipts
 
 - Dependencies used by the UI project:
-  - `QRCoder` — generate QR codes shown on receipts
-  - `Newtonsoft.Json` — payload serialization
-  - `System.Drawing` — receipt rendering
+	- `QRCoder` — generate QR codes shown on receipts
+	- `Newtonsoft.Json` — payload serialization
+	- `System.Drawing` — receipt rendering
 
 ## Build & run (Visual Studio 2022)
 1. Open the solution in __Visual Studio 2022__.
