@@ -49,4 +49,3 @@ Key forms and examples
 
 ## Notes
 - The `Ui` project is intended as a developer tool. Production integrations should only consume `Core` and not depend on any Windows Forms components.
-- If you need this README saved into `Ui\README.md`, confirm and I will create the file in the repository root under `Ui`.
