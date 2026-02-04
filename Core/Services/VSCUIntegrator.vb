@@ -11,6 +11,7 @@ Imports Core.Models.Item.Classification
 Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
 Imports Core.Models.Item.Stock
+Imports Core.Models.Notice
 Imports Core.Models.Purchase
 Imports Core.Models.Sale
 Imports Core.Utils
@@ -321,6 +322,32 @@ Namespace Services
             Dim fallback = MakeBaseFallback(Of StockInfoResponse)("VSCU error: failed to call Stock")
             fallback.result = New StockInfoData() With {.itemCode = req.itemCode, .currentQuantity = 0, .updated = False}
             Return fallback
+        End Function
+
+        ' -----------------------
+        ' 9) Notices (POST)
+        ' -----------------------
+        Public Async Function GetNoticesAsync(req As NoticeRequest) As Task(Of NoticeResponse)
+
+            Dim endpoint = ApiEndpoints.NOTICE_SELECT
+
+            Dim resp = Await SendAndDeserializeAsync(Of NoticeResponse)(endpoint, req, isGet:=False)
+
+            If resp IsNot Nothing AndAlso resp.data IsNot Nothing Then
+                Return resp
+            End If
+
+            ' fallback if API failed
+            Dim fallback As New NoticeResponse
+            fallback.resultCd = "999"
+            fallback.resultMsg = "VSCU error: failed to call NoticeSelect"
+            fallback.resultDt = DateTime.Now.ToString("yyyyMMddHHmmss")
+            fallback.data = New NoticeData With {
+                .noticeList = New List(Of NoticeItem)
+            }
+
+            Return fallback
+
         End Function
 
         ' -----------------------

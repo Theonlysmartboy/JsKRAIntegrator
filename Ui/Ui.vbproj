@@ -162,6 +162,7 @@
     <Compile Include="Repo\CodeMappedRepository.vb" />
     <Compile Include="Repo\ItemClassificationRepository.vb" />
     <Compile Include="Repo\ItemInfoRepository.vb" />
+    <Compile Include="Repo\NoticeRepository.vb" />
     <Compile Include="Repo\ProductRepository.vb" />
     <Compile Include="Repo\SalesRepository.vb" />
     <Compile Include="Sales.Designer.vb">
