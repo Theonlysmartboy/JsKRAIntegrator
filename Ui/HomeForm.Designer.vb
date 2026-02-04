@@ -63,6 +63,7 @@ Partial Class HomeForm
         Me.ToolStripLogs = New System.Windows.Forms.ToolStripMenuItem()
         Me.NoticesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LblStatus = New System.Windows.Forms.Label()
+        Me.Loader = New JsToolBox.Loaders.DualRingLoader()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -316,11 +317,28 @@ Partial Class HomeForm
         Me.LblStatus.Size = New System.Drawing.Size(0, 20)
         Me.LblStatus.TabIndex = 7
         '
+        'Loader
+        '
+        Me.Loader.ArcLength = 220
+        Me.Loader.InnerRingColor = System.Drawing.Color.Turquoise
+        Me.Loader.LoaderColor = System.Drawing.Color.DodgerBlue
+        Me.Loader.Location = New System.Drawing.Point(357, 230)
+        Me.Loader.Name = "Loader"
+        Me.Loader.OuterRingColor = System.Drawing.Color.SkyBlue
+        Me.Loader.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Loader.RingThickness = 4
+        Me.Loader.Size = New System.Drawing.Size(75, 75)
+        Me.Loader.Speed = 100
+        Me.Loader.TabIndex = 8
+        Me.Loader.Text = "Loading"
+        Me.Loader.Visible = False
+        '
         'HomeForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 607)
+        Me.Controls.Add(Me.Loader)
         Me.Controls.Add(Me.LblStatus)
         Me.Controls.Add(Me.MenuStrip1)
         Me.MainMenuStrip = Me.MenuStrip1
@@ -374,4 +392,5 @@ Partial Class HomeForm
     Friend WithEvents LocalesToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CategoryLevelsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As ToolStripSeparator
+    Friend WithEvents Loader As JsToolBox.Loaders.DualRingLoader
 End Class

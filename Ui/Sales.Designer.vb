@@ -22,14 +22,14 @@ Partial Class Sales
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Sales))
         Me.BtnSendSales = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.txtInvoiceNo = New System.Windows.Forms.TextBox()
         Me.BtnPrintPreview = New System.Windows.Forms.Button()
         Me.pnlReceipt = New System.Windows.Forms.Panel()
-        Me.BtnPrint = New System.Windows.Forms.Button()
         Me.picReceiptPreview = New System.Windows.Forms.PictureBox()
+        Me.BtnPrint = New System.Windows.Forms.Button()
+        Me.Loader = New JsToolBox.Loaders.DualRingLoader()
         Me.pnlReceipt.SuspendLayout()
         CType(Me.picReceiptPreview, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -77,14 +77,6 @@ Partial Class Sales
         Me.pnlReceipt.Size = New System.Drawing.Size(760, 520)
         Me.pnlReceipt.TabIndex = 1
         '
-        'BtnPrint
-        '
-        Me.BtnPrint.Location = New System.Drawing.Point(641, 12)
-        Me.BtnPrint.Name = "BtnPrint"
-        Me.BtnPrint.Size = New System.Drawing.Size(120, 23)
-        Me.BtnPrint.TabIndex = 3
-        Me.BtnPrint.Text = "Print"
-        '
         'picReceiptPreview
         '
         Me.picReceiptPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
@@ -96,11 +88,36 @@ Partial Class Sales
         Me.picReceiptPreview.TabIndex = 1
         Me.picReceiptPreview.TabStop = False
         '
+        'BtnPrint
+        '
+        Me.BtnPrint.Location = New System.Drawing.Point(641, 12)
+        Me.BtnPrint.Name = "BtnPrint"
+        Me.BtnPrint.Size = New System.Drawing.Size(120, 23)
+        Me.BtnPrint.TabIndex = 3
+        Me.BtnPrint.Text = "Print"
+        '
+        'Loader
+        '
+        Me.Loader.ArcLength = 220
+        Me.Loader.InnerRingColor = System.Drawing.Color.Turquoise
+        Me.Loader.LoaderColor = System.Drawing.Color.DodgerBlue
+        Me.Loader.Location = New System.Drawing.Point(363, 254)
+        Me.Loader.Name = "Loader"
+        Me.Loader.OuterRingColor = System.Drawing.Color.SkyBlue
+        Me.Loader.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Loader.RingThickness = 4
+        Me.Loader.Size = New System.Drawing.Size(75, 75)
+        Me.Loader.Speed = 100
+        Me.Loader.TabIndex = 7
+        Me.Loader.Text = "Loading"
+        Me.Loader.Visible = False
+        '
         'Sales
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 582)
+        Me.Controls.Add(Me.Loader)
         Me.Controls.Add(Me.BtnPrint)
         Me.Controls.Add(Me.BtnPrintPreview)
         Me.Controls.Add(Me.pnlReceipt)
@@ -126,4 +143,5 @@ Partial Class Sales
     Private printPreviewDlg As New PrintPreviewDialog()
     Friend WithEvents BtnPrint As Button
     Friend WithEvents picReceiptPreview As PictureBox
+    Friend WithEvents Loader As JsToolBox.Loaders.DualRingLoader
 End Class

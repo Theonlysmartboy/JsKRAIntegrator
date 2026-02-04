@@ -9,6 +9,7 @@ Imports Core.Models.Sale.Invoice
 Imports Core.Services
 Imports Newtonsoft.Json
 Imports QRCoder
+Imports Ui.Helpers
 Imports Ui.Repo
 
 Public Class Sales
@@ -65,6 +66,8 @@ Public Class Sales
     Private Async Sub ButtonSendSales_Click(sender As Object, e As EventArgs) Handles BtnSendSales.Click
         Dim capturedEx As Exception = Nothing
         Try
+            Loader.Visible = True
+            Loader.Text = "Preparing invoice..."
             BtnSendSales.Enabled = False
             BtnSendSales.Text = "Sending..."
             ' Load settings
@@ -74,14 +77,14 @@ Public Class Sales
             ' Load invoice master & details from DB (example uses InvoiceNo textbox)
             Dim invoiceNo As String = txtInvoiceNo.Text.Trim()
             If String.IsNullOrEmpty(invoiceNo) Then
-                MessageBox.Show("Enter invoice number first.")
+                CustomAlert.ShowAlert(Me, "Enter invoice number first.", "Warning", CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
                 Return
             End If
             Dim invoiceRepo = New SalesRepository(_conn)
             Dim master = Await invoiceRepo.LoadMasterAsync(invoiceNo) ' iInvoice object from db
             Dim details = Await invoiceRepo.LoadDetailsAsync(invoiceNo) ' list of rows from dbca
             If master Is Nothing OrElse details Is Nothing OrElse details.Count = 0 Then
-                MessageBox.Show("Invoice or details not found.")
+                CustomAlert.ShowAlert(Me, "Invoice or details not found.", "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                 Return
             End If
             ' === Initialize sums per tax type ===
@@ -239,6 +242,7 @@ Public Class Sales
                 })
                 seq += 1
             Next
+            Loader.Text = "Sending invoice to tax authority..."
             ' Serialize payload
             Dim jsonPayload = JsonConvert.SerializeObject(req, Formatting.None, New JsonSerializerSettings With {
                                                           .NullValueHandling = NullValueHandling.Ignore})
@@ -246,7 +250,8 @@ Public Class Sales
             Dim resp As SalesResponse = Await _integrator.SendSalesAsync(req)
             ' fallback: call VSCU directly with HttpClient if needed
             If resp Is Nothing OrElse resp.resultCd <> "000" Then
-                CustomAlert.ShowAlert(Me, "Error sending invoice: " & If(resp?.resultMsg, "No response"), "Error", CustomAlert.AlertType.Error)
+                CustomAlert.ShowAlert(Me, "Error sending invoice: " & If(resp?.resultMsg, "No response"), "Error", CustomAlert.AlertType.Error,
+                                      CustomAlert.ButtonType.OK)
                 Return
             End If
             ' Persist response in DB (update invoicemaster)
@@ -261,11 +266,13 @@ Public Class Sales
             ' Build and show the thermal roll preview (and prepare printing state)
             BuildReceiptLines(master, details, resp)
             RenderFullReceiptBitmap(master)
-            CustomAlert.ShowAlert(Me, "Invoice sent successfully. Receipt No: " & resp.data.rcptNo.ToString(), "Success", CustomAlert.AlertType.Success)
+            CustomAlert.ShowAlert(Me, "Invoice sent successfully. Receipt No: " & resp.data.rcptNo.ToString(), "Success",
+                                  CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
         Catch ex As Exception
             capturedEx = ex
-            CustomAlert.ShowAlert(Me, "Error sending invoice: " & ex.Message, "Error", CustomAlert.AlertType.Error)
+            CustomAlert.ShowAlert(Me, "Error sending invoice: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
+            Loader.Visible = False
             BtnSendSales.Enabled = True
             BtnSendSales.Text = "Send Invoice"
         End Try

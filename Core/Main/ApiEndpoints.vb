@@ -14,5 +14,6 @@
         Public Const PURCHASE As String = "/trnsPurchase/selectTrnsPurchaseSales"
         Public Const STOCK_SAVE As String = "/stockMaster/saveStockMaster"
         Public Const STOCK_SELECT As String = "/stockMaster/selectStockMaster"
+        Public Const NOTICE_SELECT As String = "/notices/selectNotices"
     End Class
 End Namespace

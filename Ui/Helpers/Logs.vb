@@ -1,5 +1,6 @@
 ﻿
 Imports Core.Logging
+Imports Ui.Helpers
 
 Public Class Logs
     Private ReadOnly _logRepo As LogRepository
@@ -71,22 +72,15 @@ Public Class Logs
     End Sub
     Private Async Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
 
-        Dim result = CustomAlert.ShowAlert(Logs.ActiveForm,
-            "Are you sure you want to clear ALL logs?" & vbCrLf &
-            "This action cannot be undone.",
-            "Confirm Deletion",
-            CustomAlert.AlertType.Confirm
-        )
+        Dim result = CustomAlert.ShowAlert(Me, "Are you sure you want to clear ALL logs?" & vbCrLf & "This action cannot be undone.",
+            "Confirm Deletion", CustomAlert.AlertType.Confirm, CustomAlert.ButtonType.YesNo)
 
-        If result = DialogResult.OK Then
+        If result = DialogResult.Yes Then
             Try
                 Await _logRepo.ClearLogsAsync()
 
-                CustomAlert.ShowAlert(Logs.ActiveForm,
-                    "Logs cleared successfully!",
-                    "Success",
-                    CustomAlert.AlertType.Success
-                )
+                CustomAlert.ShowAlert(Me, "Logs cleared successfully!", "Success",
+                    CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
 
                 ' Reload data and reset filters
                 LogsTable = Await _logRepo.GetLogsAsync()
@@ -96,18 +90,14 @@ Public Class Logs
                 dpEnd.Value = DateTime.Now
 
             Catch ex As Exception
-                CustomAlert.ShowAlert(Logs.ActiveForm,
-                    "Failed to clear logs: " & ex.Message,
-                    "Error",
-                    CustomAlert.AlertType.Error
-                )
+                CustomAlert.ShowAlert(Me, "Failed to clear logs: " & ex.Message, "Error",
+                    CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            Finally
+
             End Try
         Else
             ' Optional: notify cancel
-            CustomAlert.ShowAlert(Logs.ActiveForm,
-                "Action cancelled.",
-                "Cancelled",
-                CustomAlert.AlertType.Info
+            CustomAlert.ShowAlert(Me, "Action cancelled.", "Cancelled", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK
             )
         End If
 
@@ -184,10 +174,7 @@ Public Class Logs
         Next
 
         Clipboard.SetText(copiedText.ToString())
-        CustomAlert.ShowAlert(Logs.ActiveForm,
-            "Row copied to clipboard!",
-            "Copied",
-            CustomAlert.AlertType.Info
+        CustomAlert.ShowAlert(Me, "Row copied to clipboard!", "Copied", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK
         )
     End Sub
 End Class

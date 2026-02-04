@@ -23,9 +23,10 @@ Partial Class Notices
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.TxtSearchNotices = New System.Windows.Forms.TextBox()
-        Me.DataGridViewNotices = New System.Windows.Forms.DataGridView()
+        Me.DgvNotices = New System.Windows.Forms.DataGridView()
         Me.ButtonFetchNotices = New System.Windows.Forms.Button()
-        CType(Me.DataGridViewNotices, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Loader = New JsToolBox.Loaders.DualRingLoader()
+        CType(Me.DgvNotices, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TxtSearchNotices
@@ -35,16 +36,16 @@ Partial Class Notices
         Me.TxtSearchNotices.Size = New System.Drawing.Size(261, 20)
         Me.TxtSearchNotices.TabIndex = 5
         '
-        'DataGridViewNotices
+        'DgvNotices
         '
-        Me.DataGridViewNotices.AllowUserToAddRows = False
-        Me.DataGridViewNotices.AllowUserToDeleteRows = False
-        Me.DataGridViewNotices.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridViewNotices.Location = New System.Drawing.Point(2, 37)
-        Me.DataGridViewNotices.Name = "DataGridViewNotices"
-        Me.DataGridViewNotices.ReadOnly = True
-        Me.DataGridViewNotices.Size = New System.Drawing.Size(750, 392)
-        Me.DataGridViewNotices.TabIndex = 4
+        Me.DgvNotices.AllowUserToAddRows = False
+        Me.DgvNotices.AllowUserToDeleteRows = False
+        Me.DgvNotices.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DgvNotices.Location = New System.Drawing.Point(2, 37)
+        Me.DgvNotices.Name = "DgvNotices"
+        Me.DgvNotices.ReadOnly = True
+        Me.DgvNotices.Size = New System.Drawing.Size(750, 392)
+        Me.DgvNotices.TabIndex = 4
         '
         'ButtonFetchNotices
         '
@@ -55,23 +56,41 @@ Partial Class Notices
         Me.ButtonFetchNotices.Text = "Fetch Notices"
         Me.ButtonFetchNotices.UseVisualStyleBackColor = True
         '
+        'Loader
+        '
+        Me.Loader.ArcLength = 220
+        Me.Loader.InnerRingColor = System.Drawing.Color.Turquoise
+        Me.Loader.LoaderColor = System.Drawing.Color.DodgerBlue
+        Me.Loader.Location = New System.Drawing.Point(375, 182)
+        Me.Loader.Name = "Loader"
+        Me.Loader.OuterRingColor = System.Drawing.Color.SkyBlue
+        Me.Loader.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Loader.RingThickness = 4
+        Me.Loader.Size = New System.Drawing.Size(75, 75)
+        Me.Loader.Speed = 100
+        Me.Loader.TabIndex = 6
+        Me.Loader.Text = "Loading"
+        Me.Loader.Visible = False
+        '
         'Notices
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(764, 441)
+        Me.Controls.Add(Me.Loader)
         Me.Controls.Add(Me.TxtSearchNotices)
-        Me.Controls.Add(Me.DataGridViewNotices)
+        Me.Controls.Add(Me.DgvNotices)
         Me.Controls.Add(Me.ButtonFetchNotices)
         Me.Name = "Notices"
         Me.Text = "Notices"
-        CType(Me.DataGridViewNotices, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DgvNotices, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
 
     Friend WithEvents TxtSearchNotices As TextBox
-    Friend WithEvents DataGridViewNotices As DataGridView
+    Friend WithEvents DgvNotices As DataGridView
     Friend WithEvents ButtonFetchNotices As Button
+    Friend WithEvents Loader As JsToolBox.Loaders.DualRingLoader
 End Class

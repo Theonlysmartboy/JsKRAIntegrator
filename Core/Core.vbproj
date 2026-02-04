@@ -103,6 +103,9 @@
     <Compile Include="Models\Item\Stock\StockInfoResponse.vb" />
     <Compile Include="Models\Item\Stock\StockSaveRequest.vb" />
     <Compile Include="Models\Item\Stock\StockSaveResponse.vb" />
+    <Compile Include="Models\Notice\NoticeRequest.vb" />
+    <Compile Include="Models\Notice\NoticeResponse.vb" />
+    <Compile Include="Models\Notice\VscuNotice.vb" />
     <Compile Include="Models\Purchase\PurchaseInfoRequest.vb" />
     <Compile Include="Models\Purchase\PurchaseInfoResponse.vb" />
     <Compile Include="Models\Purchase\PurchaseRequest.vb" />
