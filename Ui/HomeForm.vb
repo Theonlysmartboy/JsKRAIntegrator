@@ -93,38 +93,29 @@ Public Class HomeForm
 
             If resp IsNot Nothing Then
                 If resp.resultCd = "ERROR" Then
-                    CustomAlert.ShowAlert(HomeForm.ActiveForm,
-                                          resp.resultMsg,
-                                          "Error", CustomAlert.AlertType.Error)
+                    CustomAlert.ShowAlert(Me, resp.resultMsg, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                     LblStatus.Text = $"Code: {resp.resultCd}, Message: {resp.resultMsg}"
                     LblStatus.ForeColor = Color.Red
                 ElseIf resp.data IsNot Nothing AndAlso resp.data.info IsNot Nothing Then
                     Dim info = resp.data.info
                     Await SaveInitInfoAsync(info)
-                    CustomAlert.ShowAlert(HomeForm.ActiveForm,
-                                          $"Code: {resp.resultCd}, Message: {resp.resultMsg} TIN: {info.tin}, Device: {info.dvcId}, Branch: {info.bhfNm}",
-                                          "Success", CustomAlert.AlertType.Success)
+                    CustomAlert.ShowAlert(Me, $"Code: {resp.resultCd}, Message: {resp.resultMsg} TIN: {info.tin}, Device: {info.dvcId}, Branch: {info.bhfNm}",
+                                          "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
                     LblStatus.Text = $"Code: {resp.resultCd}, Message: {resp.resultMsg} TIN: {info.tin}, Device: {info.dvcId}, Branch: {info.bhfNm}"
                     LblStatus.ForeColor = Color.Green
                 Else
-                    CustomAlert.ShowAlert(HomeForm.ActiveForm,
-                                          $"Code: {resp.resultCd}, Message: {resp.resultMsg}",
-                                          "Success", CustomAlert.AlertType.Info)
+                    CustomAlert.ShowAlert(Me, $"Code: {resp.resultCd}, Message: {resp.resultMsg}", "Success", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
                     LblStatus.Text = $"Code: {resp.resultCd}, Message: {resp.resultMsg}"
                     LblStatus.ForeColor = Color.Green
                 End If
             Else
-                CustomAlert.ShowAlert(HomeForm.ActiveForm,
-                                      "No response from VSCU",
-                                      "Error", CustomAlert.AlertType.Error)
+                CustomAlert.ShowAlert(Me, "No response from VSCU", "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                 LblStatus.Text = "No response from VSCU"
                 LblStatus.ForeColor = Color.Red
             End If
 
         Catch ex As Exception
-            CustomAlert.ShowAlert(HomeForm.ActiveForm,
-                                  "Initialization failed: " & ex.Message,
-                                  "Error", CustomAlert.AlertType.Error)
+            CustomAlert.ShowAlert(Me, "Initialization failed: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
             LblStatus.Text = $"Initialization failed: {ex.Message}"
             LblStatus.ForeColor = Color.Red
         Finally
@@ -175,6 +166,8 @@ Public Class HomeForm
 
     Private Async Sub SyncToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SyncToolStripMenuItem.Click
         Try
+            Loader.Visible = True
+            Loader.Text = "Syncing..."
             SyncToolStripMenuItem.Enabled = False
             SyncToolStripMenuItem.Text = "Syncing..."
             ' 1) Load required settings
@@ -210,10 +203,12 @@ Public Class HomeForm
                 Next
             Next
             Await _settingsManager.SetSettingAsync("last_code_sync", DateTime.Now.ToString("yyyyMMddHHmmss"))
-            CustomAlert.ShowAlert(Me, "Codes synced successfully!", "Success", CustomAlert.AlertType.Success)
+            CustomAlert.ShowAlert(Me, "Codes synced successfully!", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Sync Error: " & ex.Message, "Error", CustomAlert.AlertType.Error)
+            CustomAlert.ShowAlert(Me, "Sync Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
+            Loader.Visible = False
+            Loader.Text = "Loading"
             SyncToolStripMenuItem.Enabled = True
             SyncToolStripMenuItem.Text = "Sync Codes"
         End Try

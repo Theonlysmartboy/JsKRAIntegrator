@@ -14,7 +14,7 @@
                String.IsNullOrWhiteSpace(db) Then
                 CustomAlert.ShowAlert(Launcher.ActiveForm,
                     "Your database settings are incomplete. Please configure the database connection.",
-                    "Missing Configuration", CustomAlert.AlertType.Warning)
+                    "Missing Configuration", CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
 
                 ' Open Settings form
                 Dim frm As New Settings()

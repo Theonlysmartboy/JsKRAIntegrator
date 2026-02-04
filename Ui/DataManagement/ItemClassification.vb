@@ -2,6 +2,7 @@
 Imports Core.Logging
 Imports Core.Models.Item.Classification
 Imports Core.Services
+Imports Ui.Helpers
 Imports Ui.Repo.Item.Classification
 
 Public Class ItemClassification
@@ -77,13 +78,13 @@ Public Class ItemClassification
             If resp Is Nothing OrElse resp.resultCd <> "000" Then
                 Dim msg As String = If(resp IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(resp.resultMsg), resp.resultMsg, "Integrator error")
 
-                CustomAlert.ShowAlert(Me, "Failed to sync item classifications: " & msg, "Error", CustomAlert.AlertType.Error)
+                CustomAlert.ShowAlert(Me, "Failed to sync item classifications: " & msg, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                 Return
             End If
 
             ' 2) Data availability check
             If resp.data Is Nothing OrElse resp.data.itemClsList Is Nothing OrElse resp.data.itemClsList.Count = 0 Then
-                CustomAlert.ShowAlert(Me, "No new item classifications found.", "Information", CustomAlert.AlertType.Info)
+                CustomAlert.ShowAlert(Me, "No new item classifications found.", "Information", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
                 Return
             End If
 
@@ -110,7 +111,7 @@ Public Class ItemClassification
                 Try
                     Await repo.SaveAsync(r)
                 Catch ex As Exception
-                    CustomAlert.ShowAlert(Me, $"Failed saving classification: {r.Code} - {r.Name}. Error: {ex.Message}", "Error", CustomAlert.AlertType.Error)
+                    CustomAlert.ShowAlert(Me, $"Failed saving classification: {r.Code} - {r.Name}. Error: {ex.Message}", "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                 End Try
             Next
 
@@ -120,10 +121,10 @@ Public Class ItemClassification
             ' 7) Refresh Grid or UI
             Await LoadItemClassificationIntoGridAsync()
 
-            CustomAlert.ShowAlert(Me, "Item classification data synced successfully!", "Success", CustomAlert.AlertType.Success)
+            CustomAlert.ShowAlert(Me, "Item classification data synced successfully!", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
 
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Error during item classification sync: " & ex.Message, "Error", CustomAlert.AlertType.Error)
+            CustomAlert.ShowAlert(Me, "Error during item classification sync: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
             BtnSyncItemClassification.Enabled = True
             BtnSyncItemClassification.Text = "Sync Item Classification"

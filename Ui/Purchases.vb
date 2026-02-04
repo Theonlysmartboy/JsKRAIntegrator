@@ -131,6 +131,8 @@ Public Class Purchases
 
     Private Async Sub BtnPurchaseGet_Click(sender As Object, e As EventArgs) Handles BtnPurchaseGet.Click
         Try
+            Loader.Visible = True
+            Loader.Text = "Fetching..."
             BtnPurchaseGet.Enabled = False
             BtnPurchaseGet.Text = "Processing..."
 
@@ -154,7 +156,7 @@ Public Class Purchases
             Dim res = Await _integrator.GetPurchaseAsync(req)
 
             If res Is Nothing OrElse res.data Is Nothing OrElse res.data.saleList Is Nothing Then
-                CustomAlert.ShowAlert(Me, "No purchase data returned.", "Info", CustomAlert.AlertType.Info)
+                CustomAlert.ShowAlert(Me, "No purchase data returned.", "Info", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
 
@@ -191,11 +193,13 @@ Public Class Purchases
             ' Update last request timestamp
             Await _settingsManager.SetSettingAsync("last_purchase_get_dt", DateTime.Now.ToString("yyyyMMddHHmmss"))
 
-            CustomAlert.ShowAlert(Me, $"Loaded {purchases.Count} purchase records.", "Success", CustomAlert.AlertType.Success)
+            CustomAlert.ShowAlert(Me, $"Loaded {purchases.Count} purchase records.", "Success", CustomAlert.AlertType.Success,
+                                  CustomAlert.ButtonType.OK)
 
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error)
+            CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
+            Loader.Visible = False
             BtnPurchaseGet.Enabled = True
             BtnPurchaseGet.Text = "FETCH"
         End Try

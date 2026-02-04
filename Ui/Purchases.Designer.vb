@@ -22,7 +22,6 @@ Partial Class Purchases
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Purchases))
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPageGet = New System.Windows.Forms.TabPage()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
@@ -37,6 +36,8 @@ Partial Class Purchases
         Me.TxtPurchaseSendSearch = New System.Windows.Forms.TextBox()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.DtgvPurchaseSend = New System.Windows.Forms.DataGridView()
+        Me.Loader = New JsToolBox.Loaders.DualRingLoader()
+        Me.Loader2 = New JsToolBox.Loaders.DualRingLoader()
         Me.TabControl1.SuspendLayout()
         Me.TabPageGet.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
@@ -61,6 +62,7 @@ Partial Class Purchases
         '
         'TabPageGet
         '
+        Me.TabPageGet.Controls.Add(Me.Loader)
         Me.TabPageGet.Controls.Add(Me.TableLayoutPanel1)
         Me.TabPageGet.Location = New System.Drawing.Point(4, 22)
         Me.TabPageGet.Name = "TabPageGet"
@@ -130,6 +132,7 @@ Partial Class Purchases
         '
         'TabPageSend
         '
+        Me.TabPageSend.Controls.Add(Me.Loader2)
         Me.TabPageSend.Controls.Add(Me.TableLayoutPanel3)
         Me.TabPageSend.Location = New System.Drawing.Point(4, 22)
         Me.TabPageSend.Name = "TabPageSend"
@@ -208,6 +211,36 @@ Partial Class Purchases
         Me.DtgvPurchaseSend.Size = New System.Drawing.Size(780, 358)
         Me.DtgvPurchaseSend.TabIndex = 1
         '
+        'Loader
+        '
+        Me.Loader.ArcLength = 220
+        Me.Loader.InnerRingColor = System.Drawing.Color.DeepSkyBlue
+        Me.Loader.LoaderColor = System.Drawing.Color.DodgerBlue
+        Me.Loader.Location = New System.Drawing.Point(8, 8)
+        Me.Loader.Name = "Loader"
+        Me.Loader.OuterRingColor = System.Drawing.Color.DarkTurquoise
+        Me.Loader.RingThickness = 4
+        Me.Loader.Size = New System.Drawing.Size(75, 75)
+        Me.Loader.Speed = 100
+        Me.Loader.TabIndex = 1
+        Me.Loader.Text = "Loading"
+        Me.Loader.Visible = False
+        '
+        'Loader2
+        '
+        Me.Loader2.ArcLength = 220
+        Me.Loader2.InnerRingColor = System.Drawing.Color.DeepSkyBlue
+        Me.Loader2.LoaderColor = System.Drawing.Color.DodgerBlue
+        Me.Loader2.Location = New System.Drawing.Point(8, 8)
+        Me.Loader2.Name = "Loader2"
+        Me.Loader2.OuterRingColor = System.Drawing.Color.DarkTurquoise
+        Me.Loader2.RingThickness = 4
+        Me.Loader2.Size = New System.Drawing.Size(75, 75)
+        Me.Loader2.Speed = 100
+        Me.Loader2.TabIndex = 1
+        Me.Loader2.Text = "Loading"
+        Me.Loader2.Visible = False
+        '
         'Purchases
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -246,4 +279,6 @@ Partial Class Purchases
     Friend WithEvents TxtPurchaseSendSearch As TextBox
     Friend WithEvents Button1 As Button
     Friend WithEvents DtgvPurchasesGet As DataGridView
+    Friend WithEvents Loader As JsToolBox.Loaders.DualRingLoader
+    Friend WithEvents Loader2 As JsToolBox.Loaders.DualRingLoader
 End Class

@@ -22,7 +22,6 @@ Partial Class ProductManagement
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ProductManagement))
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabItemSave = New System.Windows.Forms.TabPage()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
@@ -50,6 +49,7 @@ Partial Class ProductManagement
         Me.BtnImportItemRequest = New System.Windows.Forms.Button()
         Me.TxtImportItemSearch = New System.Windows.Forms.TextBox()
         Me.DtgvImportItemRequest = New System.Windows.Forms.DataGridView()
+        Me.Loader = New JsToolBox.Loaders.DualRingLoader()
         Me.TabControl1.SuspendLayout()
         Me.TabItemSave.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
@@ -384,11 +384,27 @@ Partial Class ProductManagement
         Me.DtgvImportItemRequest.Size = New System.Drawing.Size(1179, 474)
         Me.DtgvImportItemRequest.TabIndex = 1
         '
+        'Loader
+        '
+        Me.Loader.ArcLength = 220
+        Me.Loader.InnerRingColor = System.Drawing.Color.DeepSkyBlue
+        Me.Loader.LoaderColor = System.Drawing.Color.DodgerBlue
+        Me.Loader.Location = New System.Drawing.Point(518, 0)
+        Me.Loader.Name = "Loader"
+        Me.Loader.OuterRingColor = System.Drawing.Color.DarkTurquoise
+        Me.Loader.RingThickness = 4
+        Me.Loader.Size = New System.Drawing.Size(75, 75)
+        Me.Loader.Speed = 100
+        Me.Loader.TabIndex = 1
+        Me.Loader.Text = "Loading"
+        Me.Loader.Visible = False
+        '
         'ProductManagement
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1193, 562)
+        Me.Controls.Add(Me.Loader)
         Me.Controls.Add(Me.TabControl1)
         Me.MaximizeBox = False
         Me.Name = "ProductManagement"
@@ -445,4 +461,5 @@ Partial Class ProductManagement
     Friend WithEvents TxtImportItemSearch As TextBox
     Friend WithEvents BtnImportItemUpload As Button
     Friend WithEvents TxtImportItemUpdateSearch As TextBox
+    Friend WithEvents Loader As JsToolBox.Loaders.DualRingLoader
 End Class

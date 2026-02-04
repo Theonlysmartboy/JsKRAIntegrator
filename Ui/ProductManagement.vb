@@ -127,6 +127,8 @@ Public Class ProductManagement
     End Sub
 
     Private Sub BtnFetch_Click(sender As Object, e As EventArgs) Handles BtnFetch.Click
+        Loader.Visible = True
+        Loader.Text = "Loading..."
         Dim repo As New ProductRepository(_connString)
         Dim products = repo.GetAllProducts()
 
@@ -145,10 +147,13 @@ Public Class ProductManagement
         DtgvItemSave.DataSource = dt
 
         AddHeaderCheckBox()
+        Loader.Visible = False
     End Sub
 
     Private Async Sub BtnSendItem_Click(sender As Object, e As EventArgs) Handles BtnSendItem.Click
         Try
+            Loader.Visible = True
+            Loader.Text = "Processing..."
             BtnSendItem.Enabled = False
             BtnSendItem.Text = "Processing..."
             ' Load integrator settings
@@ -176,7 +181,7 @@ Public Class ProductManagement
 
             ' If none selected stop here
             If selectedItems.Count = 0 Then
-                CustomAlert.ShowAlert(Me, "No items selected.", "Warning", CustomAlert.AlertType.Warning)
+                CustomAlert.ShowAlert(Me, "No items selected.", "Warning", CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
 
@@ -193,7 +198,7 @@ Public Class ProductManagement
                 Dim product = repo.GetProductByProductCode(itemCd)
 
                 If product Is Nothing Then
-                    CustomAlert.ShowAlert(Me, $"Item '{itemCd}' not found in database.", "Error", CustomAlert.AlertType.Error)
+                    CustomAlert.ShowAlert(Me, $"Item '{itemCd}' not found in database.", "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                     Exit Sub   ' stop entire upload process if any item is missing
                 End If
 
@@ -233,13 +238,15 @@ Public Class ProductManagement
                 ' 4. Evaluate response
                 '------------------------------------------------------------------------
                 If res Is Nothing Then
-                    CustomAlert.ShowAlert(Me, $"NO RESPONSE FROM SERVER for item {itemCd}", "Error", CustomAlert.AlertType.Error)
+                    CustomAlert.ShowAlert(Me, $"NO RESPONSE FROM SERVER for item {itemCd}", "Error", CustomAlert.AlertType.Error,
+                                          CustomAlert.ButtonType.OK)
                     Exit Sub
                 End If
 
                 If res.resultCd <> "000" Then
                     ' STOP immediately on first error
-                    CustomAlert.ShowAlert(Me, $"FAILED at item {itemCd}" & vbCrLf & $"Code: {res.resultCd}" & vbCrLf & $"Message: {res.resultMsg}", "Upload Failed", CustomAlert.AlertType.Error)
+                    CustomAlert.ShowAlert(Me, $"FAILED at item {itemCd}" & vbCrLf & $"Code: {res.resultCd}" & vbCrLf & $"Message: {res.resultMsg}",
+                                          "Upload Failed", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                     Exit Sub
                 End If
 
@@ -253,13 +260,15 @@ Public Class ProductManagement
                 '------------------------------------------------------------------------
                 ' 6. If last item and all succeeded
                 '------------------------------------------------------------------------
-                CustomAlert.ShowAlert(Me, $"All {total} items uploaded successfully.", "Upload Complete", CustomAlert.AlertType.Success
+                CustomAlert.ShowAlert(Me, $"All {total} items uploaded successfully.", "Upload Complete", CustomAlert.AlertType.Success,
+                                      CustomAlert.ButtonType.OK
             )
             Next
 
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Sync Error: " & ex.Message, "Error", CustomAlert.AlertType.Error)
+            CustomAlert.ShowAlert(Me, "Sync Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
+            Loader.Visible = False
             BtnSendItem.Enabled = True
             BtnSendItem.Text = "Upload"
         End Try
@@ -293,6 +302,8 @@ Public Class ProductManagement
 
     Private Async Sub BtnItemRequest_Click(sender As Object, e As EventArgs) Handles BtnItemRequest.Click
         Try
+            Loader.Visible = True
+            Loader.Text = "Processing..."
             BtnItemRequest.Enabled = False
             BtnItemRequest.Text = "Processing..."
             Dim req As New ItemInfoRequest With {
@@ -303,7 +314,7 @@ Public Class ProductManagement
 
             Dim res = Await _integrator.GetItemAsync(req)
             If res Is Nothing OrElse res.resultCd <> "000" Then
-                CustomAlert.ShowAlert(Me, "No new item data returned from KRA.", "Info", CustomAlert.AlertType.Info)
+                CustomAlert.ShowAlert(Me, "No new item data returned from KRA.", "Info", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
                 Exit Sub
             Else
                 Dim items = res.data.itemList
@@ -325,8 +336,9 @@ Public Class ProductManagement
 
 
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Unexpected error: " & ex.Message, "Error", CustomAlert.AlertType.Error)
+            CustomAlert.ShowAlert(Me, "Unexpected error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
+            Loader.Visible = False
             BtnItemRequest.Enabled = True
             BtnItemRequest.Text = "FETCH"
         End Try
