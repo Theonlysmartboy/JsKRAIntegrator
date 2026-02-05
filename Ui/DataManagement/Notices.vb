@@ -76,6 +76,7 @@ Public Class Notices
         OriginalTables(DgvNotices) = dt.copy()
         DgvNotices.DataSource = dt
         DgvNotices.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        Await _settingsManager.SetSettingAsync("last_notice_sync", DateTime.Now.ToString("yyyyMMddHHmmss"))
         Loader.Visible = False
         CustomAlert.ShowAlert(Me, "Notices synced successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
 
