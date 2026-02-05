@@ -50,36 +50,54 @@ Public Class Notices
     End Sub
 
     Private Async Sub ButtonFetchNotices_Click(sender As Object, e As EventArgs) Handles ButtonFetchNotices.Click
-        Loader.Visible = True
-        Dim request As New NoticeRequest With {
-            .tin = Await _settingsManager.GetSettingAsync("pin"),
-            .bhfId = Await _settingsManager.GetSettingAsync("branch_id"),
-            .lastReqDt = Await _settingsManager.GetSettingAsync("last_notice_sync")
-        }
-        Dim response = Await _integrator.GetNoticesAsync(request)
-        If response.resultCd <> "000" Then
-            MessageBox.Show(response.resultMsg)
-            Exit Sub
-        End If
-        ' Map API model → Entity
-        Dim entities = response.data.noticeList.Select(Function(n) New VscuNotice With {
-                                                    .NoticeNo = n.noticeNo,
-                                                    .Title = n.title,
-                                                    .Content = n.cont,
-                                                    .DetailUrl = n.dtlUrl,
-                                                    .RegisteredBy = n.regrNm,
-                                                    .RegDt = ParseKraDate(n.regDt),
-                                                    .ResultDt = ParseKraDate(response.resultDt)
-                                                }).ToList()
-        Await _repo.SaveAsync(entities)
-        Dim dt = Await _repo.GetAllAsync()
-        OriginalTables(DgvNotices) = dt.copy()
-        DgvNotices.DataSource = dt
-        DgvNotices.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-        Await _settingsManager.SetSettingAsync("last_notice_sync", DateTime.Now.ToString("yyyyMMddHHmmss"))
-        Loader.Visible = False
-        CustomAlert.ShowAlert(Me, "Notices synced successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
-
+        Try
+            Loader.Visible = True
+            Loader.Text = "Fetching notices"
+            Dim lastSync = Await _settingsManager.GetSettingAsync("last_notice_sync")
+            Dim request As New NoticeRequest With {
+                .tin = Await _settingsManager.GetSettingAsync("pin"),
+                .bhfId = Await _settingsManager.GetSettingAsync("branch_id"),
+                .lastReqDt = lastSync
+            }
+            Dim response = Await _integrator.GetNoticesAsync(request)
+            If response Is Nothing OrElse response.resultCd <> "000" Then
+                Loader.Visible = False
+                Dim errMsg As String = "Failed to fetch notices."
+                If response IsNot Nothing AndAlso Not String.IsNullOrEmpty(response.resultMsg) Then
+                    errMsg = response.resultMsg
+                End If
+                CustomAlert.ShowAlert(Me, errMsg, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+                Exit Sub
+            End If
+            ' ===== CHECK FOR NO NEW MESSAGES =====
+            If response.data Is Nothing OrElse response.data.noticeList Is Nothing OrElse response.data.noticeList.Count = 0 Then
+                CustomAlert.ShowAlert(Me, "No new messages found since last sync.", "Information", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+                Exit Sub
+            End If
+            ' Map API model → Entity
+            Dim entities = response.data.noticeList.
+        Select(Function(n) New VscuNotice With {
+            .NoticeNo = n.noticeNo,
+            .Title = n.title,
+            .Content = n.cont,
+            .DetailUrl = n.dtlUrl,
+            .RegisteredBy = n.regrNm,
+            .RegDt = ParseKraDate(n.regDt),
+            .ResultDt = ParseKraDate(response.resultDt)
+        }).ToList()
+            Await _repo.SaveAsync(entities)
+            Dim dt = Await _repo.GetAllAsync()
+            OriginalTables(DgvNotices) = dt.Copy()
+            DgvNotices.DataSource = dt
+            DgvNotices.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            ' Update last sync ONLY if new notices were received
+            Await _settingsManager.SetSettingAsync("last_notice_sync", DateTime.Now.ToString("yyyyMMddHHmmss"))
+            CustomAlert.ShowAlert(Me, $"{entities.Count} new notice(s) synced successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+        Catch ex As Exception
+            CustomAlert.ShowAlert(Me, "An error occurred while fetching notices: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+        Finally
+            Loader.Visible = False
+        End Try
     End Sub
 
     Private Sub TxtSearchNotices_TextChanged(sender As Object, e As EventArgs)
