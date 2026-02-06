@@ -4,7 +4,7 @@
         Public Const CODE_DATA As String = "/code/selectCodes"
         Public Const ITEM_CLASSIFICATION_SELECTOR As String = "/itemClass/selectItemsClass"
         Public Const CUSTOMER_SELECTOR As String = "/customers/selectCustomer"
-        Public Const BRANCH_SELECTOR As String = "/branches/selectBranches"
+        Public Const BRANCH_LIST As String = "/branches/selectBranches"
         Public Const BRANCH_INFO As String = "/branch/info"
         Public Const ITEM_SAVE As String = "/items/saveItems"
         Public Const ITEM_SELECT As String = "/items/selectItems"

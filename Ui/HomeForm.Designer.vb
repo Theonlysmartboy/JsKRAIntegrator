@@ -56,6 +56,8 @@ Partial Class HomeForm
         Me.TaxOfficesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LocalesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.CategoryLevelsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.BranchesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.BranchListToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ProductManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SalesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PurchasesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -64,15 +66,18 @@ Partial Class HomeForm
         Me.NoticesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LblStatus = New System.Windows.Forms.Label()
         Me.Loader = New JsToolBox.Loaders.DualRingLoader()
+        Me.CustomerBranchToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.UserAccountsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.InsurancesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'MenuStrip1
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializationToolStripMenuItem, Me.DataMgtToolStripMenuItem, Me.ProductManagementToolStripMenuItem, Me.SalesToolStripMenuItem, Me.PurchasesToolStripMenuItem, Me.ToolStripSettings, Me.ToolStripLogs, Me.NoticesToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializationToolStripMenuItem, Me.DataMgtToolStripMenuItem, Me.BranchesToolStripMenuItem, Me.ProductManagementToolStripMenuItem, Me.SalesToolStripMenuItem, Me.PurchasesToolStripMenuItem, Me.ToolStripSettings, Me.ToolStripLogs, Me.NoticesToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(800, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(984, 24)
         Me.MenuStrip1.TabIndex = 6
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -271,6 +276,19 @@ Partial Class HomeForm
         Me.CategoryLevelsToolStripMenuItem.Size = New System.Drawing.Size(230, 22)
         Me.CategoryLevelsToolStripMenuItem.Text = "Category Levels"
         '
+        'BranchesToolStripMenuItem
+        '
+        Me.BranchesToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BranchListToolStripMenuItem, Me.CustomerBranchToolStripMenuItem, Me.UserAccountsToolStripMenuItem, Me.InsurancesToolStripMenuItem})
+        Me.BranchesToolStripMenuItem.Name = "BranchesToolStripMenuItem"
+        Me.BranchesToolStripMenuItem.Size = New System.Drawing.Size(67, 20)
+        Me.BranchesToolStripMenuItem.Text = "Branches"
+        '
+        'BranchListToolStripMenuItem
+        '
+        Me.BranchListToolStripMenuItem.Name = "BranchListToolStripMenuItem"
+        Me.BranchListToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.BranchListToolStripMenuItem.Text = "Branch List"
+        '
         'ProductManagementToolStripMenuItem
         '
         Me.ProductManagementToolStripMenuItem.Name = "ProductManagementToolStripMenuItem"
@@ -312,7 +330,7 @@ Partial Class HomeForm
         Me.LblStatus.AutoSize = True
         Me.LblStatus.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.LblStatus.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LblStatus.Location = New System.Drawing.Point(0, 587)
+        Me.LblStatus.Location = New System.Drawing.Point(0, 441)
         Me.LblStatus.Name = "LblStatus"
         Me.LblStatus.Size = New System.Drawing.Size(0, 20)
         Me.LblStatus.TabIndex = 7
@@ -333,11 +351,29 @@ Partial Class HomeForm
         Me.Loader.Text = "Loading"
         Me.Loader.Visible = False
         '
+        'CustomerBranchToolStripMenuItem
+        '
+        Me.CustomerBranchToolStripMenuItem.Name = "CustomerBranchToolStripMenuItem"
+        Me.CustomerBranchToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.CustomerBranchToolStripMenuItem.Text = "Customer Branch"
+        '
+        'UserAccountsToolStripMenuItem
+        '
+        Me.UserAccountsToolStripMenuItem.Name = "UserAccountsToolStripMenuItem"
+        Me.UserAccountsToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.UserAccountsToolStripMenuItem.Text = "User Accounts"
+        '
+        'InsurancesToolStripMenuItem
+        '
+        Me.InsurancesToolStripMenuItem.Name = "InsurancesToolStripMenuItem"
+        Me.InsurancesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.InsurancesToolStripMenuItem.Text = "Insurances"
+        '
         'HomeForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 607)
+        Me.ClientSize = New System.Drawing.Size(984, 461)
         Me.Controls.Add(Me.Loader)
         Me.Controls.Add(Me.LblStatus)
         Me.Controls.Add(Me.MenuStrip1)
@@ -393,4 +429,9 @@ Partial Class HomeForm
     Friend WithEvents CategoryLevelsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As ToolStripSeparator
     Friend WithEvents Loader As JsToolBox.Loaders.DualRingLoader
+    Friend WithEvents BranchesToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents BranchListToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents CustomerBranchToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents UserAccountsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents InsurancesToolStripMenuItem As ToolStripMenuItem
 End Class

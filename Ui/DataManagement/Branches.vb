@@ -1,14 +1,14 @@
 ﻿Imports Core.Config
 Imports Core.Logging
-Imports Core.Models.Notice
+Imports Core.Models.Branch
 Imports Core.Services
 Imports Ui.Helpers
 Imports Ui.Repo
 
-Public Class Notices
+Public Class Branches
     Private _settingsManager As SettingsManager
     Private _integrator As VSCUIntegrator
-    Private ReadOnly _repo As INoticeRepository
+    Private ReadOnly _branchRepo As IBranchRepository
     Private _logger As Logger
     Private _conn As String
     Private OriginalTables As New Dictionary(Of DataGridView, DataTable)
@@ -21,7 +21,7 @@ Public Class Notices
         ' Initialize logger
         Dim repo As New LogRepository(connectionString)
         _logger = New Logger(repo)
-        _repo = New NoticeRepository(connectionString)
+        _branchRepo = New BranchRepository(connectionString)
         ' Build IntegratorSettings from DB
         Dim baseUrlTask = _settingsManager.GetSettingAsync("base_url")
         Dim pinTask = _settingsManager.GetSettingAsync("pin")
@@ -40,68 +40,54 @@ Public Class Notices
                                                                                                      End Sub)
     End Sub
 
-    Private Sub Notices_Load(sender As Object, e As EventArgs) Handles Me.Load
+    Private Sub Branches_Load(sender As Object, e As EventArgs) Handles Me.Load
         ' Add placeholder text
-        SetPlaceholder(TxtSearchNotices, "Start typing to search...")
+        SetPlaceholder(TxtSearchBranches, "Start typing to search...")
         ' Attach placeholder handlers
-        AddHandler TxtSearchNotices.Enter, AddressOf TextBox_Enter
-        AddHandler TxtSearchNotices.Leave, AddressOf TextBox_Leave
-        AddHandler TxtSearchNotices.TextChanged, AddressOf TxtSearchNotices_TextChanged
+        AddHandler TxtSearchBranches.Enter, AddressOf TextBox_Enter
+        AddHandler TxtSearchBranches.Leave, AddressOf TextBox_Leave
+        AddHandler TxtSearchBranches.TextChanged, AddressOf TxtSearchBranches_TextChanged
     End Sub
-
-    Private Async Sub ButtonFetchNotices_Click(sender As Object, e As EventArgs) Handles ButtonFetchNotices.Click
+    Private Async Sub ButtonFetchBranches_Click(sender As Object, e As EventArgs) Handles ButtonFetchBranches.Click
         Try
             Loader.Visible = True
-            Loader.Text = "Fetching notices"
-            Dim lastSync = Await _settingsManager.GetSettingAsync("last_notice_sync")
-            Dim request As New NoticeRequest With {
+            ButtonFetchBranches.Enabled = False
+            Loader.Text = "Fetching branches..."
+            Dim request As New BranchListRequest With {
                 .tin = Await _settingsManager.GetSettingAsync("pin"),
                 .bhfId = Await _settingsManager.GetSettingAsync("branch_id"),
-                .lastReqDt = lastSync
+                .lastReqDt = Await _settingsManager.GetSettingAsync("last_branch_sync")
             }
-            Dim response = Await _integrator.GetNoticesAsync(request)
+            Dim response = Await _integrator.GetBranchListAsync(request)
             If response Is Nothing OrElse response.resultCd <> "000" Then
-                Dim errMsg As String = "Failed to fetch Notices."
+                Dim errMsg As String = "Failed to fetch Branches."
                 If response IsNot Nothing AndAlso Not String.IsNullOrEmpty(response.resultMsg) Then
                     errMsg = response.resultMsg
                 End If
                 CustomAlert.ShowAlert(Me, errMsg, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
-            ' ===== CHECK FOR NO NEW MESSAGES =====
-            If response.data Is Nothing OrElse response.data.noticeList Is Nothing OrElse response.data.noticeList.Count = 0 Then
-                CustomAlert.ShowAlert(Me, "No new messages found since last sync.", "Information", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+            If response.data Is Nothing OrElse response.data.bhfList Is Nothing OrElse response.data.bhfList.Count = 0 Then
+                CustomAlert.ShowAlert(Me, "No new Branches found since last sync.", "Information", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
-            ' Map API model → Entity
-            Dim entities = response.data.noticeList.
-        Select(Function(n) New VscuNotice With {
-            .NoticeNo = n.noticeNo,
-            .Title = n.title,
-            .Content = n.cont,
-            .DetailUrl = n.dtlUrl,
-            .RegisteredBy = n.regrNm,
-            .RegDt = ParseKraDate(n.regDt),
-            .ResultDt = ParseKraDate(response.resultDt)
-        }).ToList()
-            Await _repo.SaveAsync(entities)
-            Dim dt = Await _repo.GetAllAsync()
-            OriginalTables(DgvNotices) = dt.Copy()
-            DgvNotices.DataSource = dt
-            DgvNotices.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            ' Update last sync ONLY if new notices were received
-            Await _settingsManager.SetSettingAsync("last_notice_sync", DateTime.Now.ToString("yyyyMMddHHmmss"))
-            CustomAlert.ShowAlert(Me, $"{entities.Count} new notice(s) synced successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+            Dim resultDate = ParseKraDate(response.resultDt)
+            Await _branchRepo.SaveAsync(response.data.bhfList, resultDate)
+            Dim dt As DataTable = Await _branchRepo.GetAllAsync()
+            OriginalTables(DgvBranches) = dt.Copy()
+            DgvBranches.DataSource = dt
+            CustomAlert.ShowAlert(Me, "Branches fetched and saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "An error occurred while fetching notices: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            CustomAlert.ShowAlert(Me, "An error occurred: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
             Loader.Visible = False
+            ButtonFetchBranches.Enabled = True
         End Try
     End Sub
 
-    Private Sub TxtSearchNotices_TextChanged(sender As Object, e As EventArgs)
-        If TxtSearchNotices.ForeColor = Color.Gray Then Exit Sub
-        FilterGrid(DgvNotices, TxtSearchNotices.Text)
+    Private Sub TxtSearchBranches_TextChanged(sender As Object, e As EventArgs)
+        If TxtSearchBranches.ForeColor = Color.Gray Then Exit Sub
+        FilterGrid(DgvBranches, TxtSearchBranches.Text)
     End Sub
 
     Private Sub FilterGrid(grid As DataGridView, search As String)

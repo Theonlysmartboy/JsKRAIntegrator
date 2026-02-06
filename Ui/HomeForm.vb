@@ -338,4 +338,9 @@ Public Class HomeForm
         Dim catLevelsForm As New DataManagement(_conn, 49)
         catLevelsForm.ShowDialog()
     End Sub
+
+    Private Sub BranchListToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BranchListToolStripMenuItem.Click
+        Dim branchListForm As New Branches(_conn)
+        branchListForm.ShowDialog()
+    End Sub
 End Class
