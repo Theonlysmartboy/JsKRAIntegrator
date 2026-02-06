@@ -343,4 +343,9 @@ Public Class HomeForm
         Dim branchListForm As New Branches(_conn)
         branchListForm.ShowDialog()
     End Sub
+
+    Private Sub CustomerBranchToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CustomerBranchToolStripMenuItem.Click
+        Dim customerBranchForm As New Customers(_conn)
+        customerBranchForm.ShowDialog()
+    End Sub
 End Class

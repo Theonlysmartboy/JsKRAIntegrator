@@ -82,10 +82,12 @@
     <Compile Include="Main\ApiEndpoints.vb" />
     <Compile Include="Main\VscuStarter.vb" />
     <Compile Include="Models\BaseResponse.vb" />
-    <Compile Include="Models\Branch\BranchInfoRequest.vb" />
-    <Compile Include="Models\Branch\BranchInfoResponse.vb" />
     <Compile Include="Models\Branch\BranchListRequest.vb" />
     <Compile Include="Models\Branch\BranchListResponse.vb" />
+    <Compile Include="Models\Branch\Customer\CustomerRequest.vb" />
+    <Compile Include="Models\Branch\Customer\CustomerResponse.vb" />
+    <Compile Include="Models\Branch\Customer\SaveBranchCustomerRequest.vb" />
+    <Compile Include="Models\Branch\Customer\SaveBranchCustomerResponse.vb" />
     <Compile Include="Models\Code\CodeClassMap.vb" />
     <Compile Include="Models\Code\CodeDataEntry.vb" />
     <Compile Include="Models\Code\CodeDataRequest.vb" />
