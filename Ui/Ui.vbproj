@@ -96,6 +96,12 @@
     <Compile Include="DataManagement.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DataManagement\Branches.Designer.vb">
+      <DependentUpon>Branches.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DataManagement\Branches.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DataManagement\ItemClassification.Designer.vb">
       <DependentUpon>ItemClassification.vb</DependentUpon>
     </Compile>
@@ -163,6 +169,7 @@
     <Compile Include="Purchases.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Repo\BranchRepository.vb" />
     <Compile Include="Repo\CodeMappedRepository.vb" />
     <Compile Include="Repo\ItemClassificationRepository.vb" />
     <Compile Include="Repo\ItemInfoRepository.vb" />
@@ -185,6 +192,9 @@
   <ItemGroup>
     <EmbeddedResource Include="DataManagement.resx">
       <DependentUpon>DataManagement.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataManagement\Branches.resx">
+      <DependentUpon>Branches.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataManagement\ItemClassification.resx">
       <DependentUpon>ItemClassification.vb</DependentUpon>

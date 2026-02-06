@@ -156,18 +156,20 @@ Namespace Services
         ' -----------------------
         ' 3) Branch Information (POST)
         ' -----------------------
-        Public Async Function SendBranchInfoAsync(req As BranchInfoRequest) As Task(Of BranchInfoResponse)
-            Dim endpoint = ApiEndpoints.BRANCH_INFO
-            Dim resp = Await SendAndDeserializeAsync(Of BranchInfoResponse)(endpoint, req, isGet:=False)
-            If resp IsNot Nothing Then Return resp
-
-            Dim fallback = MakeBaseFallback(Of BranchInfoResponse)("VSCU error: failed to call BranchInfo")
-            fallback.result = New BranchInfoData() With {
-                .branchId = req.branchId,
-                .branchName = req.branchName,
-                .address = req.address,
-                .mobile = req.mobile,
-                .registered = False
+        Public Async Function GetBranchListAsync(req As BranchListRequest) As Task(Of BranchListResponse)
+            Dim endpoint = ApiEndpoints.BRANCH_LIST
+            Dim resp = Await SendAndDeserializeAsync(Of BranchListResponse)(endpoint, req, isGet:=False)
+            If resp IsNot Nothing Then
+                Return resp
+            End If
+            ' Fallback
+            Dim fallback As New BranchListResponse With {
+                    .resultCd = "Error",
+                    .resultMsg = "VSCU error: failed to call BranchList",
+                    .resultDt = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    .data = New BranchListData With {
+                    .bhfList = New List(Of BranchInfo)()
+                }
             }
             Return fallback
         End Function
