@@ -64,12 +64,14 @@ Partial Class HomeForm
         Me.NoticesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LblStatus = New System.Windows.Forms.Label()
         Me.Loader = New JsToolBox.Loaders.DualRingLoader()
+        Me.BranchesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.BranchListToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'MenuStrip1
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializationToolStripMenuItem, Me.DataMgtToolStripMenuItem, Me.ProductManagementToolStripMenuItem, Me.SalesToolStripMenuItem, Me.PurchasesToolStripMenuItem, Me.ToolStripSettings, Me.ToolStripLogs, Me.NoticesToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializationToolStripMenuItem, Me.DataMgtToolStripMenuItem, Me.BranchesToolStripMenuItem, Me.ProductManagementToolStripMenuItem, Me.SalesToolStripMenuItem, Me.PurchasesToolStripMenuItem, Me.ToolStripSettings, Me.ToolStripLogs, Me.NoticesToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Size = New System.Drawing.Size(800, 24)
@@ -333,6 +335,19 @@ Partial Class HomeForm
         Me.Loader.Text = "Loading"
         Me.Loader.Visible = False
         '
+        'BranchesToolStripMenuItem
+        '
+        Me.BranchesToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BranchListToolStripMenuItem})
+        Me.BranchesToolStripMenuItem.Name = "BranchesToolStripMenuItem"
+        Me.BranchesToolStripMenuItem.Size = New System.Drawing.Size(67, 20)
+        Me.BranchesToolStripMenuItem.Text = "Branches"
+        '
+        'BranchListToolStripMenuItem
+        '
+        Me.BranchListToolStripMenuItem.Name = "BranchListToolStripMenuItem"
+        Me.BranchListToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.BranchListToolStripMenuItem.Text = "Branch List"
+        '
         'HomeForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -393,4 +408,6 @@ Partial Class HomeForm
     Friend WithEvents CategoryLevelsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As ToolStripSeparator
     Friend WithEvents Loader As JsToolBox.Loaders.DualRingLoader
+    Friend WithEvents BranchesToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents BranchListToolStripMenuItem As ToolStripMenuItem
 End Class
