@@ -60,7 +60,7 @@ Public Class Branches
             }
             Dim response = Await _integrator.GetBranchListAsync(request)
             If response Is Nothing OrElse response.resultCd <> "000" Then
-                Dim errMsg As String = "Failed to fetch notices."
+                Dim errMsg As String = "Failed to fetch Branches."
                 If response IsNot Nothing AndAlso Not String.IsNullOrEmpty(response.resultMsg) Then
                     errMsg = response.resultMsg
                 End If
