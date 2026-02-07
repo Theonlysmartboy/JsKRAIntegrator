@@ -64,7 +64,7 @@ Partial Class ItemClassification
         Me.Controls.Add(Me.DataGridViewItemClassification)
         Me.Controls.Add(Me.BtnSyncItemClassification)
         Me.Name = "ItemClassification"
-        Me.Text = "ItemClassification"
+        Me.Text = "Item Classification"
         CType(Me.DataGridViewItemClassification, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()

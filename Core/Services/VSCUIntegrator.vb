@@ -7,6 +7,7 @@ Imports Core.Logging
 Imports Core.Main
 Imports Core.Models.Branch
 Imports Core.Models.Branch.Customer
+Imports Core.Models.Branch.User
 Imports Core.Models.Code
 Imports Core.Models.Import
 Imports Core.Models.Init
@@ -211,6 +212,25 @@ Namespace Services
             Dim fallback As New SaveBranchCustomerResponse With {
                 .resultCd = "Error",
                 .resultMsg = "VSCU error: failed to call SaveBranchCustomer",
+                .resultDt = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                .data = Nothing
+            }
+            Return fallback
+        End Function
+
+        '-----------------------
+        'Branch User Save (POST)
+        '-----------------------
+        Public Async Function SaveBranchUserAsync(req As BranchUserSaveRequest) As Task(Of BranchUserSaveResponse)
+            Dim endpoint = ApiEndpoints.BRANCH_USER_SAVE
+            Dim resp = Await SendAndDeserializeAsync(Of BranchUserSaveResponse)(endpoint, req, isGet:=False)
+            If resp IsNot Nothing Then
+                Return resp
+            End If
+            ' Fallback if API call fails
+            Dim fallback As New BranchUserSaveResponse With {
+                .resultCd = "Error",
+                .resultMsg = "VSCU error: failed to call SaveBranchUser",
                 .resultDt = DateTime.Now.ToString("yyyyMMddHHmmss"),
                 .data = Nothing
             }
