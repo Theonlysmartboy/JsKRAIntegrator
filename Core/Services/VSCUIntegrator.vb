@@ -1,6 +1,4 @@
 ﻿
-Imports System.Net.Http
-Imports System.Text
 Imports Core.Config
 Imports Core.Enums
 Imports Core.Logging
@@ -20,7 +18,6 @@ Imports Core.Models.Notice
 Imports Core.Models.Purchase
 Imports Core.Models.Sale
 Imports Core.Utils
-Imports Newtonsoft.Json
 
 Namespace Services
     Public Class VSCUIntegrator
@@ -289,6 +286,7 @@ Namespace Services
                             }
             Return fallback
         End Function
+
         '------------------------
         ' 5C) Item  Save (POST)
         '------------------------
@@ -300,6 +298,7 @@ Namespace Services
             Dim fallback = MakeBaseFallback(Of ItemSaveResponse)("VSCU error: failed to call ItemSave")
             Return fallback
         End Function
+
         ' -----------------------
         ' 5d) Imported Item (POST)
         ' -----------------------

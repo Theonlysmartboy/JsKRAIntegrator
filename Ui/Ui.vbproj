@@ -114,12 +114,6 @@
     <Compile Include="DataManagement\InsuranceForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DataManagement\InsuranceModal.Designer.vb">
-      <DependentUpon>InsuranceModal.vb</DependentUpon>
-    </Compile>
-    <Compile Include="DataManagement\InsuranceModal.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="DataManagement\ItemClassification.Designer.vb">
       <DependentUpon>ItemClassification.vb</DependentUpon>
     </Compile>
