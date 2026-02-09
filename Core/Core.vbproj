@@ -90,6 +90,9 @@
     <Compile Include="Models\Branch\Customer\CustomerResponse.vb" />
     <Compile Include="Models\Branch\Customer\SaveBranchCustomerRequest.vb" />
     <Compile Include="Models\Branch\Customer\SaveBranchCustomerResponse.vb" />
+    <Compile Include="Models\Branch\Insurance\BranchInsurance.vb" />
+    <Compile Include="Models\Branch\Insurance\BranchInsuranceRequest.vb" />
+    <Compile Include="Models\Branch\Insurance\BranchInsuranceResponse.vb" />
     <Compile Include="Models\Branch\User\BranchUser.vb" />
     <Compile Include="Models\Branch\User\BranchUserSaveRequest.vb" />
     <Compile Include="Models\Branch\User\BranchUserSaveResponse.vb" />

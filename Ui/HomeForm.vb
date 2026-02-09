@@ -353,4 +353,9 @@ Public Class HomeForm
         Dim userAccountsForm As New UserAccounts(_conn)
         userAccountsForm.ShowDialog()
     End Sub
+
+    Private Sub InsurancesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InsurancesToolStripMenuItem.Click
+        Dim insuranceForm As New InsuranceForm(_conn)
+        insuranceForm.ShowDialog()
+    End Sub
 End Class

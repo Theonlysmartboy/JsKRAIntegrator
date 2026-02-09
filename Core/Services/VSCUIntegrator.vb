@@ -7,6 +7,7 @@ Imports Core.Logging
 Imports Core.Main
 Imports Core.Models.Branch
 Imports Core.Models.Branch.Customer
+Imports Core.Models.Branch.Insurance
 Imports Core.Models.Branch.User
 Imports Core.Models.Code
 Imports Core.Models.Import
@@ -218,9 +219,9 @@ Namespace Services
             Return fallback
         End Function
 
-        '-----------------------
-        'Branch User Save (POST)
-        '-----------------------
+        '-----------------------------
+        ' 4 c) Branch User Save (POST)
+        '------------------------------
         Public Async Function SaveBranchUserAsync(req As BranchUserSaveRequest) As Task(Of BranchUserSaveResponse)
             Dim endpoint = ApiEndpoints.BRANCH_USER_SAVE
             Dim resp = Await SendAndDeserializeAsync(Of BranchUserSaveResponse)(endpoint, req, isGet:=False)
@@ -237,9 +238,26 @@ Namespace Services
             Return fallback
         End Function
 
-        ' -----------------------
+        '---------------------------------------
+        ' 4 d) Branch Insurance Save (POST)
+        '---------------------------------------
+        Public Async Function SaveBranchInsuranceAsync(req As BranchInsuranceRequest) As Task(Of BranchInsuranceResponse)
+            Dim endpoint = ApiEndpoints.BRANCH_INSURANCE_SAVE
+            Dim resp = Await SendAndDeserializeAsync(Of BranchInsuranceResponse)(endpoint, req, isGet:=False)
+            If resp IsNot Nothing Then Return resp
+            ' Fallback if API call fails
+            Dim fallback As New BranchInsuranceResponse With {
+                .resultCd = "Error",
+                .resultMsg = "VSCU error: failed to call SaveBranchInsurance",
+                .resultDt = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                .data = Nothing
+            }
+            Return fallback
+        End Function
+
+        ' -----------------------------------------
         ' 5) Item Classification Information (POST)
-        ' -----------------------
+        ' ------------------------------------------
         Public Async Function SendItemClassificationInfoAsync(req As ItemClassificationRequest) As Task(Of ItemClassificationResponse)
             Dim endpoint = ApiEndpoints.ITEM_CLASSIFICATION_SELECTOR
             Dim resp = Await SendAndDeserializeAsync(Of ItemClassificationResponse)(endpoint, req, isGet:=False)
@@ -255,9 +273,9 @@ Namespace Services
             Return fallback
         End Function
 
-        '------------------------
+        '-----------------------------
         ' 5b) Item  Information (POST)
-        '------------------------
+        '-----------------------------
         Public Async Function GetItemAsync(query As ItemInfoRequest) As Task(Of ItemInfoResponse)
             Dim endpoint = ApiEndpoints.ITEM_SELECT
             Dim resp = Await SendAndDeserializeAsync(Of ItemInfoResponse)(endpoint, query, isGet:=False)
