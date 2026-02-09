@@ -102,6 +102,24 @@
     <Compile Include="DataManagement\Branches.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DataManagement\Customers.Designer.vb">
+      <DependentUpon>Customers.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DataManagement\Customers.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataManagement\InsuranceForm.Designer.vb">
+      <DependentUpon>InsuranceForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DataManagement\InsuranceForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataManagement\InsuranceModal.Designer.vb">
+      <DependentUpon>InsuranceModal.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DataManagement\InsuranceModal.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DataManagement\ItemClassification.Designer.vb">
       <DependentUpon>ItemClassification.vb</DependentUpon>
     </Compile>
@@ -112,6 +130,12 @@
       <DependentUpon>Notices.vb</DependentUpon>
     </Compile>
     <Compile Include="DataManagement\Notices.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataManagement\UserAccounts.Designer.vb">
+      <DependentUpon>UserAccounts.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DataManagement\UserAccounts.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Helpers\CustomAlert.Designer.vb">
@@ -169,8 +193,11 @@
     <Compile Include="Purchases.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Repo\BranchInsuranceRepository.vb" />
     <Compile Include="Repo\BranchRepository.vb" />
+    <Compile Include="Repo\BranchUserRepository.vb" />
     <Compile Include="Repo\CodeMappedRepository.vb" />
+    <Compile Include="Repo\CustomerRepository.vb" />
     <Compile Include="Repo\ItemClassificationRepository.vb" />
     <Compile Include="Repo\ItemInfoRepository.vb" />
     <Compile Include="Repo\NoticeRepository.vb" />
@@ -196,11 +223,20 @@
     <EmbeddedResource Include="DataManagement\Branches.resx">
       <DependentUpon>Branches.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DataManagement\Customers.resx">
+      <DependentUpon>Customers.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataManagement\InsuranceForm.resx">
+      <DependentUpon>InsuranceForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DataManagement\ItemClassification.resx">
       <DependentUpon>ItemClassification.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataManagement\Notices.resx">
       <DependentUpon>Notices.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataManagement\UserAccounts.resx">
+      <DependentUpon>UserAccounts.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Helpers\CustomAlert.resx">
       <DependentUpon>CustomAlert.vb</DependentUpon>

@@ -58,6 +58,9 @@ Partial Class HomeForm
         Me.CategoryLevelsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.BranchesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.BranchListToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CustomerBranchToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.UserAccountsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.InsurancesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ProductManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SalesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PurchasesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -66,9 +69,6 @@ Partial Class HomeForm
         Me.NoticesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LblStatus = New System.Windows.Forms.Label()
         Me.Loader = New JsToolBox.Loaders.DualRingLoader()
-        Me.CustomerBranchToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.UserAccountsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.InsurancesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -289,6 +289,24 @@ Partial Class HomeForm
         Me.BranchListToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.BranchListToolStripMenuItem.Text = "Branch List"
         '
+        'CustomerBranchToolStripMenuItem
+        '
+        Me.CustomerBranchToolStripMenuItem.Name = "CustomerBranchToolStripMenuItem"
+        Me.CustomerBranchToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.CustomerBranchToolStripMenuItem.Text = "Customer Branch"
+        '
+        'UserAccountsToolStripMenuItem
+        '
+        Me.UserAccountsToolStripMenuItem.Name = "UserAccountsToolStripMenuItem"
+        Me.UserAccountsToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.UserAccountsToolStripMenuItem.Text = "User Accounts"
+        '
+        'InsurancesToolStripMenuItem
+        '
+        Me.InsurancesToolStripMenuItem.Name = "InsurancesToolStripMenuItem"
+        Me.InsurancesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.InsurancesToolStripMenuItem.Text = "Insurances"
+        '
         'ProductManagementToolStripMenuItem
         '
         Me.ProductManagementToolStripMenuItem.Name = "ProductManagementToolStripMenuItem"
@@ -350,24 +368,6 @@ Partial Class HomeForm
         Me.Loader.TabIndex = 8
         Me.Loader.Text = "Loading"
         Me.Loader.Visible = False
-        '
-        'CustomerBranchToolStripMenuItem
-        '
-        Me.CustomerBranchToolStripMenuItem.Name = "CustomerBranchToolStripMenuItem"
-        Me.CustomerBranchToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.CustomerBranchToolStripMenuItem.Text = "Customer Branch"
-        '
-        'UserAccountsToolStripMenuItem
-        '
-        Me.UserAccountsToolStripMenuItem.Name = "UserAccountsToolStripMenuItem"
-        Me.UserAccountsToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.UserAccountsToolStripMenuItem.Text = "User Accounts"
-        '
-        'InsurancesToolStripMenuItem
-        '
-        Me.InsurancesToolStripMenuItem.Name = "InsurancesToolStripMenuItem"
-        Me.InsurancesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.InsurancesToolStripMenuItem.Text = "Insurances"
         '
         'HomeForm
         '
