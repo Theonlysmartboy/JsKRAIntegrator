@@ -68,7 +68,8 @@ Public Class Branches
                 Exit Sub
             End If
             If response.data Is Nothing OrElse response.data.bhfList Is Nothing OrElse response.data.bhfList.Count = 0 Then
-                CustomAlert.ShowAlert(Me, "No new Branches found since last sync.", "Information", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+                CustomAlert.ShowAlert(Me, "No new Branches found since last sync.", "Information", CustomAlert.AlertType.Info,
+                                      CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
             Dim resultDate = ParseKraDate(response.resultDt)
@@ -76,7 +77,8 @@ Public Class Branches
             Dim dt As DataTable = Await _branchRepo.GetAllAsync()
             OriginalTables(DgvBranches) = dt.Copy()
             DgvBranches.DataSource = dt
-            CustomAlert.ShowAlert(Me, "Branches fetched and saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+            Await _settingsManager.SetSettingAsync("last_branch_sync", DateTime.Now.ToString("yyyyMMddHHmmss"))
+            CustomAlert.ShowAlert(Me, "Branches fetched and saved successfully.", "Success", CustomAlert.AlertType.Success,CustomAlert.ButtonType.OK)
         Catch ex As Exception
             CustomAlert.ShowAlert(Me, "An error occurred: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally

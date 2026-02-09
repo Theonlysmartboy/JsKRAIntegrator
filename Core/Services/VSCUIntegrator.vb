@@ -11,6 +11,7 @@ Imports Core.Models.Code
 Imports Core.Models.Import
 Imports Core.Models.Init
 Imports Core.Models.Item.Classification
+Imports Core.Models.Item.Import
 Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
 Imports Core.Models.Item.Stock
@@ -302,31 +303,29 @@ Namespace Services
         ' -----------------------
         ' 5d) Imported Item (POST)
         ' -----------------------
-        Public Async Function SendImportedItemAsync(req As ImportedItemRequest) As Task(Of ImportedItemResponse)
-            Dim endpoint = ApiEndpoints.IMPORTED_ITEM_UPDATE
+        Public Async Function SendImportItemAsync(req As ImportedItemRequest) As Task(Of ImportedItemResponse)
+            Dim endpoint = ApiEndpoints.IMPORT_ITEM_UPDATE
             Dim resp = Await SendAndDeserializeAsync(Of ImportedItemResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
 
-            Dim fallback = MakeBaseFallback(Of ImportedItemResponse)("VSCU error: failed to call ImportedItem")
+            Dim fallback = MakeBaseFallback(Of ImportedItemResponse)("VSCU error: failed to call ImportItem")
             fallback.result = New ImportedItemData() With {.itemCode = req.itemCode, .importId = Nothing, .accepted = False}
             Return fallback
         End Function
 
         ' -----------------------
-        ' 5e) Imported Items GET
+        ' 5e) Imported Items (POST)
         ' -----------------------
-        Public Async Function GetImportedItemsAsync(Optional query As String = Nothing) As Task(Of ImportedItemResponse)
-            Dim endpoint = ApiEndpoints.IMPORTED_ITEM_SELECT
-            Dim target = endpoint
-            If Not String.IsNullOrEmpty(query) Then
-                target &= "?" & query
-            End If
-
-            Dim resp = Await SendAndDeserializeAsync(Of ImportedItemResponse)(target, Nothing, isGet:=False)
+        Public Async Function GetImportItemsAsync(req As ImportItemsRequest) As Task(Of ImportItemsResponse)
+            Dim endpoint = ApiEndpoints.IMPORT_ITEM_SELECT
+            Dim resp = Await SendAndDeserializeAsync(Of ImportItemsResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
-
-            Dim fallback = MakeBaseFallback(Of ImportedItemResponse)("VSCU error: failed to call GetImportedItems")
-            fallback.result = New ImportedItemData() With {.itemCode = Nothing, .importId = Nothing, .accepted = False}
+            Dim fallback = New ImportItemsResponse() With {
+                .resultCd = "Error",
+                .resultMsg = "VSCU error: failed to call GetImportItems",
+                .resultDt = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                .data = Nothing
+            }
             Return fallback
         End Function
 

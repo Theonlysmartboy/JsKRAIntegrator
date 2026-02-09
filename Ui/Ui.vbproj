@@ -187,6 +187,7 @@
     <Compile Include="Purchases.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Repo\BranchImportItemRepository.vb" />
     <Compile Include="Repo\BranchInsuranceRepository.vb" />
     <Compile Include="Repo\BranchRepository.vb" />
     <Compile Include="Repo\BranchUserRepository.vb" />

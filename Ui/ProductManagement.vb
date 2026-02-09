@@ -1,5 +1,6 @@
 ﻿Imports Core.Config
 Imports Core.Logging
+Imports Core.Models.Item.Import
 Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
 Imports Core.Services
@@ -11,19 +12,17 @@ Public Class ProductManagement
     Private _integrator As VSCUIntegrator
     Private _logger As Logger
     Private _connString As String
-
+    Private _branchImportRepo As IBranchImportItemRepository
     Private OriginalTables As New Dictionary(Of DataGridView, DataTable)
     Private headerCheckBox As New CheckBox()
 
     Public Sub New(connectionString As String)
         InitializeComponent()
         _connString = connectionString
-
         _settingsManager = New SettingsManager(connectionString)
-
         Dim repo As New LogRepository(_connString)
         _logger = New Logger(repo)
-
+        _branchImportRepo = New BranchImportItemRepository(_connString)
         Task.WhenAll(
             _settingsManager.GetSettingAsync("base_url"),
             _settingsManager.GetSettingAsync("pin"),
@@ -43,63 +42,49 @@ Public Class ProductManagement
     End Sub
 
     Private Sub ProductManagementForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Add placeholder text
         SetPlaceholder(TxtSearchItemSave, "Start typing to search...")
         SetPlaceholder(TxtItemRequestSearch, "Start typing to search...")
         SetPlaceholder(TxtImportItemUpdateSearch, "Start typing to search...")
         SetPlaceholder(TxtImportItemSearch, "Start typing to search...")
-
-        ' Attach placeholder handlers
         AddHandler TxtSearchItemSave.Enter, AddressOf TextBox_Enter
         AddHandler TxtSearchItemSave.Leave, AddressOf TextBox_Leave
-
         AddHandler TxtItemRequestSearch.Enter, AddressOf TextBox_Enter
         AddHandler TxtItemRequestSearch.Leave, AddressOf TextBox_Leave
-
         AddHandler TxtImportItemUpdateSearch.Enter, AddressOf TextBox_Enter
         AddHandler TxtImportItemUpdateSearch.Leave, AddressOf TextBox_Leave
-
         AddHandler TxtImportItemSearch.Enter, AddressOf TextBox_Enter
         AddHandler TxtImportItemSearch.Leave, AddressOf TextBox_Leave
-
         DtgvItemSave.AutoGenerateColumns = False
         DtgvItemRequest.AutoGenerateColumns = False
-
+        DtgvImportItemRequest.AutoGenerateColumns = False
+        DtgvImportItemUpload.AutoGenerateColumns = False
         SetupItemSaveGrid()
         SetupItemRequestGrid()
+        SetupImportItemRequestGrid()
     End Sub
 
     '=======================================================
     ' TEXTBOX TEXT CHANGE HANDLERS
     '=======================================================
     Private Sub TxtSearchItemSave_TextChanged(sender As Object, e As EventArgs) Handles TxtSearchItemSave.TextChanged
-        ' Prevent filtering when placeholder is active
         If TxtSearchItemSave.ForeColor = Color.Gray Then Exit Sub
-
         FilterGrid(DtgvItemSave, TxtSearchItemSave.Text.Trim())
     End Sub
 
     Private Sub TxtItemRequestSearch_TextChanged(sender As Object, e As EventArgs) Handles TxtItemRequestSearch.TextChanged
-        ' Prevent filtering when placeholder is active
         If TxtItemRequestSearch.ForeColor = Color.Gray Then Exit Sub
-
         FilterGrid(DtgvItemRequest, TxtItemRequestSearch.Text.Trim())
     End Sub
 
     Private Sub TxtImportItemUpdateSearch_TextChanged(sender As Object, e As EventArgs) Handles TxtImportItemUpdateSearch.TextChanged
-        ' Prevent filtering when placeholder is active
         If TxtImportItemUpdateSearch.ForeColor = Color.Gray Then Exit Sub
-
         FilterGrid(DtgvImportItemUpload, TxtImportItemUpdateSearch.Text.Trim())
     End Sub
 
     Private Sub TxtImportItemSearch_TextChanged(sender As Object, e As EventArgs) Handles TxtImportItemSearch.TextChanged
-        ' Prevent filtering when placeholder is active
         If TxtImportItemSearch.ForeColor = Color.Gray Then Exit Sub
-
         FilterGrid(DtgvImportItemRequest, TxtImportItemSearch.Text.Trim())
     End Sub
-
     ' =========================
     ' ITEM SAVE GRID
     ' =========================
@@ -109,12 +94,10 @@ Public Class ProductManagement
             .AllowUserToAddRows = False
             .ReadOnly = False
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-
             .Columns.Add(New DataGridViewCheckBoxColumn With {
                 .Name = "chkSelect",
                 .Width = 30
             })
-
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemCd", .HeaderText = "Item Code", .DataPropertyName = "itemCd"})
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemNm", .HeaderText = "Item Name", .DataPropertyName = "itemNm"})
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemClsCd", .HeaderText = "Item Class", .DataPropertyName = "itemClsCd"})
@@ -122,7 +105,6 @@ Public Class ProductManagement
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qtyUnitCd", .HeaderText = "Qty Unit", .DataPropertyName = "qtyUnitCd"})
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "taxTyCd", .HeaderText = "Tax Type", .DataPropertyName = "taxTyCd"})
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "dftPrc", .HeaderText = "Price", .DataPropertyName = "dftPrc"})
-
         End With
     End Sub
 
@@ -131,21 +113,16 @@ Public Class ProductManagement
         Loader.Text = "Loading..."
         Dim repo As New ProductRepository(_connString)
         Dim products = repo.GetAllProducts()
-
-        Dim dt As DataTable =
-            (From p In products Select
+        Dim dt As DataTable = (From p In products Select
                 itemCd = p.ItemCd,
                 itemNm = p.ItemNm,
                 itemClsCd = p.ItemClsCd,
                 pkgUnitCd = p.PackageUnit,
                 qtyUnitCd = p.QuantityUnit,
                 taxTyCd = p.TaxTyCd,
-                dftPrc = p.DftPrc
-            ).ToDataTable()
-
+                dftPrc = p.DftPrc).ToDataTable()
         OriginalTables(DtgvItemSave) = dt
         DtgvItemSave.DataSource = dt
-
         AddHeaderCheckBox()
         Loader.Visible = False
     End Sub
@@ -156,21 +133,15 @@ Public Class ProductManagement
             Loader.Text = "Processing..."
             BtnSendItem.Enabled = False
             BtnSendItem.Text = "Processing..."
-            ' Load integrator settings
             Dim tin = Await _settingsManager.GetSettingAsync("pin")
             Dim bhfId = Await _settingsManager.GetSettingAsync("branch_id")
-
             Dim repo As New ProductRepository(_connString)
-
-            ' Collect all checked item codes first
             Dim selectedItems As New List(Of String)
-
             For Each row As DataGridViewRow In DtgvItemSave.Rows
                 Dim isChecked As Boolean = False
                 If row.Cells("chkSelect").Value IsNot Nothing Then
                     isChecked = CBool(row.Cells("chkSelect").Value)
                 End If
-
                 If isChecked Then
                     Dim code As String = CStr(row.Cells("itemCd").Value)
                     If Not String.IsNullOrWhiteSpace(code) Then
@@ -178,93 +149,59 @@ Public Class ProductManagement
                     End If
                 End If
             Next
-
-            ' If none selected stop here
             If selectedItems.Count = 0 Then
                 CustomAlert.ShowAlert(Me, "No items selected.", "Warning", CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
-
-            ' Main communication loop
             Dim index As Integer = 0
             Dim total As Integer = selectedItems.Count
-
             For Each itemCd In selectedItems
                 index += 1
-
-                '------------------------------------------------------------------------
-                ' 1. Read record from database
-                '------------------------------------------------------------------------
                 Dim product = repo.GetProductByProductCode(itemCd)
-
                 If product Is Nothing Then
                     CustomAlert.ShowAlert(Me, $"Item '{itemCd}' not found in database.", "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
-                    Exit Sub   ' stop entire upload process if any item is missing
+                    Exit Sub   
                 End If
-
-                '------------------------------------------------------------------------
-                ' 2. Build KRA request strictly from DB values
-                '------------------------------------------------------------------------
                 Dim req As New ItemSaveRequest With {
-                .tin = tin,
-                .bhfId = bhfId,
-                .itemCd = product.ItemCd,
-                .itemNm = product.ItemNm,
-                .itemClsCd = product.ItemClsCd,
-                .itemTyCd = If(String.IsNullOrEmpty(product.ItemTyCd), "2", product.ItemTyCd),
-                .itemStdNm = If(String.IsNullOrEmpty(product.ItemStdNm), Nothing, product.ItemStdNm),
-                .orgnNatCd = If(String.IsNullOrEmpty(product.OrgNatCd), "KE", product.OrgNatCd),
-                .pkgUnitCd = product.PackageUnit,
-                .qtyUnitCd = product.QuantityUnit,
-                .taxTyCd = product.TaxTyCd,
-                .dftPrc = product.DftPrc,
-                .grpPrcL1 = If(product.GroupPrice1 > 0D, product.GroupPrice1, product.DftPrc),
-                .grpPrcL2 = If(product.GroupPrice2 > 0D, product.GroupPrice2, product.DftPrc),
-                .grpPrcL3 = If(product.GroupPrice3 > 0D, product.GroupPrice3, product.DftPrc),
-                .isrcAplcbYn = If(String.IsNullOrEmpty(product.IsrcAplcbYn), "N", product.IsrcAplcbYn),
-                .useYn = If(String.IsNullOrEmpty(product.UseYn), "Y", product.UseYn),
-                .regrNm = If(String.IsNullOrEmpty(product.CreatedBy), "Admin", product.CreatedBy),
-                .regrId = If(String.IsNullOrEmpty(product.CreatedBy), "Admin", product.CreatedBy),
-                .modrNm = If(String.IsNullOrEmpty(product.ModifiedBy), "Admin", product.ModifiedBy),
-                .modrId = If(String.IsNullOrEmpty(product.ModifiedBy), "Admin", product.ModifiedBy)
-            }
-
-                '------------------------------------------------------------------------
-                ' 3. Send to KRA
-                '------------------------------------------------------------------------
+                    .tin = tin,
+                    .bhfId = bhfId,
+                    .itemCd = product.ItemCd,
+                    .itemNm = product.ItemNm,
+                    .itemClsCd = product.ItemClsCd,
+                    .itemTyCd = If(String.IsNullOrEmpty(product.ItemTyCd), "2", product.ItemTyCd),
+                    .itemStdNm = If(String.IsNullOrEmpty(product.ItemStdNm), Nothing, product.ItemStdNm),
+                    .orgnNatCd = If(String.IsNullOrEmpty(product.OrgNatCd), "KE", product.OrgNatCd),
+                    .pkgUnitCd = product.PackageUnit,
+                    .qtyUnitCd = product.QuantityUnit,
+                    .taxTyCd = product.TaxTyCd,
+                    .dftPrc = product.DftPrc,
+                    .grpPrcL1 = If(product.GroupPrice1 > 0D, product.GroupPrice1, product.DftPrc),
+                    .grpPrcL2 = If(product.GroupPrice2 > 0D, product.GroupPrice2, product.DftPrc),
+                    .grpPrcL3 = If(product.GroupPrice3 > 0D, product.GroupPrice3, product.DftPrc),
+                    .isrcAplcbYn = If(String.IsNullOrEmpty(product.IsrcAplcbYn), "N", product.IsrcAplcbYn),
+                    .useYn = If(String.IsNullOrEmpty(product.UseYn), "Y", product.UseYn),
+                    .regrNm = If(String.IsNullOrEmpty(product.CreatedBy), "Admin", product.CreatedBy),
+                    .regrId = If(String.IsNullOrEmpty(product.CreatedBy), "Admin", product.CreatedBy),
+                    .modrNm = If(String.IsNullOrEmpty(product.ModifiedBy), "Admin", product.ModifiedBy),
+                    .modrId = If(String.IsNullOrEmpty(product.ModifiedBy), "Admin", product.ModifiedBy)
+                }
                 Dim res = Await _integrator.SaveItemAsync(req)
-
-                '------------------------------------------------------------------------
-                ' 4. Evaluate response
-                '------------------------------------------------------------------------
                 If res Is Nothing Then
                     CustomAlert.ShowAlert(Me, $"NO RESPONSE FROM SERVER for item {itemCd}", "Error", CustomAlert.AlertType.Error,
-                                          CustomAlert.ButtonType.OK)
+                                            CustomAlert.ButtonType.OK)
                     Exit Sub
                 End If
-
                 If res.resultCd <> "000" Then
-                    ' STOP immediately on first error
                     CustomAlert.ShowAlert(Me, $"FAILED at item {itemCd}" & vbCrLf & $"Code: {res.resultCd}" & vbCrLf & $"Message: {res.resultMsg}",
-                                          "Upload Failed", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+                                            "Upload Failed", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                     Exit Sub
                 End If
-
-                '------------------------------------------------------------------------
-                ' 5. If success and NOT last item, continue
-                '------------------------------------------------------------------------
                 If index < total Then
                     Continue For
                 End If
-
-                '------------------------------------------------------------------------
-                ' 6. If last item and all succeeded
-                '------------------------------------------------------------------------
                 CustomAlert.ShowAlert(Me, $"All {total} items uploaded successfully.", "Upload Complete", CustomAlert.AlertType.Success,
-                                      CustomAlert.ButtonType.OK
-            )
+                                        CustomAlert.ButtonType.OK)
             Next
-
         Catch ex As Exception
             CustomAlert.ShowAlert(Me, "Sync Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
@@ -272,7 +209,6 @@ Public Class ProductManagement
             BtnSendItem.Enabled = True
             BtnSendItem.Text = "Upload"
         End Try
-
     End Sub
 
     ' =========================
@@ -289,7 +225,6 @@ Public Class ProductManagement
                 .Name = "chkSelectReq",
                 .Width = 30
             })
-
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemCd", .HeaderText = "Item Code", .DataPropertyName = "itemCd"})
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemNm", .HeaderText = "Item Name", .DataPropertyName = "itemNm"})
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemClsCd", .HeaderText = "Item Class", .DataPropertyName = "itemClsCd"})
@@ -307,18 +242,16 @@ Public Class ProductManagement
             BtnItemRequest.Enabled = False
             BtnItemRequest.Text = "Processing..."
             Dim req As New ItemInfoRequest With {
-            .tin = Await _settingsManager.GetSettingAsync("pin"),
-            .bhfId = Await _settingsManager.GetSettingAsync("branch_id"),
-            .lastReqDt = Await _settingsManager.GetSettingAsync("last_item_request_dt")
-        }
-
+                .tin = Await _settingsManager.GetSettingAsync("pin"),
+                .bhfId = Await _settingsManager.GetSettingAsync("branch_id"),
+                .lastReqDt = Await _settingsManager.GetSettingAsync("last_item_request_dt")
+            }
             Dim res = Await _integrator.GetItemAsync(req)
             If res Is Nothing OrElse res.resultCd <> "000" Then
                 CustomAlert.ShowAlert(Me, "No new item data returned from KRA.", "Info", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
                 Exit Sub
             Else
                 Dim items = res.data.itemList
-
                 Dim dt As DataTable =
                     (From it In items Select
                     itemCd = it.itemCd,
@@ -328,13 +261,10 @@ Public Class ProductManagement
                     pkgUnitCd = it.pkgUnitCd,
                     qtyUnitCd = it.qtyUnitCd,
                     dftPrc = it.dftPrc).ToDataTable()
-
                 OriginalTables(DtgvItemRequest) = dt
                 DtgvItemRequest.DataSource = dt
                 Await _settingsManager.SetSettingAsync("last_item_request_dt", DateTime.Now.ToString("yyyyMMddHHmmss"))
             End If
-
-
         Catch ex As Exception
             CustomAlert.ShowAlert(Me, "Unexpected error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
@@ -349,9 +279,7 @@ Public Class ProductManagement
     ' =========================
     Private Sub FilterGrid(grid As DataGridView, search As String)
         If Not OriginalTables.ContainsKey(grid) Then Exit Sub
-
         Dim dv As DataView = OriginalTables(grid).DefaultView
-
         If String.IsNullOrWhiteSpace(search) Then
             dv.RowFilter = ""
         Else
@@ -360,7 +288,6 @@ Public Class ProductManagement
                 From c As DataColumn In dv.Table.Columns
                 Select $"CONVERT([{c.ColumnName}], 'System.String') LIKE '%{safe}%'")
         End If
-
         grid.DataSource = dv
     End Sub
 
@@ -461,7 +388,83 @@ Public Class ProductManagement
         End If
     End Sub
 
-    Private Sub BtnImportItemRequest_Click(sender As Object, e As EventArgs) Handles BtnImportItemRequest.Click
+    Private Async Sub BtnImportItemRequest_Click(sender As Object, e As EventArgs) Handles BtnImportItemRequest.Click
+        Try
+            Loader.Visible = True
+            Loader.Text = "Processing..."
+            BtnImportItemRequest.Enabled = False
+            BtnImportItemRequest.Text = "Processing..."
+            Dim request As New ImportItemsRequest With {
+                .tin = Await _settingsManager.GetSettingAsync("pin"),
+                .bhfId = Await _settingsManager.GetSettingAsync("branch_id"),
+                .lastReqDt = Await _settingsManager.GetSettingAsync("last_import_item_request_dt")
+            }
+            Dim response = Await _integrator.GetImportItemsAsync(request)
+            If response IsNot Nothing AndAlso response.resultCd = "000" Then
+                If response.data IsNot Nothing AndAlso response.data.itemList IsNot Nothing Then
+                    Dim items = response.data.itemList
+                    _branchImportRepo.Save(items)
+                    Dim dt As DataTable = (From it In items Select
+                        taskCd = it.taskCd,
+                        itemSeq = it.itemSeq,
+                        dclNo = it.dclNo,
+                        hsCd = it.hsCd,
+                        itemNm = it.itemNm,
+                        orgnNatCd = it.orgnNatCd,
+                        pkg = it.pkg,
+                        qty = it.qty,
+                        qtyUnitCd = it.qtyUnitCd,
+                        netWt = it.netWt,
+                        spplrNm = it.spplrNm,
+                        invcFcurAmt = it.invcFcurAmt,
+                        invcFcurCd = it.invcFcurCd).ToDataTable()
+                    OriginalTables(DtgvImportItemRequest) = dt.Copy()
+                    DtgvImportItemRequest.DataSource = dt
+                    Await _settingsManager.SetSettingAsync("last_import_item_request_dt", DateTime.Now.ToString("yyyyMMddHHmmss"))
+                    CustomAlert.ShowAlert(Me, $"{response.data.itemList.Count} items imported successfully.", "Success",
+                                    CustomAlert.AlertType.Success,
+                                    CustomAlert.ButtonType.OK)
+                End If
+            Else
+                CustomAlert.ShowAlert(Me, "Failed to fetch import items." & vbCrLf &
+                                    $"Code: {response?.resultCd}" & vbCrLf &
+                                    $"Message: {response?.resultMsg}", "Error", CustomAlert.AlertType.Error,
+                                    CustomAlert.ButtonType.OK)
+            End If
+        Catch ex As Exception
+            CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+        Finally
+            Loader.Visible = False
+            BtnImportItemRequest.Enabled = True
+            BtnImportItemRequest.Text = "REQUEST"
+        End Try
+    End Sub
+
+    Private Sub SetupImportItemRequestGrid()
+        With DtgvImportItemRequest
+            .Columns.Clear()
+            .AllowUserToAddRows = False
+            .ReadOnly = True
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "taskCd", .HeaderText = "Task Code", .DataPropertyName = "taskCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemSeq", .HeaderText = "Item Seq", .DataPropertyName = "itemSeq"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "dclNo", .HeaderText = "Declaration No", .DataPropertyName = "dclNo"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "hsCd", .HeaderText = "HS Code", .DataPropertyName = "hsCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemNm", .HeaderText = "Item Name", .DataPropertyName = "itemNm"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "orgnNatCd", .HeaderText = "Origin", .DataPropertyName = "orgnNatCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "pkg", .HeaderText = "Package", .DataPropertyName = "pkg"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qty", .HeaderText = "Quantity", .DataPropertyName = "qty"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qtyUnitCd", .HeaderText = "Qty Unit", .DataPropertyName = "qtyUnitCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "netWt", .HeaderText = "Net Weight", .DataPropertyName = "netWt"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "spplrNm", .HeaderText = "Supplier", .DataPropertyName = "spplrNm"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "invcFcurAmt", .HeaderText = "Invoice Amt", .DataPropertyName = "invcFcurAmt"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "invcFcurCd", .HeaderText = "Currency", .DataPropertyName = "invcFcurCd"})
+        End With
+    End Sub
+
+
+    Private Sub BtnImportItemFetch_Click(sender As Object, e As EventArgs) Handles BtnImportItemFetch.Click
 
     End Sub
 End Class
