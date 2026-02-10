@@ -7,26 +7,24 @@ Imports Ui.Helpers
 Public Class Purchases
     Private _settingsManager As SettingsManager
     Private _integrator As VSCUIntegrator
+    Private _purchaseRepo As PurchaseRepository
     Private _logger As Logger
     Private OriginalTables As New Dictionary(Of DataGridView, DataTable)
 
     Public Sub New(connectionString As String)
         InitializeComponent()
-
         ' Initialize settings manager
         _settingsManager = New SettingsManager(connectionString)
-
         ' Initialize logger
         Dim repo As New LogRepository(DatabaseHelper.GetConnectionString())
         _logger = New Logger(repo)
-
         ' Build IntegratorSettings from DB
         Dim baseUrlTask = _settingsManager.GetSettingAsync("base_url")
         Dim pinTask = _settingsManager.GetSettingAsync("pin")
         Dim branchIdTask = _settingsManager.GetSettingAsync("branch_id")
         Dim deviceSerialTask = _settingsManager.GetSettingAsync("device_serial")
         Dim timeoutTask = _settingsManager.GetSettingAsync("timeout")
-
+        _purchaseRepo = New PurchaseRepository(connectionString)
         Task.WhenAll(baseUrlTask, pinTask, branchIdTask, deviceSerialTask, timeoutTask).ContinueWith(Sub(t)
                                                                                                          Dim settings As New IntegratorSettings With {
                                                                                                             .BaseUrl = baseUrlTask.Result,
@@ -44,28 +42,23 @@ Public Class Purchases
         ' Add placeholder text
         SetPlaceholder(TxtSearchPurchases, "Start typing to search...")
         SetPlaceholder(TxtPurchaseSendSearch, "Start typing to search...")
-
         ' Attach placeholder handlers
         AddHandler TxtSearchPurchases.Enter, AddressOf TextBox_Enter
         AddHandler TxtSearchPurchases.Leave, AddressOf TextBox_Leave
-
         AddHandler TxtPurchaseSendSearch.Enter, AddressOf TextBox_Enter
         AddHandler TxtPurchaseSendSearch.Leave, AddressOf TextBox_Leave
-
     End Sub
 
     Private Sub TxtSearchPurchases_TextChanged(sender As Object, e As EventArgs) Handles TxtSearchPurchases.TextChanged
         ' Prevent filtering when placeholder is active
         If TxtSearchPurchases.ForeColor = Color.Gray Then Exit Sub
-
         FilterGrid(DtgvPurchasesGet, TxtSearchPurchases.Text.Trim())
     End Sub
 
     Private Sub TxtPurchaseSendSearch_TextChanged(sender As Object, e As EventArgs) Handles TxtPurchaseSendSearch.TextChanged
         ' Prevent filtering when placeholder is active
         If TxtPurchaseSendSearch.ForeColor = Color.Gray Then Exit Sub
-
-        FilterGrid(DtgvPurchaseSend, TxtPurchaseSendSearch.Text.Trim())
+        FilterGrid(DgvPurchaseSend, TxtPurchaseSendSearch.Text.Trim())
     End Sub
 
     Private Sub SetPlaceholder(txt As TextBox, placeholder As String)
@@ -95,10 +88,8 @@ Public Class Purchases
 
     Private Sub FilterGrid(grid As DataGridView, search As String)
         If Not OriginalTables.ContainsKey(grid) Then Exit Sub
-
         Dim dt As DataTable = OriginalTables(grid)
         Dim dv As DataView = dt.DefaultView
-
         If String.IsNullOrWhiteSpace(search) Then
             dv.RowFilter = ""
         Else
@@ -109,10 +100,8 @@ Public Class Purchases
             Next
             dv.RowFilter = String.Join(" OR ", filters)
         End If
-
         ' Clear rows but keep columns
         grid.Rows.Clear()
-
         ' Repopulate dynamically
         For Each rowView As DataRowView In dv
             Dim values As New List(Of Object)
@@ -135,23 +124,19 @@ Public Class Purchases
             Loader.Text = "Fetching..."
             BtnPurchaseGet.Enabled = False
             BtnPurchaseGet.Text = "Processing..."
-
             ' Get integrator settings
             Dim tin = Await _settingsManager.GetSettingAsync("pin")
             Dim bhfId = Await _settingsManager.GetSettingAsync("branch_id")
             Dim lastReqDt = Await _settingsManager.GetSettingAsync("last_purchase_get_dt")
-
             If String.IsNullOrWhiteSpace(lastReqDt) Then
                 lastReqDt = "20180101000000"
             End If
-
             ' Build request
             Dim req As New PurchaseInfoRequest With {
                 .tin = tin,
                 .bhfId = bhfId,
                 .lastReqDt = lastReqDt
             }
-
             ' Call integrator
             Dim res = Await _integrator.GetPurchaseAsync(req)
 
@@ -159,12 +144,9 @@ Public Class Purchases
                 CustomAlert.ShowAlert(Me, "No purchase data returned.", "Info", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
-
             Dim purchases = res.data.saleList
-
             ' Setup grid
             SetupPurchaseGetGrid()
-
             ' Load rows
             For Each p In purchases
                 DtgvPurchasesGet.Rows.Add(
@@ -178,7 +160,6 @@ Public Class Purchases
                     p.totTaxAmt
                 )
             Next
-
             ' Store a DataTable for searching
             OriginalTables(DtgvPurchasesGet) = (From p In purchases Select p.spplrTin,
                         p.spplrNm,
@@ -189,13 +170,10 @@ Public Class Purchases
                         p.totAmt,
                         p.totTaxAmt
                 ).ToDataTable()
-
             ' Update last request timestamp
             Await _settingsManager.SetSettingAsync("last_purchase_get_dt", DateTime.Now.ToString("yyyyMMddHHmmss"))
-
             CustomAlert.ShowAlert(Me, $"Loaded {purchases.Count} purchase records.", "Success", CustomAlert.AlertType.Success,
-                                  CustomAlert.ButtonType.OK)
-
+                                    CustomAlert.ButtonType.OK)
         Catch ex As Exception
             CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
@@ -204,6 +182,7 @@ Public Class Purchases
             BtnPurchaseGet.Text = "FETCH"
         End Try
     End Sub
+
     Private Sub SetupPurchaseGetGrid()
         With DtgvPurchasesGet
             .Columns.Clear()
@@ -211,7 +190,6 @@ Public Class Purchases
             .AllowUserToAddRows = False
             .ReadOnly = True
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-
             .Columns.Add("spplrTin", "Supplier TIN")
             .Columns.Add("spplrNm", "Supplier Name")
             .Columns.Add("spplrBhfId", "Branch ID")
@@ -223,4 +201,79 @@ Public Class Purchases
         End With
     End Sub
 
+    Private Sub BtnPurchaseFetch_Click(sender As Object, e As EventArgs) Handles BtnPurchaseFetch.Click
+        Dim dt = _purchaseRepo.GetAll()
+        DgvPurchaseSend.DataSource = dt
+        DgvPurchaseSend.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+    End Sub
+
+    Private Async Sub BtnUploadPurchase_Click(sender As Object, e As EventArgs) Handles BtnUploadPurchase.Click
+        DgvPurchaseSend.EndEdit()
+        For Each row As DataGridViewRow In DgvPurchaseSend.Rows
+            If row.IsNewRow Then Continue For
+            Dim isChecked = If(row.Cells("chkSelect").Value, False)
+            If Not isChecked Then Continue For
+            If CBool(row.Cells("is_uploaded").Value) Then Continue For
+            Dim id = CInt(row.Cells("id").Value)
+            Await UploadPurchase(id)
+        Next
+        BtnPurchaseFetch_Click(Nothing, Nothing)
+    End Sub
+
+    Private Async Function UploadPurchase(id As Integer) As Task
+        Dim purchase = _purchaseRepo.GetById(id)
+        Dim request = BuildRequest(purchase)
+        Dim response = Await _integrator.SavePurchaseAsync(request)
+        If response IsNot Nothing AndAlso response.resultCd = "000" Then
+            _purchaseRepo.MarkAsUploaded(id)
+        Else
+            Throw New Exception(response?.resultMsg)
+        End If
+    End Function
+
+    Private Function BuildRequest(purchase As PurchaseTransaction) As PurchaseTransactionRequest
+        Dim req As New PurchaseTransactionRequest With {
+            .invcNo = purchase.InvcNo,
+            .orgInvcNo = 0,
+            .regTyCd = purchase.RegTyCd,
+            .pchsTyCd = purchase.PchsTyCd,
+            .rcptTyCd = purchase.RcptTyCd,
+            .pmtTyCd = purchase.PmtTyCd,
+            .pchsSttsCd = purchase.PchsSttsCd,
+            .cfmDt = DateTime.Now.ToString("yyyyMMddHHmmss"),
+            .pchsDt = purchase.PchsDt,
+            .totItemCnt = purchase.Items.Count,
+            .totTaxblAmt = purchase.TotTaxblAmt,
+            .totTaxAmt = purchase.TotTaxAmt,
+            .totAmt = purchase.TotAmt,
+            .remark = purchase.Remark,
+            .regrNm = "Admin",
+            .regrId = "Admin",
+            .modrNm = "Admin",
+            .modrId = "Admin",
+            .itemList = New List(Of PurchaseTransactionItem)
+        }
+        For Each it In purchase.Items
+            req.itemList.Add(New PurchaseTransactionItem With {
+                .ItemSeq = it.ItemSeq,
+                .ItemCd = it.ItemCd,
+                .ItemClsCd = it.ItemClsCd,
+                .ItemNm = it.ItemNm,
+                .pkgUnitCd = "NT",
+                .pkg = 1,
+                .qtyUnitCd = "U",
+                .Qty = it.Qty,
+                .Prc = it.Prc,
+                .splyAmt = it.TotAmt,
+                .dcRt = 0,
+                .dcAmt = 0,
+                .taxblAmt = it.TotAmt,
+                .TaxTyCd = it.TaxTyCd,
+                .TaxAmt = it.TaxAmt,
+                .TotAmt = it.TotAmt,
+                .itemExprDt = Nothing
+            })
+        Next
+        Return req
+    End Function
 End Class

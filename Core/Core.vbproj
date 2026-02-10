@@ -106,8 +106,6 @@
     <Compile Include="Models\Item\Classification\ItemClassificationEntry.vb" />
     <Compile Include="Models\Item\Classification\ItemClassificationRequest.vb" />
     <Compile Include="Models\Item\Classification\ItemClassificationResponse.vb" />
-    <Compile Include="Models\Import\ImportedItemRequest.vb" />
-    <Compile Include="Models\Import\ImportedItemResponse.vb" />
     <Compile Include="Models\Init\InitInfoRequest.vb" />
     <Compile Include="Models\Init\InitInfoResponse.vb" />
     <Compile Include="Models\Item\Import\ImportItemStatus.vb" />
@@ -127,8 +125,12 @@
     <Compile Include="Models\Notice\VscuNotice.vb" />
     <Compile Include="Models\Purchase\PurchaseInfoRequest.vb" />
     <Compile Include="Models\Purchase\PurchaseInfoResponse.vb" />
+    <Compile Include="Models\Purchase\PurchaseTransaction.vb" />
+    <Compile Include="Models\Purchase\PurchaseTransactionItem.vb" />
     <Compile Include="Models\Purchase\PurchaseRequest.vb" />
     <Compile Include="Models\Purchase\PurchaseResponse.vb" />
+    <Compile Include="Models\Purchase\PurchaseTransactionRequest.vb" />
+    <Compile Include="Models\Purchase\PurchaseTransactionResponse.vb" />
     <Compile Include="Models\Receipt\Receipt.vb" />
     <Compile Include="Models\Sale\Invoice\InvoiceMaster.vb" />
     <Compile Include="Models\Sale\SalesRequest.vb" />

@@ -349,14 +349,18 @@ Namespace Services
         ' -----------------------
         ' 7) Purchase (POST)
         ' -----------------------
-        Public Async Function SendPurchaseAsync(req As PurchaseRequest) As Task(Of PurchaseResponse)
+        Public Async Function SavePurchaseAsync(request As PurchaseTransactionRequest) As Task(Of PurchaseTransactionResponse)
             Dim endpoint = ApiEndpoints.PURCHASE_SAVE
-            Dim resp = Await SendAndDeserializeAsync(Of PurchaseResponse)(endpoint, req, isGet:=False)
-            If resp IsNot Nothing Then Return resp
-
-            Dim fallback = MakeBaseFallback(Of PurchaseResponse)("VSCU error: failed to call Purchase")
-            fallback.result = New PurchaseData() With {.purchaseId = req.purchaseId, .accepted = False}
-            Return fallback
+            Dim resp = Await SendAndDeserializeAsync(Of PurchaseTransactionResponse)(endpoint, request, isGet:=False)
+            If resp IsNot Nothing Then
+                Return resp
+            End If
+            ' fallback if API call fails
+            Dim fb As New PurchaseTransactionResponse
+            fb.resultCd = "Error"
+            fb.resultMsg = "VSCU error: Failed to call SavePurchase"
+            fb.data = Nothing
+            Return fb
         End Function
 
         ' ---------------------------
@@ -364,16 +368,13 @@ Namespace Services
         ' ---------------------------
         Public Async Function GetPurchaseAsync(query As PurchaseInfoRequest) As Task(Of PurchaseInfoResponse)
             Dim endpoint = ApiEndpoints.PURCHASE_SELECT
-
             Dim resp = Await SendAndDeserializeAsync(Of PurchaseInfoResponse)(endpoint, query, isGet:=False)
-
             If resp IsNot Nothing AndAlso resp.data IsNot Nothing Then
                 Return resp
             End If
-
             ' fallback if API failed
             Dim fb As New PurchaseInfoResponse
-            fb.resultCd = "999"
+            fb.resultCd = "Error"
             fb.resultMsg = "No data returned"
             fb.data = New PurchaseInfoData With {.saleList = New List(Of PurchaseRecord)}
             Return fb
