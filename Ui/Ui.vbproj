@@ -194,6 +194,7 @@
     <Compile Include="Repo\BranchUserRepository.vb" />
     <Compile Include="Repo\CodeMappedRepository.vb" />
     <Compile Include="Repo\CustomerRepository.vb" />
+    <Compile Include="Repo\ImportItemStatusCodeRepository.vb" />
     <Compile Include="Repo\ItemClassificationRepository.vb" />
     <Compile Include="Repo\ItemInfoRepository.vb" />
     <Compile Include="Repo\NoticeRepository.vb" />

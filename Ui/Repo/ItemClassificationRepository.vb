@@ -43,5 +43,22 @@ Namespace Repo.Item.Classification
                 End Using
             End Using
         End Function
+
+        Public Function GetAll() As List(Of ItemClassificationEntity)
+            Dim list As New List(Of ItemClassificationEntity)
+            Using conn As New MySqlConnection(_connString)
+                conn.Open()
+                Dim cmd As New MySqlCommand("SELECT itemClsCd, itemClsNm FROM itemclslist", conn)
+                Using rdr = cmd.ExecuteReader()
+                    While rdr.Read()
+                        list.Add(New ItemClassificationEntity With {
+                            .ItemClsCd = rdr("itemClsCd").ToString(),
+                            .ItemClsNm = rdr("itemClsNm").ToString()
+                        })
+                    End While
+                End Using
+            End Using
+            Return list
+        End Function
     End Class
 End Namespace

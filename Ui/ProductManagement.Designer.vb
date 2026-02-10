@@ -22,6 +22,7 @@ Partial Class ProductManagement
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabItemSave = New System.Windows.Forms.TabPage()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
@@ -312,8 +313,8 @@ Partial Class ProductManagement
         '
         'DtgvImportItemUpload
         '
-        Me.DtgvImportItemUpload.AllowUserToAddRows = False
-        Me.DtgvImportItemUpload.AllowUserToDeleteRows = False
+        DataGridViewCellStyle1.BackColor = System.Drawing.Color.Silver
+        Me.DtgvImportItemUpload.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         Me.DtgvImportItemUpload.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DtgvImportItemUpload.Dock = System.Windows.Forms.DockStyle.Fill
         Me.DtgvImportItemUpload.Location = New System.Drawing.Point(3, 45)

@@ -6,6 +6,7 @@ Imports Core.Models.Item.Product
 Imports Core.Services
 Imports Ui.Helpers
 Imports Ui.Repo
+Imports Ui.Repo.Item.Classification
 
 Public Class ProductManagement
     Private _settingsManager As SettingsManager
@@ -467,13 +468,28 @@ Public Class ProductManagement
 
     Private Sub BtnSaveImportItemStatus_Click(sender As Object, e As EventArgs) Handles BtnSaveImportItemStatus.Click
         Dim repo As New BranchImportItemStatusRepository(_connString)
+        Dim saveCount As Integer = 0
         For Each row As DataGridViewRow In DtgvImportItemUpload.Rows
             If row.IsNewRow Then Continue For
+            ' Skip empty rows
+            If row.Cells("taskCd").Value Is Nothing OrElse String.IsNullOrWhiteSpace(row.Cells("taskCd").Value.ToString()) Then
+                Continue For
+            End If
+            Dim rawDate = row.Cells("dclDe").Value
+
+            Dim formattedDate As String = Nothing
+
+            If rawDate IsNot Nothing AndAlso Not IsDBNull(rawDate) Then
+                Dim parsedDate As DateTime
+                If DateTime.TryParse(rawDate.ToString(), parsedDate) Then
+                    formattedDate = parsedDate.ToString("yyyy-MM-dd")
+                End If
+            End If
             Dim entity As New ImportItemStatus With {
-                .Id = If(row.Cells("id").Value IsNot Nothing, CInt(row.Cells("id").Value), 0),
+                .Id = If(row.Cells("id").Value IsNot Nothing AndAlso Not IsDBNull(row.Cells("id").Value), CInt(row.Cells("id").Value), 0),
                 .TaskCd = row.Cells("taskCd").Value?.ToString(),
-                .DclDe = row.Cells("dclDe").Value?.ToString(),
-                .ItemSeq = Convert.ToInt32(row.Cells("itemSeq").Value),
+                .DclDe = formattedDate,
+                .ItemSeq = If(row.Cells("itemSeq").Value IsNot Nothing, Convert.ToInt32(row.Cells("itemSeq").Value), 0),
                 .HsCd = row.Cells("hsCd").Value?.ToString(),
                 .ItemClsCd = row.Cells("itemClsCd").Value?.ToString(),
                 .ItemCd = row.Cells("itemCd").Value?.ToString(),
@@ -483,8 +499,14 @@ Public Class ProductManagement
                 .ModrId = "Admin"
             }
             repo.Save(entity)
+            saveCount += 1
         Next
-        CustomAlert.ShowAlert(Me, "Saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+        If saveCount = 0 Then
+            CustomAlert.ShowAlert(Me, "No valid records to save.", "Info", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+            Return
+        End If
+        CustomAlert.ShowAlert(Me,
+        $"{saveCount} record(s) saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
         LoadImportStatusGrid()
     End Sub
 
@@ -511,27 +533,36 @@ Public Class ProductManagement
                     .tin = tin,
                     .bhfId = bhfId,
                     .taskCd = row.Cells("taskCd").Value.ToString(),
-                    .dclDe = row.Cells("dclDe").Value.ToString(),
                     .itemSeq = Convert.ToInt32(row.Cells("itemSeq").Value),
                     .hsCd = row.Cells("hsCd").Value.ToString(),
                     .itemClsCd = row.Cells("itemClsCd").Value.ToString(),
                     .itemCd = row.Cells("itemCd").Value.ToString(),
-                    .imptItemSttsCd = row.Cells("imptItemSttsCd").Value.ToString(),
                     .remark = row.Cells("remark").Value?.ToString(),
                     .modrNm = "Admin",
                     .modrId = "Admin"
                 }
+                Dim parsedDate As DateTime
+                If DateTime.TryParse(row.Cells("dclDe").Value?.ToString(), parsedDate) Then
+                    req.dclDe = parsedDate.ToString("yyyyMMdd")
+                Else
+                    CustomAlert.ShowAlert(Me, $"Invalid Declaration Date for Task {req.taskCd}. Please correct the date format.", "Validation Error",
+                                            CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
+                End If
+                Dim statusValue = row.Cells("imptItemSttsCd").Value
+                If statusValue Is Nothing OrElse String.IsNullOrWhiteSpace(statusValue.ToString()) Then
+                    CustomAlert.ShowAlert(Me, $"Status Code is required for Task {row.Cells("taskCd").Value}", "Validation Error",
+                                            CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
+                End If
+                req.imptItemSttsCd = statusValue.ToString()
                 Dim response = Await _integrator.UpdateImportItemStatusAsync(req)
                 If response IsNot Nothing AndAlso response.resultCd = "000" Then
                     repo.MarkAsUploaded(CInt(row.Cells("id").Value))
                 Else
-                    CustomAlert.ShowAlert(Me,
-                $"Upload failed for Task {req.taskCd}" & vbCrLf &
-                $"Code: {response?.resultCd}" & vbCrLf &
-                $"Message: {response?.resultMsg}",
-                "Error",
-                CustomAlert.AlertType.Error,
-                CustomAlert.ButtonType.OK)
+                    CustomAlert.ShowAlert(Me, $"Upload failed for Task {req.taskCd}" & vbCrLf & $"Code: {response?.resultCd}" & vbCrLf &
+                                            $"Message: {response?.resultMsg}",
+                                            "Error",
+                                            CustomAlert.AlertType.Error,
+                                            CustomAlert.ButtonType.OK)
                     Exit Sub
                 End If
             Next
@@ -549,8 +580,11 @@ Public Class ProductManagement
     Private Sub SetupImportItemUploadGrid()
         With DtgvImportItemUpload
             .Columns.Clear()
+            .ReadOnly = False
             .AllowUserToAddRows = True
             .AutoGenerateColumns = False
+            .AllowUserToDeleteRows = True
+            .EditMode = DataGridViewEditMode.EditOnEnter
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             .Columns.Add(New DataGridViewCheckBoxColumn With {
                 .Name = "chkSelect",
@@ -570,7 +604,7 @@ Public Class ProductManagement
                 .Name = "dclDe",
                 .HeaderText = "Declaration Date",
                 .DataPropertyName = "dclDe"
-            })
+                            })
             .Columns.Add(New DataGridViewTextBoxColumn With {
                 .Name = "itemSeq",
                 .HeaderText = "Item Seq",
@@ -581,21 +615,31 @@ Public Class ProductManagement
                 .HeaderText = "HS Code",
                 .DataPropertyName = "hsCd"
             })
-            .Columns.Add(New DataGridViewTextBoxColumn With {
+            Dim itemClsColumn As New DataGridViewComboBoxColumn With {
                 .Name = "itemClsCd",
                 .HeaderText = "Item Class",
-                .DataPropertyName = "itemClsCd"
-            })
+                .DataPropertyName = "itemClsCd",
+                .DisplayMember = "itemClsNm",
+                .ValueMember = "itemClsCd"
+            }
+            Dim clsRepo As New ItemClassificationRepository(_connString)
+            itemClsColumn.DataSource = clsRepo.GetAll()
+            .Columns.Add(itemClsColumn)
             .Columns.Add(New DataGridViewTextBoxColumn With {
                 .Name = "itemCd",
                 .HeaderText = "Item Code",
                 .DataPropertyName = "itemCd"
             })
-            .Columns.Add(New DataGridViewTextBoxColumn With {
+            Dim statusColumn As New DataGridViewComboBoxColumn With {
                 .Name = "imptItemSttsCd",
-                .HeaderText = "Status Code",
-                .DataPropertyName = "imptItemSttsCd"
-            })
+                .HeaderText = "Status",
+                .DataPropertyName = "imptItemSttsCd",
+                .DisplayMember = "statusName",
+                .ValueMember = "statusCode"
+            }
+            Dim statusRepo As New ImportItemStatusCodeRepository(_connString)
+            statusColumn.DataSource = statusRepo.GetAll()
+            .Columns.Add(statusColumn)
             .Columns.Add(New DataGridViewTextBoxColumn With {
                 .Name = "remark",
                 .HeaderText = "Remark",
