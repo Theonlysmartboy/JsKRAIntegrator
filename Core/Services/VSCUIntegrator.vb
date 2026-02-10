@@ -300,9 +300,9 @@ Namespace Services
             Return fallback
         End Function
 
-        ' -----------------------
-        ' 5d) Imported Item (POST)
-        ' -----------------------
+        ' ---------------------------------
+        ' 5d) Imported Item Update (POST)
+        ' ----------------------------------
         Public Async Function UpdateImportItemStatusAsync(req As ImportItemStatusUpdateRequest) As Task(Of ImportItemStatusUpdateResponse)
             Dim endpoint = ApiEndpoints.IMPORT_ITEM_UPDATE
             Dim resp = Await SendAndDeserializeAsync(Of ImportItemStatusUpdateResponse)(endpoint, req, isGet:=False)
@@ -315,9 +315,9 @@ Namespace Services
             }
         End Function
 
-        ' -----------------------
-        ' 5e) Imported Items (POST)
-        ' -----------------------
+        ' -----------------------------------
+        ' 5e) Imported Items select (POST)
+        ' -----------------------------------
         Public Async Function GetImportItemsAsync(req As ImportItemsRequest) As Task(Of ImportItemsResponse)
             Dim endpoint = ApiEndpoints.IMPORT_ITEM_SELECT
             Dim resp = Await SendAndDeserializeAsync(Of ImportItemsResponse)(endpoint, req, isGet:=False)
@@ -350,7 +350,7 @@ Namespace Services
         ' 7) Purchase (POST)
         ' -----------------------
         Public Async Function SendPurchaseAsync(req As PurchaseRequest) As Task(Of PurchaseResponse)
-            Dim endpoint = ApiEndpoints.PURCHASE
+            Dim endpoint = ApiEndpoints.PURCHASE_SAVE
             Dim resp = Await SendAndDeserializeAsync(Of PurchaseResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
 
@@ -359,11 +359,11 @@ Namespace Services
             Return fallback
         End Function
 
-        ' -----------------------
-        ' 7b) Purchase GET
-        ' -----------------------
+        ' ---------------------------
+        ' 7b) Purchase Request (POST)
+        ' ---------------------------
         Public Async Function GetPurchaseAsync(query As PurchaseInfoRequest) As Task(Of PurchaseInfoResponse)
-            Dim endpoint = ApiEndpoints.PURCHASE
+            Dim endpoint = ApiEndpoints.PURCHASE_SELECT
 
             Dim resp = Await SendAndDeserializeAsync(Of PurchaseInfoResponse)(endpoint, query, isGet:=False)
 
@@ -435,7 +435,7 @@ Namespace Services
 
         ' -----------------------
         ' Generic helper: call arbitrary endpoint with raw JSON and get back raw body
-        ' Useful for tests and troubleshooting
+        ' For tests and troubleshooting
         ' -----------------------
         Public Async Function CallRawAsync(endpoint As String, payloadJson As String) As Task(Of String)
             Dim fullUrl = _client.FullUrl(endpoint)

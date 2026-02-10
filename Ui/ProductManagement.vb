@@ -85,6 +85,7 @@ Public Class ProductManagement
         If TxtImportItemSearch.ForeColor = Color.Gray Then Exit Sub
         FilterGrid(DtgvImportItemRequest, TxtImportItemSearch.Text.Trim())
     End Sub
+
     ' =========================
     ' ITEM SAVE GRID
     ' =========================
@@ -476,9 +477,7 @@ Public Class ProductManagement
                 Continue For
             End If
             Dim rawDate = row.Cells("dclDe").Value
-
             Dim formattedDate As String = Nothing
-
             If rawDate IsNot Nothing AndAlso Not IsDBNull(rawDate) Then
                 Dim parsedDate As DateTime
                 If DateTime.TryParse(rawDate.ToString(), parsedDate) Then
