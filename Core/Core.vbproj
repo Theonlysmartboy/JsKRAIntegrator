@@ -100,6 +100,7 @@
     <Compile Include="Models\Code\CodeDataEntry.vb" />
     <Compile Include="Models\Code\CodeDataRequest.vb" />
     <Compile Include="Models\Code\CodeDataResponse.vb" />
+    <Compile Include="Models\Item\Classification\ItemClassificationEntity.vb" />
     <Compile Include="Models\Item\Import\ImportItemsResponse.vb" />
     <Compile Include="Models\Item\Import\ImportItemsRequest.vb" />
     <Compile Include="Models\Item\Classification\ItemClassificationEntry.vb" />
@@ -109,6 +110,10 @@
     <Compile Include="Models\Import\ImportedItemResponse.vb" />
     <Compile Include="Models\Init\InitInfoRequest.vb" />
     <Compile Include="Models\Init\InitInfoResponse.vb" />
+    <Compile Include="Models\Item\Import\ImportItemStatus.vb" />
+    <Compile Include="Models\Item\Import\ImportItemStatusCode.vb" />
+    <Compile Include="Models\Item\Import\ImportItemStatusUpdateRequest.vb" />
+    <Compile Include="Models\Item\Import\ImportItemStatusUpdateResponse.vb" />
     <Compile Include="Models\Item\Info\ItemInfoEntry.vb" />
     <Compile Include="Models\Item\Product\ItemSaveRequest.vb" />
     <Compile Include="Models\Item\Product\ItemSaveResponse.vb" />

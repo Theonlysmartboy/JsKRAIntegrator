@@ -22,6 +22,7 @@ Partial Class ProductManagement
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabItemSave = New System.Windows.Forms.TabPage()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
@@ -50,6 +51,8 @@ Partial Class ProductManagement
         Me.TxtImportItemSearch = New System.Windows.Forms.TextBox()
         Me.DtgvImportItemRequest = New System.Windows.Forms.DataGridView()
         Me.Loader = New JsToolBox.Loaders.DualRingLoader()
+        Me.TableLayoutPanel9 = New System.Windows.Forms.TableLayoutPanel()
+        Me.BtnSaveImportItemStatus = New System.Windows.Forms.Button()
         Me.TabControl1.SuspendLayout()
         Me.TabItemSave.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
@@ -67,6 +70,7 @@ Partial Class ProductManagement
         Me.TableLayoutPanel7.SuspendLayout()
         Me.TableLayoutPanel8.SuspendLayout()
         CType(Me.DtgvImportItemRequest, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TableLayoutPanel9.SuspendLayout()
         Me.SuspendLayout()
         '
         'TabControl1
@@ -125,9 +129,9 @@ Partial Class ProductManagement
         'TableLayoutPanel2
         '
         Me.TableLayoutPanel2.ColumnCount = 3
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
         Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 359.0!))
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
         Me.TableLayoutPanel2.Controls.Add(Me.BtnSendItem, 2, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.BtnFetch, 0, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.TxtSearchItemSave, 1, 0)
@@ -135,7 +139,7 @@ Partial Class ProductManagement
         Me.TableLayoutPanel2.Location = New System.Drawing.Point(3, 3)
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
         Me.TableLayoutPanel2.RowCount = 1
-        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel2.Size = New System.Drawing.Size(1173, 48)
         Me.TableLayoutPanel2.TabIndex = 1
         '
@@ -162,9 +166,9 @@ Partial Class ProductManagement
         'TxtSearchItemSave
         '
         Me.TxtSearchItemSave.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.TxtSearchItemSave.Location = New System.Drawing.Point(410, 25)
+        Me.TxtSearchItemSave.Location = New System.Drawing.Point(296, 25)
         Me.TxtSearchItemSave.Name = "TxtSearchItemSave"
-        Me.TxtSearchItemSave.Size = New System.Drawing.Size(401, 20)
+        Me.TxtSearchItemSave.Size = New System.Drawing.Size(580, 20)
         Me.TxtSearchItemSave.TabIndex = 4
         '
         'TabItemRequest
@@ -196,9 +200,9 @@ Partial Class ProductManagement
         'TableLayoutPanel6
         '
         Me.TableLayoutPanel6.ColumnCount = 3
-        Me.TableLayoutPanel6.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
-        Me.TableLayoutPanel6.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
-        Me.TableLayoutPanel6.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
+        Me.TableLayoutPanel6.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
+        Me.TableLayoutPanel6.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel6.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
         Me.TableLayoutPanel6.Controls.Add(Me.TxtItemRequestSearch, 1, 0)
         Me.TableLayoutPanel6.Controls.Add(Me.BtnItemRequest, 0, 0)
         Me.TableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill
@@ -212,9 +216,9 @@ Partial Class ProductManagement
         'TxtItemRequestSearch
         '
         Me.TxtItemRequestSearch.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.TxtItemRequestSearch.Location = New System.Drawing.Point(393, 23)
+        Me.TxtItemRequestSearch.Location = New System.Drawing.Point(296, 23)
         Me.TxtItemRequestSearch.Name = "TxtItemRequestSearch"
-        Me.TxtItemRequestSearch.Size = New System.Drawing.Size(384, 20)
+        Me.TxtItemRequestSearch.Size = New System.Drawing.Size(580, 20)
         Me.TxtItemRequestSearch.TabIndex = 1
         '
         'BtnItemRequest
@@ -248,24 +252,26 @@ Partial Class ProductManagement
         'TableLayoutPanel3
         '
         Me.TableLayoutPanel3.ColumnCount = 1
-        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel3.Controls.Add(Me.TableLayoutPanel4, 0, 0)
         Me.TableLayoutPanel3.Controls.Add(Me.DtgvImportItemUpload, 0, 1)
+        Me.TableLayoutPanel3.Controls.Add(Me.TableLayoutPanel9, 0, 2)
         Me.TableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel3.Location = New System.Drawing.Point(0, 0)
         Me.TableLayoutPanel3.Name = "TableLayoutPanel3"
-        Me.TableLayoutPanel3.RowCount = 2
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.141791!))
-        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90.85821!))
+        Me.TableLayoutPanel3.RowCount = 3
+        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.0!))
+        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 84.0!))
+        Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.0!))
         Me.TableLayoutPanel3.Size = New System.Drawing.Size(1185, 533)
         Me.TableLayoutPanel3.TabIndex = 0
         '
         'TableLayoutPanel4
         '
         Me.TableLayoutPanel4.ColumnCount = 3
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
-        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
+        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
+        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel4.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
         Me.TableLayoutPanel4.Controls.Add(Me.BtnImportItemFetch, 0, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.BtnImportItemUpload, 2, 0)
         Me.TableLayoutPanel4.Controls.Add(Me.TxtImportItemUpdateSearch, 1, 0)
@@ -274,7 +280,7 @@ Partial Class ProductManagement
         Me.TableLayoutPanel4.Name = "TableLayoutPanel4"
         Me.TableLayoutPanel4.RowCount = 1
         Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel4.Size = New System.Drawing.Size(1179, 42)
+        Me.TableLayoutPanel4.Size = New System.Drawing.Size(1179, 36)
         Me.TableLayoutPanel4.TabIndex = 0
         '
         'BtnImportItemFetch
@@ -282,7 +288,7 @@ Partial Class ProductManagement
         Me.BtnImportItemFetch.Dock = System.Windows.Forms.DockStyle.Left
         Me.BtnImportItemFetch.Location = New System.Drawing.Point(3, 3)
         Me.BtnImportItemFetch.Name = "BtnImportItemFetch"
-        Me.BtnImportItemFetch.Size = New System.Drawing.Size(75, 36)
+        Me.BtnImportItemFetch.Size = New System.Drawing.Size(75, 30)
         Me.BtnImportItemFetch.TabIndex = 2
         Me.BtnImportItemFetch.Text = "FETCH"
         Me.BtnImportItemFetch.UseVisualStyleBackColor = True
@@ -292,29 +298,29 @@ Partial Class ProductManagement
         Me.BtnImportItemUpload.Dock = System.Windows.Forms.DockStyle.Right
         Me.BtnImportItemUpload.Location = New System.Drawing.Point(1101, 3)
         Me.BtnImportItemUpload.Name = "BtnImportItemUpload"
-        Me.BtnImportItemUpload.Size = New System.Drawing.Size(75, 36)
+        Me.BtnImportItemUpload.Size = New System.Drawing.Size(75, 30)
         Me.BtnImportItemUpload.TabIndex = 3
         Me.BtnImportItemUpload.Text = "UPLOAD"
         Me.BtnImportItemUpload.UseVisualStyleBackColor = True
         '
         'TxtImportItemUpdateSearch
         '
-        Me.TxtImportItemUpdateSearch.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.TxtImportItemUpdateSearch.Location = New System.Drawing.Point(395, 19)
+        Me.TxtImportItemUpdateSearch.Dock = System.Windows.Forms.DockStyle.Top
+        Me.TxtImportItemUpdateSearch.Location = New System.Drawing.Point(297, 3)
         Me.TxtImportItemUpdateSearch.Name = "TxtImportItemUpdateSearch"
-        Me.TxtImportItemUpdateSearch.Size = New System.Drawing.Size(386, 20)
+        Me.TxtImportItemUpdateSearch.Size = New System.Drawing.Size(583, 20)
         Me.TxtImportItemUpdateSearch.TabIndex = 4
         '
         'DtgvImportItemUpload
         '
-        Me.DtgvImportItemUpload.AllowUserToAddRows = False
-        Me.DtgvImportItemUpload.AllowUserToDeleteRows = False
+        DataGridViewCellStyle1.BackColor = System.Drawing.Color.Silver
+        Me.DtgvImportItemUpload.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         Me.DtgvImportItemUpload.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DtgvImportItemUpload.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.DtgvImportItemUpload.Location = New System.Drawing.Point(3, 51)
+        Me.DtgvImportItemUpload.Location = New System.Drawing.Point(3, 45)
         Me.DtgvImportItemUpload.Name = "DtgvImportItemUpload"
         Me.DtgvImportItemUpload.ReadOnly = True
-        Me.DtgvImportItemUpload.Size = New System.Drawing.Size(1179, 479)
+        Me.DtgvImportItemUpload.Size = New System.Drawing.Size(1179, 441)
         Me.DtgvImportItemUpload.TabIndex = 1
         '
         'TabImportItemRequest
@@ -345,9 +351,9 @@ Partial Class ProductManagement
         'TableLayoutPanel8
         '
         Me.TableLayoutPanel8.ColumnCount = 3
-        Me.TableLayoutPanel8.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
-        Me.TableLayoutPanel8.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
-        Me.TableLayoutPanel8.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
+        Me.TableLayoutPanel8.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
+        Me.TableLayoutPanel8.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel8.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
         Me.TableLayoutPanel8.Controls.Add(Me.BtnImportItemRequest, 0, 0)
         Me.TableLayoutPanel8.Controls.Add(Me.TxtImportItemSearch, 1, 0)
         Me.TableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill
@@ -370,9 +376,9 @@ Partial Class ProductManagement
         'TxtImportItemSearch
         '
         Me.TxtImportItemSearch.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.TxtImportItemSearch.Location = New System.Drawing.Point(395, 24)
+        Me.TxtImportItemSearch.Location = New System.Drawing.Point(297, 24)
         Me.TxtImportItemSearch.Name = "TxtImportItemSearch"
-        Me.TxtImportItemSearch.Size = New System.Drawing.Size(386, 20)
+        Me.TxtImportItemSearch.Size = New System.Drawing.Size(583, 20)
         Me.TxtImportItemSearch.TabIndex = 1
         '
         'DtgvImportItemRequest
@@ -398,6 +404,31 @@ Partial Class ProductManagement
         Me.Loader.TabIndex = 1
         Me.Loader.Text = "Loading"
         Me.Loader.Visible = False
+        '
+        'TableLayoutPanel9
+        '
+        Me.TableLayoutPanel9.ColumnCount = 3
+        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
+        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
+        Me.TableLayoutPanel9.Controls.Add(Me.BtnSaveImportItemStatus, 1, 0)
+        Me.TableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel9.Location = New System.Drawing.Point(3, 492)
+        Me.TableLayoutPanel9.Name = "TableLayoutPanel9"
+        Me.TableLayoutPanel9.RowCount = 1
+        Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel9.Size = New System.Drawing.Size(1179, 38)
+        Me.TableLayoutPanel9.TabIndex = 2
+        '
+        'BtnSaveImportItemStatus
+        '
+        Me.BtnSaveImportItemStatus.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me.BtnSaveImportItemStatus.Location = New System.Drawing.Point(297, 12)
+        Me.BtnSaveImportItemStatus.Name = "BtnSaveImportItemStatus"
+        Me.BtnSaveImportItemStatus.Size = New System.Drawing.Size(583, 23)
+        Me.BtnSaveImportItemStatus.TabIndex = 0
+        Me.BtnSaveImportItemStatus.Text = "Save"
+        Me.BtnSaveImportItemStatus.UseVisualStyleBackColor = True
         '
         'ProductManagement
         '
@@ -430,6 +461,7 @@ Partial Class ProductManagement
         Me.TableLayoutPanel8.ResumeLayout(False)
         Me.TableLayoutPanel8.PerformLayout()
         CType(Me.DtgvImportItemRequest, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TableLayoutPanel9.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -462,4 +494,6 @@ Partial Class ProductManagement
     Friend WithEvents BtnImportItemUpload As Button
     Friend WithEvents TxtImportItemUpdateSearch As TextBox
     Friend WithEvents Loader As JsToolBox.Loaders.DualRingLoader
+    Friend WithEvents TableLayoutPanel9 As TableLayoutPanel
+    Friend WithEvents BtnSaveImportItemStatus As Button
 End Class

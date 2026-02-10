@@ -6,6 +6,7 @@ Imports Core.Models.Item.Product
 Imports Core.Services
 Imports Ui.Helpers
 Imports Ui.Repo
+Imports Ui.Repo.Item.Classification
 
 Public Class ProductManagement
     Private _settingsManager As SettingsManager
@@ -28,17 +29,15 @@ Public Class ProductManagement
             _settingsManager.GetSettingAsync("pin"),
             _settingsManager.GetSettingAsync("branch_id"),
             _settingsManager.GetSettingAsync("device_serial"),
-            _settingsManager.GetSettingAsync("timeout")
-        ).ContinueWith(Sub(t)
-                           _integrator = New VSCUIntegrator(New IntegratorSettings With {
-                               .BaseUrl = t.Result(0),
-                               .Pin = t.Result(1),
-                               .BranchId = t.Result(2),
-                               .DeviceSerial = t.Result(3),
-                               .Timeout = If(Integer.TryParse(t.Result(4), Nothing), CInt(t.Result(4)), 30)
-                           }, _logger)
-
-                       End Sub)
+            _settingsManager.GetSettingAsync("timeout")).ContinueWith(Sub(t)
+                                                                          _integrator = New VSCUIntegrator(New IntegratorSettings With {
+                                                                               .BaseUrl = t.Result(0),
+                                                                               .Pin = t.Result(1),
+                                                                               .BranchId = t.Result(2),
+                                                                               .DeviceSerial = t.Result(3),
+                                                                               .Timeout = If(Integer.TryParse(t.Result(4), Nothing), CInt(t.Result(4)), 30)
+                                                                           }, _logger)
+                                                                      End Sub)
     End Sub
 
     Private Sub ProductManagementForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -61,6 +60,7 @@ Public Class ProductManagement
         SetupItemSaveGrid()
         SetupItemRequestGrid()
         SetupImportItemRequestGrid()
+        SetupImportItemUploadGrid()
     End Sub
 
     '=======================================================
@@ -159,8 +159,9 @@ Public Class ProductManagement
                 index += 1
                 Dim product = repo.GetProductByProductCode(itemCd)
                 If product Is Nothing Then
-                    CustomAlert.ShowAlert(Me, $"Item '{itemCd}' not found in database.", "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
-                    Exit Sub   
+                    CustomAlert.ShowAlert(Me, $"Item '{itemCd}' not found in database.", "Error", CustomAlert.AlertType.Error,
+                                            CustomAlert.ButtonType.OK)
+                    Exit Sub
                 End If
                 Dim req As New ItemSaveRequest With {
                     .tin = tin,
@@ -426,10 +427,9 @@ Public Class ProductManagement
                                     CustomAlert.ButtonType.OK)
                 End If
             Else
-                CustomAlert.ShowAlert(Me, "Failed to fetch import items." & vbCrLf &
-                                    $"Code: {response?.resultCd}" & vbCrLf &
-                                    $"Message: {response?.resultMsg}", "Error", CustomAlert.AlertType.Error,
-                                    CustomAlert.ButtonType.OK)
+                CustomAlert.ShowAlert(Me, "Failed to fetch import items." & vbCrLf & $"Message: {response?.resultMsg}", "Error",
+                                        CustomAlert.AlertType.Error,
+                                        CustomAlert.ButtonType.OK)
             End If
         Catch ex As Exception
             CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
@@ -446,7 +446,6 @@ Public Class ProductManagement
             .AllowUserToAddRows = False
             .ReadOnly = True
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "taskCd", .HeaderText = "Task Code", .DataPropertyName = "taskCd"})
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemSeq", .HeaderText = "Item Seq", .DataPropertyName = "itemSeq"})
             .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "dclNo", .HeaderText = "Declaration No", .DataPropertyName = "dclNo"})
@@ -463,8 +462,214 @@ Public Class ProductManagement
         End With
     End Sub
 
-
     Private Sub BtnImportItemFetch_Click(sender As Object, e As EventArgs) Handles BtnImportItemFetch.Click
+        LoadImportStatusGrid()
+    End Sub
 
+    Private Sub BtnSaveImportItemStatus_Click(sender As Object, e As EventArgs) Handles BtnSaveImportItemStatus.Click
+        Dim repo As New BranchImportItemStatusRepository(_connString)
+        Dim saveCount As Integer = 0
+        For Each row As DataGridViewRow In DtgvImportItemUpload.Rows
+            If row.IsNewRow Then Continue For
+            ' Skip empty rows
+            If row.Cells("taskCd").Value Is Nothing OrElse String.IsNullOrWhiteSpace(row.Cells("taskCd").Value.ToString()) Then
+                Continue For
+            End If
+            Dim rawDate = row.Cells("dclDe").Value
+
+            Dim formattedDate As String = Nothing
+
+            If rawDate IsNot Nothing AndAlso Not IsDBNull(rawDate) Then
+                Dim parsedDate As DateTime
+                If DateTime.TryParse(rawDate.ToString(), parsedDate) Then
+                    formattedDate = parsedDate.ToString("yyyy-MM-dd")
+                End If
+            End If
+            Dim entity As New ImportItemStatus With {
+                .Id = If(row.Cells("id").Value IsNot Nothing AndAlso Not IsDBNull(row.Cells("id").Value), CInt(row.Cells("id").Value), 0),
+                .TaskCd = row.Cells("taskCd").Value?.ToString(),
+                .DclDe = formattedDate,
+                .ItemSeq = If(row.Cells("itemSeq").Value IsNot Nothing, Convert.ToInt32(row.Cells("itemSeq").Value), 0),
+                .HsCd = row.Cells("hsCd").Value?.ToString(),
+                .ItemClsCd = row.Cells("itemClsCd").Value?.ToString(),
+                .ItemCd = row.Cells("itemCd").Value?.ToString(),
+                .ImptItemSttsCd = row.Cells("imptItemSttsCd").Value?.ToString(),
+                .Remark = row.Cells("remark").Value?.ToString(),
+                .ModrNm = "Admin",
+                .ModrId = "Admin"
+            }
+            repo.Save(entity)
+            saveCount += 1
+        Next
+        If saveCount = 0 Then
+            CustomAlert.ShowAlert(Me, "No valid records to save.", "Info", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+            Return
+        End If
+        CustomAlert.ShowAlert(Me,
+        $"{saveCount} record(s) saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+        LoadImportStatusGrid()
+    End Sub
+
+    Private Async Sub BtnImportItemUpload_Click(sender As Object, e As EventArgs) Handles BtnImportItemUpload.Click
+        Try
+            Loader.Visible = True
+            Loader.Text = "Updating..."
+            BtnImportItemUpload.Enabled = False
+            Dim tin = Await _settingsManager.GetSettingAsync("pin")
+            Dim bhfId = Await _settingsManager.GetSettingAsync("branch_id")
+            ' Get selected row from grid
+            If DtgvImportItemUpload.CurrentRow Is Nothing Then
+                CustomAlert.ShowAlert(Me, "Select an item first.", "Warning", CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
+                Exit Sub
+            End If
+            Dim repo As New BranchImportItemStatusRepository(_connString)
+            For Each row As DataGridViewRow In DtgvImportItemUpload.Rows
+                If row.IsNewRow Then Continue For
+                Dim isChecked As Boolean =
+            If(row.Cells("chkSelect").Value, False)
+                If Not isChecked Then Continue For
+                If CBool(row.Cells("is_uploaded").Value) Then Continue For
+                Dim req As New ImportItemStatusUpdateRequest With {
+                    .tin = tin,
+                    .bhfId = bhfId,
+                    .taskCd = row.Cells("taskCd").Value.ToString(),
+                    .itemSeq = Convert.ToInt32(row.Cells("itemSeq").Value),
+                    .hsCd = row.Cells("hsCd").Value.ToString(),
+                    .itemClsCd = row.Cells("itemClsCd").Value.ToString(),
+                    .itemCd = row.Cells("itemCd").Value.ToString(),
+                    .remark = row.Cells("remark").Value?.ToString(),
+                    .modrNm = "Admin",
+                    .modrId = "Admin"
+                }
+                Dim parsedDate As DateTime
+                If DateTime.TryParse(row.Cells("dclDe").Value?.ToString(), parsedDate) Then
+                    req.dclDe = parsedDate.ToString("yyyyMMdd")
+                Else
+                    CustomAlert.ShowAlert(Me, $"Invalid Declaration Date for Task {req.taskCd}. Please correct the date format.", "Validation Error",
+                                            CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
+                End If
+                Dim statusValue = row.Cells("imptItemSttsCd").Value
+                If statusValue Is Nothing OrElse String.IsNullOrWhiteSpace(statusValue.ToString()) Then
+                    CustomAlert.ShowAlert(Me, $"Status Code is required for Task {row.Cells("taskCd").Value}", "Validation Error",
+                                            CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
+                End If
+                req.imptItemSttsCd = statusValue.ToString()
+                Dim response = Await _integrator.UpdateImportItemStatusAsync(req)
+                If response IsNot Nothing AndAlso response.resultCd = "000" Then
+                    repo.MarkAsUploaded(CInt(row.Cells("id").Value))
+                Else
+                    CustomAlert.ShowAlert(Me, $"Upload failed for Task {req.taskCd}" & vbCrLf & $"Code: {response?.resultCd}" & vbCrLf &
+                                            $"Message: {response?.resultMsg}",
+                                            "Error",
+                                            CustomAlert.AlertType.Error,
+                                            CustomAlert.ButtonType.OK)
+                    Exit Sub
+                End If
+            Next
+            CustomAlert.ShowAlert(Me, "Selected records uploaded successfully.", "Success", CustomAlert.AlertType.Success,
+                            CustomAlert.ButtonType.OK)
+            LoadImportStatusGrid()
+        Catch ex As Exception
+            CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+        Finally
+            Loader.Visible = False
+            BtnImportItemUpload.Enabled = True
+        End Try
+    End Sub
+
+    Private Sub SetupImportItemUploadGrid()
+        With DtgvImportItemUpload
+            .Columns.Clear()
+            .ReadOnly = False
+            .AllowUserToAddRows = True
+            .AutoGenerateColumns = False
+            .AllowUserToDeleteRows = True
+            .EditMode = DataGridViewEditMode.EditOnEnter
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            .Columns.Add(New DataGridViewCheckBoxColumn With {
+                .Name = "chkSelect",
+                .Width = 30
+            })
+            .Columns.Add(New DataGridViewTextBoxColumn With {
+                .Name = "id",
+                .DataPropertyName = "id",
+                .Visible = False
+            })
+            .Columns.Add(New DataGridViewTextBoxColumn With {
+                .Name = "taskCd",
+                .HeaderText = "Task Code",
+                .DataPropertyName = "taskCd"
+            })
+            .Columns.Add(New DataGridViewTextBoxColumn With {
+                .Name = "dclDe",
+                .HeaderText = "Declaration Date",
+                .DataPropertyName = "dclDe"
+                            })
+            .Columns.Add(New DataGridViewTextBoxColumn With {
+                .Name = "itemSeq",
+                .HeaderText = "Item Seq",
+                .DataPropertyName = "itemSeq"
+            })
+            .Columns.Add(New DataGridViewTextBoxColumn With {
+                .Name = "hsCd",
+                .HeaderText = "HS Code",
+                .DataPropertyName = "hsCd"
+            })
+            Dim itemClsColumn As New DataGridViewComboBoxColumn With {
+                .Name = "itemClsCd",
+                .HeaderText = "Item Class",
+                .DataPropertyName = "itemClsCd",
+                .DisplayMember = "itemClsNm",
+                .ValueMember = "itemClsCd"
+            }
+            Dim clsRepo As New ItemClassificationRepository(_connString)
+            itemClsColumn.DataSource = clsRepo.GetAll()
+            .Columns.Add(itemClsColumn)
+            .Columns.Add(New DataGridViewTextBoxColumn With {
+                .Name = "itemCd",
+                .HeaderText = "Item Code",
+                .DataPropertyName = "itemCd"
+            })
+            Dim statusColumn As New DataGridViewComboBoxColumn With {
+                .Name = "imptItemSttsCd",
+                .HeaderText = "Status",
+                .DataPropertyName = "imptItemSttsCd",
+                .DisplayMember = "statusName",
+                .ValueMember = "statusCode"
+            }
+            Dim statusRepo As New ImportItemStatusCodeRepository(_connString)
+            statusColumn.DataSource = statusRepo.GetAll()
+            .Columns.Add(statusColumn)
+            .Columns.Add(New DataGridViewTextBoxColumn With {
+                .Name = "remark",
+                .HeaderText = "Remark",
+                .DataPropertyName = "remark"
+            })
+            .Columns.Add(New DataGridViewCheckBoxColumn With {
+                .Name = "is_uploaded",
+                .HeaderText = "Uploaded",
+                .DataPropertyName = "is_uploaded",
+                .ReadOnly = True
+            })
+        End With
+    End Sub
+
+    Private Sub LoadImportStatusGrid()
+        Dim repo As New BranchImportItemStatusRepository(_connString)
+        Dim data = repo.GetAll()
+        Dim dt As DataTable = (From it In data Select
+            id = it.Id,
+            taskCd = it.TaskCd,
+            dclDe = it.DclDe,
+            itemSeq = it.ItemSeq,
+            hsCd = it.HsCd,
+            itemClsCd = it.ItemClsCd,
+            itemCd = it.ItemCd,
+            imptItemSttsCd = it.ImptItemSttsCd,
+            remark = it.Remark,
+            is_uploaded = it.IsUploaded
+        ).ToDataTable()
+        OriginalTables(DtgvImportItemUpload) = dt
+        DtgvImportItemUpload.DataSource = dt
     End Sub
 End Class
