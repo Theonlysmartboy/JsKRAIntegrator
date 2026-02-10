@@ -47,6 +47,10 @@ Public Class Purchases
         AddHandler TxtSearchPurchases.Leave, AddressOf TextBox_Leave
         AddHandler TxtPurchaseSendSearch.Enter, AddressOf TextBox_Enter
         AddHandler TxtPurchaseSendSearch.Leave, AddressOf TextBox_Leave
+        ' Setup grid
+        SetupPurchaseGetGrid()
+        SetupPurchaseHeaderGrid()
+        SetupPurchaseItemsGrid()
     End Sub
 
     Private Sub TxtSearchPurchases_TextChanged(sender As Object, e As EventArgs) Handles TxtSearchPurchases.TextChanged
@@ -58,7 +62,7 @@ Public Class Purchases
     Private Sub TxtPurchaseSendSearch_TextChanged(sender As Object, e As EventArgs) Handles TxtPurchaseSendSearch.TextChanged
         ' Prevent filtering when placeholder is active
         If TxtPurchaseSendSearch.ForeColor = Color.Gray Then Exit Sub
-        FilterGrid(DgvPurchaseSend, TxtPurchaseSendSearch.Text.Trim())
+        FilterGrid(DgvPurchaseHeader, TxtPurchaseSendSearch.Text.Trim())
     End Sub
 
     Private Sub SetPlaceholder(txt As TextBox, placeholder As String)
@@ -145,8 +149,6 @@ Public Class Purchases
                 Exit Sub
             End If
             Dim purchases = res.data.saleList
-            ' Setup grid
-            SetupPurchaseGetGrid()
             ' Load rows
             For Each p In purchases
                 DtgvPurchasesGet.Rows.Add(
@@ -203,13 +205,12 @@ Public Class Purchases
 
     Private Sub BtnPurchaseFetch_Click(sender As Object, e As EventArgs) Handles BtnPurchaseFetch.Click
         Dim dt = _purchaseRepo.GetAll()
-        DgvPurchaseSend.DataSource = dt
-        DgvPurchaseSend.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        DgvPurchaseHeader.DataSource = dt
     End Sub
 
     Private Async Sub BtnUploadPurchase_Click(sender As Object, e As EventArgs) Handles BtnUploadPurchase.Click
-        DgvPurchaseSend.EndEdit()
-        For Each row As DataGridViewRow In DgvPurchaseSend.Rows
+        DgvPurchaseHeader.EndEdit()
+        For Each row As DataGridViewRow In DgvPurchaseHeader.Rows
             If row.IsNewRow Then Continue For
             Dim isChecked = If(row.Cells("chkSelect").Value, False)
             If Not isChecked Then Continue For
@@ -276,4 +277,81 @@ Public Class Purchases
         Next
         Return req
     End Function
+
+    Private Sub SetupPurchaseHeaderGrid()
+        With DgvPurchaseHeader
+            .Columns.Clear()
+            .AllowUserToAddRows = True
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            .Columns.Add("invcNo", "Invoice No")
+            .Columns.Add("pchsDt", "Purchase Date (yyyyMMdd)")
+            .Columns.Add("remark", "Remark")
+        End With
+    End Sub
+
+    Private Sub SetupPurchaseItemsGrid()
+        With DgvPurchaseItems
+            .Columns.Clear()
+            .AllowUserToAddRows = True
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            .Columns.Add("itemSeq", "Seq")
+            .Columns.Add("itemCd", "Item Code")
+            .Columns.Add("itemClsCd", "Item Class")
+            .Columns.Add("itemNm", "Item Name")
+            .Columns.Add("qty", "Qty")
+            .Columns.Add("prc", "Price")
+            .Columns.Add("taxTyCd", "Tax Type")
+            .Columns.Add("taxAmt", "Tax Amt")
+            .Columns.Add("totAmt", "Total")
+        End With
+    End Sub
+
+    Private Sub BtnSavePurchaseInfo_Click(sender As Object, e As EventArgs) Handles BtnSavePurchaseInfo.Click
+        Try
+            DgvPurchaseHeader.EndEdit()
+            DgvPurchaseItems.EndEdit()
+            If DgvPurchaseHeader.Rows.Count = 0 OrElse DgvPurchaseHeader.Rows(0).IsNewRow Then
+                Throw New Exception("Enter purchase header information.")
+            End If
+            Dim headerRow = DgvPurchaseHeader.Rows(0)
+            Dim purchase As New PurchaseTransaction With {
+                .InvcNo = Convert.ToInt32(headerRow.Cells("invcNo").Value),
+                .PchsDt = headerRow.Cells("pchsDt").Value.ToString(),
+                .RegTyCd = "M",
+                .PchsTyCd = "N",
+                .RcptTyCd = "P",
+                .PmtTyCd = "01",
+                .PchsSttsCd = "02",
+                .Remark = headerRow.Cells("remark").Value?.ToString(),
+                .Items = New List(Of PurchaseTransactionItem)
+            }
+            Dim totalAmt As Decimal = 0
+            Dim totalTax As Decimal = 0
+            For Each row As DataGridViewRow In DgvPurchaseItems.Rows
+                If row.IsNewRow Then Continue For
+                Dim item As New PurchaseTransactionItem With {
+                    .ItemSeq = Convert.ToInt32(row.Cells("itemSeq").Value),
+                    .ItemCd = row.Cells("itemCd").Value.ToString(),
+                    .ItemClsCd = row.Cells("itemClsCd").Value.ToString(),
+                    .ItemNm = row.Cells("itemNm").Value.ToString(),
+                    .Qty = Convert.ToDecimal(row.Cells("qty").Value),
+                    .Prc = Convert.ToDecimal(row.Cells("prc").Value),
+                    .TaxTyCd = row.Cells("taxTyCd").Value.ToString(),
+                    .TaxAmt = Convert.ToDecimal(row.Cells("taxAmt").Value),
+                    .TotAmt = Convert.ToDecimal(row.Cells("totAmt").Value)
+                }
+                totalAmt += item.TotAmt
+                totalTax += item.TaxAmt
+                purchase.Items.Add(item)
+            Next
+            purchase.TotAmt = totalAmt
+            purchase.TotTaxAmt = totalTax
+            purchase.TotTaxblAmt = totalAmt - totalTax
+            _purchaseRepo.Insert(purchase)
+            CustomAlert.ShowAlert(Me, "Purchase saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+            DgvPurchaseItems.Rows.Clear()
+        Catch ex As Exception
+            CustomAlert.ShowAlert(Me, ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+        End Try
+    End Sub
 End Class

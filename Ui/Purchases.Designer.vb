@@ -37,9 +37,11 @@ Partial Class Purchases
         Me.BtnPurchaseFetch = New System.Windows.Forms.Button()
         Me.TxtPurchaseSendSearch = New System.Windows.Forms.TextBox()
         Me.BtnUploadPurchase = New System.Windows.Forms.Button()
-        Me.DgvPurchaseSend = New System.Windows.Forms.DataGridView()
         Me.TableLayoutPanel5 = New System.Windows.Forms.TableLayoutPanel()
         Me.BtnSavePurchaseInfo = New System.Windows.Forms.Button()
+        Me.TableLayoutPanel6 = New System.Windows.Forms.TableLayoutPanel()
+        Me.DgvPurchaseHeader = New System.Windows.Forms.DataGridView()
+        Me.DgvPurchaseItems = New System.Windows.Forms.DataGridView()
         Me.TabControl1.SuspendLayout()
         Me.TabPageGet.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
@@ -48,8 +50,10 @@ Partial Class Purchases
         Me.TabPageSend.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
-        CType(Me.DgvPurchaseSend, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TableLayoutPanel5.SuspendLayout()
+        Me.TableLayoutPanel6.SuspendLayout()
+        CType(Me.DgvPurchaseHeader, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.DgvPurchaseItems, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TabControl1
@@ -60,7 +64,7 @@ Partial Class Purchases
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(800, 450)
+        Me.TabControl1.Size = New System.Drawing.Size(1234, 561)
         Me.TabControl1.TabIndex = 0
         '
         'TabPageGet
@@ -155,7 +159,7 @@ Partial Class Purchases
         Me.TabPageSend.Location = New System.Drawing.Point(4, 22)
         Me.TabPageSend.Name = "TabPageSend"
         Me.TabPageSend.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPageSend.Size = New System.Drawing.Size(792, 424)
+        Me.TabPageSend.Size = New System.Drawing.Size(1226, 535)
         Me.TabPageSend.TabIndex = 1
         Me.TabPageSend.Text = "Send"
         Me.TabPageSend.UseVisualStyleBackColor = True
@@ -180,8 +184,8 @@ Partial Class Purchases
         Me.TableLayoutPanel3.ColumnCount = 1
         Me.TableLayoutPanel3.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel3.Controls.Add(Me.TableLayoutPanel4, 0, 0)
-        Me.TableLayoutPanel3.Controls.Add(Me.DgvPurchaseSend, 0, 1)
         Me.TableLayoutPanel3.Controls.Add(Me.TableLayoutPanel5, 0, 2)
+        Me.TableLayoutPanel3.Controls.Add(Me.TableLayoutPanel6, 0, 1)
         Me.TableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel3.Location = New System.Drawing.Point(3, 3)
         Me.TableLayoutPanel3.Name = "TableLayoutPanel3"
@@ -189,7 +193,7 @@ Partial Class Purchases
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10.0!))
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80.0!))
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10.0!))
-        Me.TableLayoutPanel3.Size = New System.Drawing.Size(786, 418)
+        Me.TableLayoutPanel3.Size = New System.Drawing.Size(1220, 529)
         Me.TableLayoutPanel3.TabIndex = 0
         '
         'TableLayoutPanel4
@@ -206,7 +210,7 @@ Partial Class Purchases
         Me.TableLayoutPanel4.Name = "TableLayoutPanel4"
         Me.TableLayoutPanel4.RowCount = 1
         Me.TableLayoutPanel4.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel4.Size = New System.Drawing.Size(780, 35)
+        Me.TableLayoutPanel4.Size = New System.Drawing.Size(1214, 46)
         Me.TableLayoutPanel4.TabIndex = 0
         '
         'BtnPurchaseFetch
@@ -214,7 +218,7 @@ Partial Class Purchases
         Me.BtnPurchaseFetch.Dock = System.Windows.Forms.DockStyle.Top
         Me.BtnPurchaseFetch.Location = New System.Drawing.Point(3, 3)
         Me.BtnPurchaseFetch.Name = "BtnPurchaseFetch"
-        Me.BtnPurchaseFetch.Size = New System.Drawing.Size(189, 29)
+        Me.BtnPurchaseFetch.Size = New System.Drawing.Size(297, 40)
         Me.BtnPurchaseFetch.TabIndex = 7
         Me.BtnPurchaseFetch.Text = "FETCH"
         Me.BtnPurchaseFetch.UseVisualStyleBackColor = True
@@ -222,29 +226,20 @@ Partial Class Purchases
         'TxtPurchaseSendSearch
         '
         Me.TxtPurchaseSendSearch.Dock = System.Windows.Forms.DockStyle.Top
-        Me.TxtPurchaseSendSearch.Location = New System.Drawing.Point(198, 3)
+        Me.TxtPurchaseSendSearch.Location = New System.Drawing.Point(306, 3)
         Me.TxtPurchaseSendSearch.Name = "TxtPurchaseSendSearch"
-        Me.TxtPurchaseSendSearch.Size = New System.Drawing.Size(384, 20)
+        Me.TxtPurchaseSendSearch.Size = New System.Drawing.Size(601, 20)
         Me.TxtPurchaseSendSearch.TabIndex = 8
         '
         'BtnUploadPurchase
         '
         Me.BtnUploadPurchase.Dock = System.Windows.Forms.DockStyle.Top
-        Me.BtnUploadPurchase.Location = New System.Drawing.Point(588, 3)
+        Me.BtnUploadPurchase.Location = New System.Drawing.Point(913, 3)
         Me.BtnUploadPurchase.Name = "BtnUploadPurchase"
-        Me.BtnUploadPurchase.Size = New System.Drawing.Size(189, 29)
+        Me.BtnUploadPurchase.Size = New System.Drawing.Size(298, 40)
         Me.BtnUploadPurchase.TabIndex = 9
         Me.BtnUploadPurchase.Text = "Send"
         Me.BtnUploadPurchase.UseVisualStyleBackColor = True
-        '
-        'DgvPurchaseSend
-        '
-        Me.DgvPurchaseSend.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DgvPurchaseSend.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.DgvPurchaseSend.Location = New System.Drawing.Point(3, 44)
-        Me.DgvPurchaseSend.Name = "DgvPurchaseSend"
-        Me.DgvPurchaseSend.Size = New System.Drawing.Size(780, 328)
-        Me.DgvPurchaseSend.TabIndex = 1
         '
         'TableLayoutPanel5
         '
@@ -254,28 +249,61 @@ Partial Class Purchases
         Me.TableLayoutPanel5.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
         Me.TableLayoutPanel5.Controls.Add(Me.BtnSavePurchaseInfo, 1, 0)
         Me.TableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel5.Location = New System.Drawing.Point(3, 378)
+        Me.TableLayoutPanel5.Location = New System.Drawing.Point(3, 478)
         Me.TableLayoutPanel5.Name = "TableLayoutPanel5"
         Me.TableLayoutPanel5.RowCount = 1
         Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel5.Size = New System.Drawing.Size(780, 37)
+        Me.TableLayoutPanel5.Size = New System.Drawing.Size(1214, 48)
         Me.TableLayoutPanel5.TabIndex = 2
         '
         'BtnSavePurchaseInfo
         '
         Me.BtnSavePurchaseInfo.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.BtnSavePurchaseInfo.Location = New System.Drawing.Point(198, 11)
+        Me.BtnSavePurchaseInfo.Location = New System.Drawing.Point(306, 22)
         Me.BtnSavePurchaseInfo.Name = "BtnSavePurchaseInfo"
-        Me.BtnSavePurchaseInfo.Size = New System.Drawing.Size(384, 23)
+        Me.BtnSavePurchaseInfo.Size = New System.Drawing.Size(601, 23)
         Me.BtnSavePurchaseInfo.TabIndex = 0
         Me.BtnSavePurchaseInfo.Text = "Save"
         Me.BtnSavePurchaseInfo.UseVisualStyleBackColor = True
+        '
+        'TableLayoutPanel6
+        '
+        Me.TableLayoutPanel6.ColumnCount = 2
+        Me.TableLayoutPanel6.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40.0!))
+        Me.TableLayoutPanel6.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60.0!))
+        Me.TableLayoutPanel6.Controls.Add(Me.DgvPurchaseHeader, 0, 0)
+        Me.TableLayoutPanel6.Controls.Add(Me.DgvPurchaseItems, 1, 0)
+        Me.TableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel6.Location = New System.Drawing.Point(3, 55)
+        Me.TableLayoutPanel6.Name = "TableLayoutPanel6"
+        Me.TableLayoutPanel6.RowCount = 1
+        Me.TableLayoutPanel6.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel6.Size = New System.Drawing.Size(1214, 417)
+        Me.TableLayoutPanel6.TabIndex = 3
+        '
+        'DgvPurchaseHeader
+        '
+        Me.DgvPurchaseHeader.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DgvPurchaseHeader.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DgvPurchaseHeader.Location = New System.Drawing.Point(3, 3)
+        Me.DgvPurchaseHeader.Name = "DgvPurchaseHeader"
+        Me.DgvPurchaseHeader.Size = New System.Drawing.Size(479, 411)
+        Me.DgvPurchaseHeader.TabIndex = 2
+        '
+        'DgvPurchaseItems
+        '
+        Me.DgvPurchaseItems.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DgvPurchaseItems.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DgvPurchaseItems.Location = New System.Drawing.Point(488, 3)
+        Me.DgvPurchaseItems.Name = "DgvPurchaseItems"
+        Me.DgvPurchaseItems.Size = New System.Drawing.Size(723, 411)
+        Me.DgvPurchaseItems.TabIndex = 3
         '
         'Purchases
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.ClientSize = New System.Drawing.Size(1234, 561)
         Me.Controls.Add(Me.TabControl1)
         Me.MaximizeBox = False
         Me.Name = "Purchases"
@@ -290,8 +318,10 @@ Partial Class Purchases
         Me.TableLayoutPanel3.ResumeLayout(False)
         Me.TableLayoutPanel4.ResumeLayout(False)
         Me.TableLayoutPanel4.PerformLayout()
-        CType(Me.DgvPurchaseSend, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TableLayoutPanel5.ResumeLayout(False)
+        Me.TableLayoutPanel6.ResumeLayout(False)
+        CType(Me.DgvPurchaseHeader, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DgvPurchaseItems, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -306,7 +336,6 @@ Partial Class Purchases
     Friend WithEvents TableLayoutPanel3 As TableLayoutPanel
     Friend WithEvents TableLayoutPanel4 As TableLayoutPanel
     Friend WithEvents BtnPurchaseFetch As Button
-    Friend WithEvents DgvPurchaseSend As DataGridView
     Friend WithEvents TxtPurchaseSendSearch As TextBox
     Friend WithEvents BtnUploadPurchase As Button
     Friend WithEvents DtgvPurchasesGet As DataGridView
@@ -314,4 +343,7 @@ Partial Class Purchases
     Friend WithEvents Loader2 As JsToolBox.Loaders.DualRingLoader
     Friend WithEvents TableLayoutPanel5 As TableLayoutPanel
     Friend WithEvents BtnSavePurchaseInfo As Button
+    Friend WithEvents TableLayoutPanel6 As TableLayoutPanel
+    Friend WithEvents DgvPurchaseHeader As DataGridView
+    Friend WithEvents DgvPurchaseItems As DataGridView
 End Class
