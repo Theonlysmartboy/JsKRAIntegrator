@@ -109,6 +109,9 @@
     <Compile Include="Models\Import\ImportedItemResponse.vb" />
     <Compile Include="Models\Init\InitInfoRequest.vb" />
     <Compile Include="Models\Init\InitInfoResponse.vb" />
+    <Compile Include="Models\Item\Import\ImportItemStatus.vb" />
+    <Compile Include="Models\Item\Import\ImportItemStatusUpdateRequest.vb" />
+    <Compile Include="Models\Item\Import\ImportItemStatusUpdateResponse.vb" />
     <Compile Include="Models\Item\Info\ItemInfoEntry.vb" />
     <Compile Include="Models\Item\Product\ItemSaveRequest.vb" />
     <Compile Include="Models\Item\Product\ItemSaveResponse.vb" />

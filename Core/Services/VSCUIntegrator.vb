@@ -303,14 +303,16 @@ Namespace Services
         ' -----------------------
         ' 5d) Imported Item (POST)
         ' -----------------------
-        Public Async Function SendImportItemAsync(req As ImportedItemRequest) As Task(Of ImportedItemResponse)
+        Public Async Function UpdateImportItemStatusAsync(req As ImportItemStatusUpdateRequest) As Task(Of ImportItemStatusUpdateResponse)
             Dim endpoint = ApiEndpoints.IMPORT_ITEM_UPDATE
-            Dim resp = Await SendAndDeserializeAsync(Of ImportedItemResponse)(endpoint, req, isGet:=False)
+            Dim resp = Await SendAndDeserializeAsync(Of ImportItemStatusUpdateResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
-
-            Dim fallback = MakeBaseFallback(Of ImportedItemResponse)("VSCU error: failed to call ImportItem")
-            fallback.result = New ImportedItemData() With {.itemCode = req.itemCode, .importId = Nothing, .accepted = False}
-            Return fallback
+            Return New ImportItemStatusUpdateResponse With {
+                .resultCd = "Error",
+                .resultMsg = "VSCU error: Failed to call UpdateImportItemStatus",
+                .resultDt = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                .data = Nothing
+            }
         End Function
 
         ' -----------------------
