@@ -3,7 +3,7 @@ Imports Core.Logging
 Imports Core.Models.Branch.Insurance
 Imports Core.Services
 Imports Ui.Helpers
-Imports Ui.Repo
+Imports Ui.Repo.BranchRepo
 
 Public Class InsuranceForm
     Private _integrator As VSCUIntegrator

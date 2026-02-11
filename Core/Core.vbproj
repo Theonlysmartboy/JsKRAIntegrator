@@ -137,6 +137,7 @@
     <Compile Include="Models\Sale\SalesResponse.vb" />
     <Compile Include="Models\Item\Info\ItemInfoRequest.vb" />
     <Compile Include="Models\Item\Info\ItemInfoResponse.vb" />
+    <Compile Include="Models\Tax\TaxType.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

@@ -1,7 +1,7 @@
 ﻿Imports Core.Models.Item.Import
 Imports MySql.Data.MySqlClient
 
-Namespace Repo
+Namespace Repo.BranchRepo
     Public Interface IBranchImportItemStatusRepository
         Function GetAll() As List(Of ImportItemStatus)
         Function GetPending() As List(Of ImportItemStatus)

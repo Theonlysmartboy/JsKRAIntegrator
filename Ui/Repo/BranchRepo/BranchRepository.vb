@@ -1,7 +1,7 @@
 ﻿Imports Core.Models.Branch
 Imports MySql.Data.MySqlClient
 
-Namespace Repo
+Namespace Repo.BranchRepo
 
     Public Interface IBranchRepository
         Function SaveAsync(branches As List(Of BranchInfo), resultDt As DateTime) As Task

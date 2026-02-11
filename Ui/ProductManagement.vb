@@ -5,8 +5,9 @@ Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
 Imports Core.Services
 Imports Ui.Helpers
-Imports Ui.Repo
-Imports Ui.Repo.Item.Classification
+Imports Ui.Repo.BranchRepo
+Imports Ui.Repo.ItemRepo
+Imports Ui.Repo.ProductRepo
 
 Public Class ProductManagement
     Private _settingsManager As SettingsManager

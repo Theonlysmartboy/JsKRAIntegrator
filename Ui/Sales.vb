@@ -5,12 +5,11 @@ Imports Core.Enums
 Imports Core.Logging
 Imports Core.Models.Sale
 Imports Core.Models.Sale.Invoice
-
 Imports Core.Services
 Imports Newtonsoft.Json
 Imports QRCoder
 Imports Ui.Helpers
-Imports Ui.Repo
+Imports Ui.Repo.ProductRepo
 
 Public Class Sales
     Private _settingsManager As SettingsManager

@@ -1,7 +1,7 @@
 ﻿Imports Core.Models.Branch.Insurance
 Imports MySql.Data.MySqlClient
 
-Namespace Repo
+Namespace Repo.BranchRepo
     Public Interface IBranchInsuranceRepository
         Function GetAll() As List(Of BranchInsurance)
         Function GetUnsynced() As List(Of BranchInsurance)

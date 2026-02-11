@@ -1,5 +1,7 @@
 ﻿Namespace Models.Purchase
     Public Class PurchaseTransactionRequest
+        Public Property tin As String
+        Public Property bhfId As String
         Public Property invcNo As Integer
         Public Property orgInvcNo As Integer
         Public Property regTyCd As String

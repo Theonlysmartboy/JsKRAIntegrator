@@ -1,7 +1,7 @@
 ﻿Imports Core.Core.Models.Item.Import
 Imports MySql.Data.MySqlClient
 
-Namespace Repo
+Namespace Repo.ItemRepo
     Public Class ImportItemStatusCodeRepository
         Private ReadOnly _connString As String
 

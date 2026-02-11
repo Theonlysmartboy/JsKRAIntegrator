@@ -1,7 +1,7 @@
 ﻿Imports Core.Models.Item.Import
 Imports MySql.Data.MySqlClient
 
-Namespace Repo
+Namespace Repo.BranchRepo
 
     Public Interface IBranchImportItemRepository
         Sub Save(items As List(Of ImportItem))

@@ -3,6 +3,8 @@ Imports Core.Logging
 Imports Core.Models.Purchase
 Imports Core.Services
 Imports Ui.Helpers
+Imports Ui.Repo.ItemRepo
+Imports Ui.Repo.ProductRepo
 
 Public Class Purchases
     Private _settingsManager As SettingsManager
@@ -10,11 +12,15 @@ Public Class Purchases
     Private _purchaseRepo As PurchaseRepository
     Private _logger As Logger
     Private OriginalTables As New Dictionary(Of DataGridView, DataTable)
+    Private _tin As String
+    Private _branchId As String
+    Private _connString As String
 
     Public Sub New(connectionString As String)
         InitializeComponent()
         ' Initialize settings manager
-        _settingsManager = New SettingsManager(connectionString)
+        _connString = connectionString
+        _settingsManager = New SettingsManager(_connString)
         ' Initialize logger
         Dim repo As New LogRepository(DatabaseHelper.GetConnectionString())
         _logger = New Logger(repo)
@@ -24,7 +30,9 @@ Public Class Purchases
         Dim branchIdTask = _settingsManager.GetSettingAsync("branch_id")
         Dim deviceSerialTask = _settingsManager.GetSettingAsync("device_serial")
         Dim timeoutTask = _settingsManager.GetSettingAsync("timeout")
-        _purchaseRepo = New PurchaseRepository(connectionString)
+        _purchaseRepo = New PurchaseRepository(_connString)
+        _tin = pinTask.Result
+        _branchId = branchIdTask.Result
         Task.WhenAll(baseUrlTask, pinTask, branchIdTask, deviceSerialTask, timeoutTask).ContinueWith(Sub(t)
                                                                                                          Dim settings As New IntegratorSettings With {
                                                                                                             .BaseUrl = baseUrlTask.Result,
@@ -227,13 +235,18 @@ Public Class Purchases
         Dim response = Await _integrator.SavePurchaseAsync(request)
         If response IsNot Nothing AndAlso response.resultCd = "000" Then
             _purchaseRepo.MarkAsUploaded(id)
+            CustomAlert.ShowAlert(Me, $"Successfully uploaded purchase with Invoice No: {purchase.InvcNo}", "Success",
+                                    CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
         Else
-            Throw New Exception(response?.resultMsg)
+            CustomAlert.ShowAlert(Me, $"Failed to upload purchase with Invoice No: {purchase.InvcNo}. Error: {response?.resultMsg}", "Error",
+                                    CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         End If
     End Function
 
     Private Function BuildRequest(purchase As PurchaseTransaction) As PurchaseTransactionRequest
         Dim req As New PurchaseTransactionRequest With {
+            .tin = _tin,
+            .bhfId = _branchId,
             .invcNo = purchase.InvcNo,
             .orgInvcNo = 0,
             .regTyCd = purchase.RegTyCd,
@@ -283,6 +296,7 @@ Public Class Purchases
             .Columns.Clear()
             .AllowUserToAddRows = True
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            .Columns.Add(New DataGridViewCheckBoxColumn() With {.Name = "chkSelect", .HeaderText = "Select"})
             .Columns.Add("invcNo", "Invoice No")
             .Columns.Add("pchsDt", "Purchase Date (yyyyMMdd)")
             .Columns.Add("remark", "Remark")
@@ -296,7 +310,16 @@ Public Class Purchases
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             .Columns.Add("itemSeq", "Seq")
             .Columns.Add("itemCd", "Item Code")
-            .Columns.Add("itemClsCd", "Item Class")
+            Dim itemClsColumn As New DataGridViewComboBoxColumn With {
+                .Name = "itemClsCd",
+                .HeaderText = "Item Class",
+                .DataPropertyName = "itemClsCd",
+                .DisplayMember = "itemClsNm",
+                .ValueMember = "itemClsCd"
+            }
+            Dim clsRepo As New ItemClassificationRepository(_connString)
+            itemClsColumn.DataSource = clsRepo.GetAll()
+            .Columns.Add(itemClsColumn)
             .Columns.Add("itemNm", "Item Name")
             .Columns.Add("qty", "Qty")
             .Columns.Add("prc", "Price")

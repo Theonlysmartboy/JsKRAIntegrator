@@ -1,7 +1,7 @@
 ﻿Imports Core.Models.Branch.User
 Imports MySql.Data.MySqlClient
 
-Namespace Repo
+Namespace Repo.BranchRepo
 
     Public Interface IBranchUserRepository
         Function GetByUserIdAsync(userId As String) As Task(Of BranchUser)
