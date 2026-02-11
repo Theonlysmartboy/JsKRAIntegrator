@@ -118,8 +118,8 @@
     <Compile Include="Models\Item\Product\Product.vb" />
     <Compile Include="Models\Item\Stock\StockInfoRequest.vb" />
     <Compile Include="Models\Item\Stock\StockInfoResponse.vb" />
-    <Compile Include="Models\Item\Stock\StockSaveRequest.vb" />
-    <Compile Include="Models\Item\Stock\StockSaveResponse.vb" />
+    <Compile Include="Models\Item\Stock\StockMasterSaveRequest.vb" />
+    <Compile Include="Models\Item\Stock\StockMasterSaveResponse.vb" />
     <Compile Include="Models\Notice\NoticeRequest.vb" />
     <Compile Include="Models\Notice\NoticeResponse.vb" />
     <Compile Include="Models\Notice\VscuNotice.vb" />

@@ -3,6 +3,7 @@ Imports Core.Logging
 Imports Core.Models.Purchase
 Imports Core.Services
 Imports Ui.Helpers
+Imports Ui.Repo
 Imports Ui.Repo.ItemRepo
 Imports Ui.Repo.ProductRepo
 
@@ -323,7 +324,17 @@ Public Class Purchases
             .Columns.Add("itemNm", "Item Name")
             .Columns.Add("qty", "Qty")
             .Columns.Add("prc", "Price")
-            .Columns.Add("taxTyCd", "Tax Type")
+            ' Tax Type Combo
+            Dim taxCol As New DataGridViewComboBoxColumn With {
+                .Name = "taxTyCd",
+                .HeaderText = "Tax Type",
+                .DataPropertyName = "taxTyCd",
+                .DisplayMember = "CodeName",
+                .ValueMember = "Code"
+            }
+            Dim taxTypeRepo As New TaxTypeRepository(_connString)
+            taxCol.DataSource = taxTypeRepo.GetAll()
+            DgvPurchaseItems.Columns.Add(taxCol)
             .Columns.Add("taxAmt", "Tax Amt")
             .Columns.Add("totAmt", "Total")
         End With
@@ -352,17 +363,24 @@ Public Class Purchases
             Dim totalTax As Decimal = 0
             For Each row As DataGridViewRow In DgvPurchaseItems.Rows
                 If row.IsNewRow Then Continue For
-                Dim item As New PurchaseTransactionItem With {
-                    .ItemSeq = Convert.ToInt32(row.Cells("itemSeq").Value),
-                    .ItemCd = row.Cells("itemCd").Value.ToString(),
-                    .ItemClsCd = row.Cells("itemClsCd").Value.ToString(),
-                    .ItemNm = row.Cells("itemNm").Value.ToString(),
-                    .Qty = Convert.ToDecimal(row.Cells("qty").Value),
-                    .Prc = Convert.ToDecimal(row.Cells("prc").Value),
-                    .TaxTyCd = row.Cells("taxTyCd").Value.ToString(),
-                    .TaxAmt = Convert.ToDecimal(row.Cells("taxAmt").Value),
-                    .TotAmt = Convert.ToDecimal(row.Cells("totAmt").Value)
-                }
+                Dim item As New PurchaseTransactionItem
+                item.ItemSeq = If(IsNumeric(row.Cells("itemSeq").Value), Convert.ToInt32(row.Cells("itemSeq").Value), 0)
+                item.ItemCd = row.Cells("itemCd").Value?.ToString()
+                item.ItemClsCd = row.Cells("itemClsCd").Value?.ToString()
+                item.ItemNm = row.Cells("itemNm").Value?.ToString()
+                Dim qtyVal As Decimal
+                Decimal.TryParse(row.Cells("qty").Value?.ToString(), qtyVal)
+                item.Qty = qtyVal
+                Dim prcVal As Decimal
+                Decimal.TryParse(row.Cells("prc").Value?.ToString(), prcVal)
+                item.Prc = prcVal
+                item.TaxTyCd = row.Cells("taxTyCd").Value?.ToString()
+                Dim taxVal As Decimal
+                Decimal.TryParse(row.Cells("taxAmt").Value?.ToString(), taxVal)
+                item.TaxAmt = taxVal
+                Dim totVal As Decimal
+                Decimal.TryParse(row.Cells("totAmt").Value?.ToString(), totVal)
+                item.TotAmt = totVal
                 totalAmt += item.TotAmt
                 totalTax += item.TaxAmt
                 purchase.Items.Add(item)

@@ -35,43 +35,32 @@ Namespace Services
         ' Generic helper: send request (GET/POST) and deserialize into T.
         ' Returns Nothing on failure (caller will produce fallback).
         Private Async Function SendAndDeserializeAsync(Of T As Class)(endpoint As String, Optional payload As Object = Nothing, Optional isGet As Boolean = False) As Task(Of T)
-
             Dim fullUrl = _client.FullUrl(endpoint)
             Dim jsonPayload As String = If(payload IsNot Nothing, JsonUtil.ToJson(payload), Nothing)
-
             Dim raw As String = Nothing
             Dim caughtEx As Exception = Nothing
             Dim deserializeEx As Exception = Nothing
-
-            ' 1) Try sending
             Try
+                'Log the request (including payload for POST)
                 Await _logger.LogAsync(LogLevel.Info, $"Calling {fullUrl}", jsonPayload)
-
                 If isGet Then
                     raw = Await _client.GetAsync(endpoint)
                 Else
                     raw = Await _client.SendAsync(endpoint, jsonPayload)
                 End If
-
             Catch ex As Exception
                 caughtEx = ex
             End Try
-
-            ' 2) Handle send exception OUTSIDE catch
             If caughtEx IsNot Nothing Then
-                Await _logger.LogAsync(
-            LogLevel.Error,
-            $"Exception calling {fullUrl}: {caughtEx.Message}",
-            caughtEx.ToString() &
-            If(String.IsNullOrEmpty(jsonPayload), "", vbCrLf & "Payload: " & jsonPayload)
-        )
+                'Log the exception OUTSIDE catch
+                Await _logger.LogAsync(LogLevel.Error, $"Exception calling {fullUrl}: {caughtEx.Message}", caughtEx.ToString() &
+            If(String.IsNullOrEmpty(jsonPayload), "", vbCrLf & "Payload: " & jsonPayload))
                 Return Nothing
             End If
-
-            ' 3) Log successful response
+            'Log the raw response
             Await _logger.LogAsync(LogLevel.Info, $"Response from {fullUrl}", raw)
 
-            ' 4) Try deserializing
+            'Try deserializing
             Dim result As T = Nothing
             Try
                 result = JsonUtil.FromJson(Of T)(raw)
@@ -79,24 +68,17 @@ Namespace Services
             Catch ex As Exception
                 deserializeEx = ex
             End Try
-
-            ' 5) Handle deserialize exception OUTSIDE catch
+            ' Handle deserialize exception OUTSIDE catch
             If deserializeEx IsNot Nothing Then
-                Await _logger.LogAsync(
-            LogLevel.Error,
-            $"Deserialization error from {fullUrl}: {deserializeEx.Message}",
-            raw
-        )
+                Await _logger.LogAsync(LogLevel.Error, $"Deserialization error from {fullUrl}: {deserializeEx.Message}", raw)
                 Return Nothing
             End If
-
             Return result
         End Function
 
         ' Helper to build a standard fallback BaseResponse-derived object with resultCd/resultMsg/resultDt
         Private Function MakeBaseFallback(Of T As {New})(msg As String) As T
             Dim inst As New T()
-
             Try
                 Dim typ = inst.GetType()
                 Dim propCd = typ.GetProperty("resultCd")
@@ -106,11 +88,9 @@ Namespace Services
                 If propCd IsNot Nothing Then propCd.SetValue(inst, "500")
                 If propMsg IsNot Nothing Then propMsg.SetValue(inst, msg)
                 If propDt IsNot Nothing Then propDt.SetValue(inst, DateTime.Now.ToString("yyyyMMddHHmmss"))
-
             Catch
                 ' ignore reflection errors
             End Try
-
             Return inst
         End Function
 
@@ -282,9 +262,7 @@ Namespace Services
             Dim fallback As New ItemInfoResponse
             fallback.resultCd = "Error"
             fallback.resultMsg = "VSCU error: failed to call ItemSelect"
-            fallback.data = New ItemInfoData() With {
-                            .itemList = New List(Of ItemInfo)()
-                            }
+            fallback.data = Nothing
             Return fallback
         End Function
 
@@ -295,8 +273,8 @@ Namespace Services
             Dim endPoint = ApiEndpoints.ITEM_SAVE
             Dim resp = Await SendAndDeserializeAsync(Of ItemSaveResponse)(endPoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
-
             Dim fallback = MakeBaseFallback(Of ItemSaveResponse)("VSCU error: failed to call ItemSave")
+
             Return fallback
         End Function
 
@@ -338,7 +316,6 @@ Namespace Services
             Dim endpoint = ApiEndpoints.SALES ' set this constant in Core.ApiEndpoints
             Dim resp = Await SendAndDeserializeAsync(Of SalesResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
-
             Dim fallback As New SalesResponse
             fallback.resultCd = "Error"
             fallback.resultMsg = "VSCU error: failed to call SalesRegister"
@@ -383,15 +360,14 @@ Namespace Services
         ' -----------------------
         ' 8) Stock (POST)
         ' -----------------------
-        Public Async Function SendStockAsync(req As StockSaveRequest) As Task(Of StockSaveResponse)
-            Dim endpoint = ApiEndpoints.STOCK_SAVE
-            Dim resp = Await SendAndDeserializeAsync(Of StockSaveResponse)(endpoint, req, isGet:=False)
+        Public Async Function SendStockMasterAsync(req As StockMasterSaveRequest) As Task(Of StockMasterSaveResponse)
+            Dim endpoint = ApiEndpoints.STOCK_MASTER_SAVE
+            Dim resp = Await SendAndDeserializeAsync(Of StockMasterSaveResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
-
-            Dim fallback As New StockSaveResponse()
+            Dim fallback As New StockMasterSaveResponse()
             fallback.resultCd = "Error"
             fallback.resultMsg = "VSCU error: failed to call StockSave"
-            fallback.data = New StockSaveResponse()
+            fallback.data = New StockMasterSaveResponse()
             Return fallback
         End Function
 
@@ -402,7 +378,6 @@ Namespace Services
             Dim endpoint = ApiEndpoints.STOCK_SAVE
             Dim resp = Await SendAndDeserializeAsync(Of StockInfoResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
-
             Dim fallback = MakeBaseFallback(Of StockInfoResponse)("VSCU error: failed to call Stock")
             fallback.result = New StockInfoData() With {.itemCode = req.itemCode, .currentQuantity = 0, .updated = False}
             Return fallback
@@ -412,15 +387,11 @@ Namespace Services
         ' 9) Notices (POST)
         ' -----------------------
         Public Async Function GetNoticesAsync(req As NoticeRequest) As Task(Of NoticeResponse)
-
             Dim endpoint = ApiEndpoints.NOTICE_SELECT
-
             Dim resp = Await SendAndDeserializeAsync(Of NoticeResponse)(endpoint, req, isGet:=False)
-
             If resp IsNot Nothing AndAlso resp.data IsNot Nothing Then
                 Return resp
             End If
-
             ' fallback if API failed
             Dim fallback As New NoticeResponse
             fallback.resultCd = "999"
@@ -429,9 +400,7 @@ Namespace Services
             fallback.data = New NoticeData With {
                 .noticeList = New List(Of NoticeItem)
             }
-
             Return fallback
-
         End Function
 
         ' -----------------------
@@ -442,16 +411,11 @@ Namespace Services
             Dim fullUrl = _client.FullUrl(endpoint)
             Dim raw As String = Nothing
             Dim caughtException As Exception = Nothing
-
             Try
                 Await _logger.LogAsync(LogLevel.Info, $"Calling {fullUrl}", payloadJson)
-
                 raw = Await _client.SendAsync(endpoint, payloadJson)
-
                 Await _logger.LogAsync(LogLevel.Info, $"Response from {fullUrl}", raw)
-
                 Return raw
-
             Catch ex As Exception
                 ' Store the exception; DO NOT AWAIT in the Catch block
                 caughtException = ex
@@ -460,7 +424,6 @@ Namespace Services
             Finally
                 ' Optional: anything non-await cleanup goes here
             End Try
-
             ' ---- After Catch (safe zone for Await) ----
             If caughtException IsNot Nothing Then
                 Await _logger.LogAsync(
