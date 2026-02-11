@@ -5,8 +5,9 @@ Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
 Imports Core.Services
 Imports Ui.Helpers
-Imports Ui.Repo
-Imports Ui.Repo.Item.Classification
+Imports Ui.Repo.BranchRepo
+Imports Ui.Repo.ItemRepo
+Imports Ui.Repo.ProductRepo
 
 Public Class ProductManagement
     Private _settingsManager As SettingsManager
@@ -85,6 +86,7 @@ Public Class ProductManagement
         If TxtImportItemSearch.ForeColor = Color.Gray Then Exit Sub
         FilterGrid(DtgvImportItemRequest, TxtImportItemSearch.Text.Trim())
     End Sub
+
     ' =========================
     ' ITEM SAVE GRID
     ' =========================
@@ -476,9 +478,7 @@ Public Class ProductManagement
                 Continue For
             End If
             Dim rawDate = row.Cells("dclDe").Value
-
             Dim formattedDate As String = Nothing
-
             If rawDate IsNot Nothing AndAlso Not IsDBNull(rawDate) Then
                 Dim parsedDate As DateTime
                 If DateTime.TryParse(rawDate.ToString(), parsedDate) Then

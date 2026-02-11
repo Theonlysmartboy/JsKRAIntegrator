@@ -4,7 +4,7 @@ Imports Core.Logging
 Imports Core.Models.Branch.User
 Imports Core.Services
 Imports Ui.Helpers
-Imports Ui.Repo
+Imports Ui.Repo.BranchRepo
 
 Public Class UserAccounts
     Private _settingsManager As SettingsManager

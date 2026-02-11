@@ -1,6 +1,7 @@
 ﻿Imports Core.Models.Item.Product
 Imports MySql.Data.MySqlClient
-Namespace Repo
+
+Namespace Repo.ProductRepo
     Public Class ProductRepository
         Private _connString As String
 
@@ -66,7 +67,7 @@ Namespace Repo
                     Using reader As MySqlDataReader = cmd.ExecuteReader()
                         If reader.Read() Then
                             product = New Product With {
-                            .ItemCd = reader("ProductCode").ToString(),
+                            .itemCd = reader("ProductCode").ToString(),
                             .ItemClsCd = reader("ItemCode").ToString(),
                             .ItemNm = reader("ProductName").ToString(),
                             .DftPrc = Convert.ToDecimal(reader("Product_Cost_Price")),

@@ -3,7 +3,7 @@ Imports Core.Logging
 Imports Core.Models.Item.Classification
 Imports Core.Services
 Imports Ui.Helpers
-Imports Ui.Repo.Item.Classification
+Imports Ui.Repo.ItemRepo
 
 Public Class ItemClassification
     Private _settingsManager As SettingsManager

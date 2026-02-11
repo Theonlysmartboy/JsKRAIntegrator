@@ -1,6 +1,7 @@
 ﻿Imports Core.Models.Sale.Invoice
 Imports MySql.Data.MySqlClient
-Namespace Repo
+
+Namespace Repo.ProductRepo
 
     Public Class SalesRepository
         Private ReadOnly _connString As String

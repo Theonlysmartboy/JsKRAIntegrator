@@ -187,19 +187,21 @@
     <Compile Include="Purchases.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Repo\BranchImportItemRepository.vb" />
-    <Compile Include="Repo\BranchImportItemStatusRepository.vb" />
-    <Compile Include="Repo\BranchInsuranceRepository.vb" />
-    <Compile Include="Repo\BranchRepository.vb" />
-    <Compile Include="Repo\BranchUserRepository.vb" />
+    <Compile Include="Repo\BranchRepo\BranchImportItemRepository.vb" />
+    <Compile Include="Repo\BranchRepo\BranchImportItemStatusRepository.vb" />
+    <Compile Include="Repo\BranchRepo\BranchInsuranceRepository.vb" />
+    <Compile Include="Repo\BranchRepo\BranchRepository.vb" />
+    <Compile Include="Repo\BranchRepo\BranchUserRepository.vb" />
     <Compile Include="Repo\CodeMappedRepository.vb" />
     <Compile Include="Repo\CustomerRepository.vb" />
-    <Compile Include="Repo\ImportItemStatusCodeRepository.vb" />
-    <Compile Include="Repo\ItemClassificationRepository.vb" />
-    <Compile Include="Repo\ItemInfoRepository.vb" />
+    <Compile Include="Repo\ItemRepo\ImportItemStatusCodeRepository.vb" />
+    <Compile Include="Repo\ItemRepo\ItemClassificationRepository.vb" />
+    <Compile Include="Repo\ItemRepo\ItemInfoRepository.vb" />
     <Compile Include="Repo\NoticeRepository.vb" />
-    <Compile Include="Repo\ProductRepository.vb" />
-    <Compile Include="Repo\SalesRepository.vb" />
+    <Compile Include="Repo\ProductRepo\ProductRepository.vb" />
+    <Compile Include="Repo\ProductRepo\PurchaseRepository.vb" />
+    <Compile Include="Repo\ProductRepo\SalesRepository.vb" />
+    <Compile Include="Repo\TaxTypeRepository.vb" />
     <Compile Include="Sales.Designer.vb">
       <DependentUpon>Sales.vb</DependentUpon>
     </Compile>
