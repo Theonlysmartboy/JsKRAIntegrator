@@ -69,12 +69,13 @@ Partial Class HomeForm
         Me.NoticesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LblStatus = New System.Windows.Forms.Label()
         Me.Loader = New JsToolBox.Loaders.DualRingLoader()
+        Me.StockToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'MenuStrip1
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializationToolStripMenuItem, Me.DataMgtToolStripMenuItem, Me.BranchesToolStripMenuItem, Me.ProductManagementToolStripMenuItem, Me.SalesToolStripMenuItem, Me.PurchasesToolStripMenuItem, Me.ToolStripSettings, Me.ToolStripLogs, Me.NoticesToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializationToolStripMenuItem, Me.DataMgtToolStripMenuItem, Me.BranchesToolStripMenuItem, Me.ProductManagementToolStripMenuItem, Me.StockToolStripMenuItem, Me.SalesToolStripMenuItem, Me.PurchasesToolStripMenuItem, Me.ToolStripSettings, Me.ToolStripLogs, Me.NoticesToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Size = New System.Drawing.Size(984, 24)
@@ -369,6 +370,12 @@ Partial Class HomeForm
         Me.Loader.Text = "Loading"
         Me.Loader.Visible = False
         '
+        'StockToolStripMenuItem
+        '
+        Me.StockToolStripMenuItem.Name = "StockToolStripMenuItem"
+        Me.StockToolStripMenuItem.Size = New System.Drawing.Size(48, 20)
+        Me.StockToolStripMenuItem.Text = "Stock"
+        '
         'HomeForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -434,4 +441,5 @@ Partial Class HomeForm
     Friend WithEvents CustomerBranchToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents UserAccountsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents InsurancesToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents StockToolStripMenuItem As ToolStripMenuItem
 End Class

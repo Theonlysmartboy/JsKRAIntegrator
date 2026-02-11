@@ -116,10 +116,12 @@
     <Compile Include="Models\Item\Product\ItemSaveRequest.vb" />
     <Compile Include="Models\Item\Product\ItemSaveResponse.vb" />
     <Compile Include="Models\Item\Product\Product.vb" />
-    <Compile Include="Models\Item\Stock\StockInfoRequest.vb" />
-    <Compile Include="Models\Item\Stock\StockInfoResponse.vb" />
     <Compile Include="Models\Item\Stock\StockMasterSaveRequest.vb" />
     <Compile Include="Models\Item\Stock\StockMasterSaveResponse.vb" />
+    <Compile Include="Models\Item\Stock\StockMovementRequest.vb" />
+    <Compile Include="Models\Item\Stock\StockMovementResponse.vb" />
+    <Compile Include="Models\Item\Stock\StockMovementSaveRequest.vb" />
+    <Compile Include="Models\Item\Stock\StockMovementSaveResponse.vb" />
     <Compile Include="Models\Notice\NoticeRequest.vb" />
     <Compile Include="Models\Notice\NoticeResponse.vb" />
     <Compile Include="Models\Notice\VscuNotice.vb" />

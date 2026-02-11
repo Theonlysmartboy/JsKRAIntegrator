@@ -358,4 +358,9 @@ Public Class HomeForm
         Dim insuranceForm As New InsuranceForm(_conn)
         insuranceForm.ShowDialog()
     End Sub
+
+    Private Sub StockToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StockToolStripMenuItem.Click
+        Dim stockForm As New Stocks(_conn)
+        stockForm.ShowDialog()
+    End Sub
 End Class

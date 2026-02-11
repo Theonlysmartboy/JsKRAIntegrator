@@ -16,8 +16,8 @@
         Public Const SALES As String = "/trnsSales/saveSales"
         Public Const PURCHASE_SELECT As String = "/trnsPurchase/selectTrnsPurchaseSales"
         Public Const PURCHASE_SAVE As String = "/trnsPurchase/savePurchases"
-        Public Const STOCK_SAVE As String = "/stock/saveStockItems"
-        Public Const STOCK_SELECT As String = "/stock/selectStockItems"
+        Public Const STOCK_MOVEMENT_SAVE As String = "/stock/saveStockItems"
+        Public Const STOCK_MOVEMENT_SELECT As String = "/stock/selectStockItems"
         Public Const STOCK_MASTER_SAVE As String = "/stockMaster/saveStockMaster"
         Public Const NOTICE_SELECT As String = "/notices/selectNotices"
     End Class

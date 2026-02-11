@@ -371,15 +371,36 @@ Namespace Services
             Return fallback
         End Function
 
-        ' -----------------------
-        ' 8 a) Stock Request(POST)
-        ' -----------------------
-        Public Async Function GetStockAsync(req As StockInfoRequest) As Task(Of StockInfoResponse)
-            Dim endpoint = ApiEndpoints.STOCK_SAVE
-            Dim resp = Await SendAndDeserializeAsync(Of StockInfoResponse)(endpoint, req, isGet:=False)
+        '------------------------------
+        ' Stock Movement Request (POST)
+        '------------------------------
+        Public Async Function GetStockMoveAsync(query As StockMovementRequest) As Task(Of StockMovementResponse)
+            Dim endpoint = ApiEndpoints.STOCK_MOVEMENT_SELECT
+            Dim resp = Await SendAndDeserializeAsync(Of StockMovementResponse)(endpoint, query, isGet:=False)
+            If resp IsNot Nothing AndAlso resp.data IsNot Nothing Then
+                Return resp
+            End If
+            ' fallback if API failed
+            Dim fb As New StockMovementResponse
+            fb.resultCd = "999"
+            fb.resultMsg = "No data returned"
+            fb.data = New StockMovementData With {
+                .stockList = New List(Of StockMovementRecord)
+            }
+            Return fb
+        End Function
+
+        '--------------------------
+        ' Stock Movement Save (POST)
+        '--------------------------
+        Public Async Function SaveStockMoveAsync(req As StockMovementSaveRequest) As Task(Of StockMovementSaveResponse)
+            Dim endpoint = ApiEndpoints.STOCK_MOVEMENT_SAVE
+            Dim resp = Await SendAndDeserializeAsync(Of StockMovementSaveResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
-            Dim fallback = MakeBaseFallback(Of StockInfoResponse)("VSCU error: failed to call Stock")
-            fallback.result = New StockInfoData() With {.itemCode = req.itemCode, .currentQuantity = 0, .updated = False}
+            Dim fallback As New StockMovementSaveResponse()
+            fallback.resultCd = "Error"
+            fallback.resultMsg = "VSCU error: failed to call SaveStockMove"
+            fallback.data = Nothing
             Return fallback
         End Function
 
