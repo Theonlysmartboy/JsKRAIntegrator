@@ -1,5 +1,5 @@
 ﻿Namespace Models.Item.Stock
-    Public Class StockSaveRequest
+    Public Class StockMasterSaveRequest
         Public Property tin As String
         Public Property bhfId As String
         Public Property itemCd As String

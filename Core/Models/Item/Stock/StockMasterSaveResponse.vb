@@ -1,5 +1,5 @@
 ﻿Namespace Models.Item.Stock
-    Public Class StockSaveResponse
+    Public Class StockMasterSaveResponse
         Inherits BaseResponse
         Public Property data As Object
 
