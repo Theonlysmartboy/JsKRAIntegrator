@@ -11,9 +11,13 @@
     End Class
 
     Public Class StockMovementRecord
-        Public Property custTin As String
-        Public Property custBhfId As String
         Public Property sarNo As Integer
+        Public Property orgSarNo As String
+        Public Property regTyCd As String
+        Public Property custTin As String
+        Public Property custNm As String
+        Public Property custBhfId As String
+        Public Property sarTyCd As String
         Public Property ocrnDt As String
         Public Property totItemCnt As Integer
         Public Property totTaxblAmt As Decimal

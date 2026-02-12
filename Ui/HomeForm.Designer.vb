@@ -62,6 +62,7 @@ Partial Class HomeForm
         Me.UserAccountsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.InsurancesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ProductManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.StockToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SalesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PurchasesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSettings = New System.Windows.Forms.ToolStripMenuItem()
@@ -69,7 +70,6 @@ Partial Class HomeForm
         Me.NoticesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LblStatus = New System.Windows.Forms.Label()
         Me.Loader = New JsToolBox.Loaders.DualRingLoader()
-        Me.StockToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -314,6 +314,12 @@ Partial Class HomeForm
         Me.ProductManagementToolStripMenuItem.Size = New System.Drawing.Size(135, 20)
         Me.ProductManagementToolStripMenuItem.Text = "Product Management"
         '
+        'StockToolStripMenuItem
+        '
+        Me.StockToolStripMenuItem.Name = "StockToolStripMenuItem"
+        Me.StockToolStripMenuItem.Size = New System.Drawing.Size(48, 20)
+        Me.StockToolStripMenuItem.Text = "Stock"
+        '
         'SalesToolStripMenuItem
         '
         Me.SalesToolStripMenuItem.Name = "SalesToolStripMenuItem"
@@ -369,12 +375,6 @@ Partial Class HomeForm
         Me.Loader.TabIndex = 8
         Me.Loader.Text = "Loading"
         Me.Loader.Visible = False
-        '
-        'StockToolStripMenuItem
-        '
-        Me.StockToolStripMenuItem.Name = "StockToolStripMenuItem"
-        Me.StockToolStripMenuItem.Size = New System.Drawing.Size(48, 20)
-        Me.StockToolStripMenuItem.Text = "Stock"
         '
         'HomeForm
         '
