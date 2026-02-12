@@ -9,6 +9,7 @@
         Public Const BRANCH_INFO As String = "/branch/info"
         Public Const BRANCH_USER_SAVE As String = "/branches/saveBrancheUsers"
         Public Const BRANCH_INSURANCE_SAVE As String = "/branches/saveBrancheInsurances"
+        Public Const ITEM_COMPOSITION_SAVE As String = "/items/saveItemComposition"
         Public Const ITEM_SAVE As String = "/items/saveItems"
         Public Const ITEM_SELECT As String = "/items/selectItems"
         Public Const IMPORT_ITEM_SELECT As String = "/imports/selectImportItems"

@@ -7,6 +7,7 @@ Imports Ui.Helpers
 Imports Ui.Repo
 Imports Ui.Repo.ItemRepo
 Imports Ui.Repo.StockRepo
+Imports Ui.Repo.UnitRepo
 
 Public Class Stocks
     Private _integrator As VSCUIntegrator
@@ -215,7 +216,7 @@ Public Class Stocks
         DgvStockMoveHeader.ReadOnly = False
     End Sub
 
-    Private Sub SetupItemsGridColumns()
+    Private Async Sub SetupItemsGridColumns()
         DgvStockMoveItems.Columns.Clear()
         ' Basic item info
         DgvStockMoveItems.Columns.Add("item_seq", "Seq")
@@ -234,9 +235,35 @@ Public Class Stocks
         ' Other item details
         DgvStockMoveItems.Columns.Add("item_nm", "ItemName")
         DgvStockMoveItems.Columns.Add("bcd", "Barcode")
-        DgvStockMoveItems.Columns.Add("pkg_unit_cd", "PackageUnit")
+        Dim pkgUnitCol As New DataGridViewComboBoxColumn With {
+            .Name = "pkg_unit_cd",
+            .HeaderText = "Package Unit",
+            .DataPropertyName = "pkg_unit_cd",
+            .DisplayMember = "CodeName",
+            .ValueMember = "Code",
+            .DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton
+        }
+
+        Dim pkgRepo As New PackagingUnitRepository(_conn)
+        pkgUnitCol.DataSource = Await pkgRepo.GetAll()
+
+        DgvStockMoveItems.Columns.Add(pkgUnitCol)
+
         DgvStockMoveItems.Columns.Add("pkg", "Package Qty")
-        DgvStockMoveItems.Columns.Add("qty_unit_cd", "QuantityUnit")
+        Dim qtyUnitCol As New DataGridViewComboBoxColumn With {
+            .Name = "qty_unit_cd",
+            .HeaderText = "Quantity Unit",
+            .DataPropertyName = "qty_unit_cd",
+            .DisplayMember = "CodeName",
+            .ValueMember = "Code",
+            .DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton
+        }
+
+        Dim qtyRepo As New UnitOfQuantityRepository(_conn)
+        qtyUnitCol.DataSource = Await qtyRepo.GetAll()
+
+        DgvStockMoveItems.Columns.Add(qtyUnitCol)
+
         DgvStockMoveItems.Columns.Add("qty", "Quantity")
         DgvStockMoveItems.Columns.Add("item_expr_dt", "ExpiryDate")
         DgvStockMoveItems.Columns.Add("prc", "Price")

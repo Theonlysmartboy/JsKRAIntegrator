@@ -26,25 +26,25 @@ Partial Class Stocks
         Me.Loader = New JsToolBox.Loaders.DualRingLoader()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.BtnFetchStockMove = New System.Windows.Forms.Button()
         Me.TxtSearchStockMovement = New System.Windows.Forms.TextBox()
         Me.BtnUploadStockMoves = New System.Windows.Forms.Button()
         Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.DgvStockMoveItems = New System.Windows.Forms.DataGridView()
         Me.DgvStockMoveHeader = New System.Windows.Forms.DataGridView()
         Me.TableLayoutPanel4 = New System.Windows.Forms.TableLayoutPanel()
         Me.BtnSaveStockMove = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
-        Me.DgvStockMoveItems = New System.Windows.Forms.DataGridView()
-        Me.Label3 = New System.Windows.Forms.Label()
-        Me.Label2 = New System.Windows.Forms.Label()
         Me.TabPage1.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
         Me.TableLayoutPanel2.SuspendLayout()
         Me.TableLayoutPanel3.SuspendLayout()
+        CType(Me.DgvStockMoveItems, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DgvStockMoveHeader, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TableLayoutPanel4.SuspendLayout()
         Me.TabControl1.SuspendLayout()
-        CType(Me.DgvStockMoveItems, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TabPage1
@@ -110,6 +110,18 @@ Partial Class Stocks
         Me.TableLayoutPanel2.Size = New System.Drawing.Size(1164, 46)
         Me.TableLayoutPanel2.TabIndex = 0
         '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Dock = System.Windows.Forms.DockStyle.Top
+        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label2.Location = New System.Drawing.Point(294, 34)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(576, 12)
+        Me.Label2.TabIndex = 5
+        Me.Label2.Text = "Stock Movement Header"
+        Me.Label2.TextAlign = System.Drawing.ContentAlignment.TopCenter
+        '
         'BtnFetchStockMove
         '
         Me.BtnFetchStockMove.Dock = System.Windows.Forms.DockStyle.Top
@@ -154,6 +166,30 @@ Partial Class Stocks
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 57.0!))
         Me.TableLayoutPanel3.Size = New System.Drawing.Size(1164, 438)
         Me.TableLayoutPanel3.TabIndex = 1
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label3.Location = New System.Drawing.Point(3, 175)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(1158, 13)
+        Me.Label3.TabIndex = 7
+        Me.Label3.Text = "Stock Movement Items"
+        Me.Label3.TextAlign = System.Drawing.ContentAlignment.TopCenter
+        '
+        'DgvStockMoveItems
+        '
+        Me.DgvStockMoveItems.AllowUserToAddRows = False
+        Me.DgvStockMoveItems.AllowUserToDeleteRows = False
+        Me.DgvStockMoveItems.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DgvStockMoveItems.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DgvStockMoveItems.Location = New System.Drawing.Point(3, 191)
+        Me.DgvStockMoveItems.Name = "DgvStockMoveItems"
+        Me.DgvStockMoveItems.ReadOnly = True
+        Me.DgvStockMoveItems.Size = New System.Drawing.Size(1158, 244)
+        Me.DgvStockMoveItems.TabIndex = 6
         '
         'DgvStockMoveHeader
         '
@@ -202,60 +238,27 @@ Partial Class Stocks
         Me.TabControl1.Size = New System.Drawing.Size(1184, 561)
         Me.TabControl1.TabIndex = 0
         '
-        'DgvStockMoveItems
-        '
-        Me.DgvStockMoveItems.AllowUserToAddRows = False
-        Me.DgvStockMoveItems.AllowUserToDeleteRows = False
-        Me.DgvStockMoveItems.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DgvStockMoveItems.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.DgvStockMoveItems.Location = New System.Drawing.Point(3, 191)
-        Me.DgvStockMoveItems.Name = "DgvStockMoveItems"
-        Me.DgvStockMoveItems.ReadOnly = True
-        Me.DgvStockMoveItems.Size = New System.Drawing.Size(1158, 244)
-        Me.DgvStockMoveItems.TabIndex = 6
-        '
-        'Label3
-        '
-        Me.Label3.AutoSize = True
-        Me.Label3.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(3, 175)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(1158, 13)
-        Me.Label3.TabIndex = 7
-        Me.Label3.Text = "Stock Movement Items"
-        Me.Label3.TextAlign = System.Drawing.ContentAlignment.TopCenter
-        '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Dock = System.Windows.Forms.DockStyle.Top
-        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(294, 34)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(576, 12)
-        Me.Label2.TabIndex = 5
-        Me.Label2.Text = "Stock Movement Header"
-        Me.Label2.TextAlign = System.Drawing.ContentAlignment.TopCenter
-        '
         'Stocks
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1184, 561)
         Me.Controls.Add(Me.TabControl1)
+        Me.MaximizeBox = False
+        Me.MinimizeBox = False
         Me.Name = "Stocks"
         Me.Text = "Stock"
+        Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.TabPage1.ResumeLayout(False)
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel2.ResumeLayout(False)
         Me.TableLayoutPanel2.PerformLayout()
         Me.TableLayoutPanel3.ResumeLayout(False)
         Me.TableLayoutPanel3.PerformLayout()
+        CType(Me.DgvStockMoveItems, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.DgvStockMoveHeader, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TableLayoutPanel4.ResumeLayout(False)
         Me.TabControl1.ResumeLayout(False)
-        CType(Me.DgvStockMoveItems, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

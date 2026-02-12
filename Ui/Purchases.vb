@@ -213,9 +213,27 @@ Public Class Purchases
     End Sub
 
     Private Sub BtnPurchaseFetch_Click(sender As Object, e As EventArgs) Handles BtnPurchaseFetch.Click
-        Dim dt = _purchaseRepo.GetAll()
-        DgvPurchaseHeader.DataSource = dt
+        ' Load header
+        Dim dtHeader = _purchaseRepo.GetAll()
+        DgvPurchaseHeader.DataSource = dtHeader
+        ' Optionally select the first purchase to load items
+        If dtHeader.Rows.Count > 0 Then
+            Dim firstPurchaseId = Convert.ToInt32(dtHeader.Rows(0)("id"))
+            LoadPurchaseItems(firstPurchaseId)
+        End If
     End Sub
+
+    Private Sub LoadPurchaseItems(purchaseId As Integer)
+        Dim dtItems = _purchaseRepo.GetById(purchaseId)
+        DgvPurchaseItems.DataSource = dtItems
+    End Sub
+
+    Private Sub DgvPurchaseHeader_SelectionChanged(sender As Object, e As EventArgs) Handles DgvPurchaseHeader.SelectionChanged
+        If DgvPurchaseHeader.CurrentRow Is Nothing Then Exit Sub
+        Dim purchaseId = Convert.ToInt32(DgvPurchaseHeader.CurrentRow.Cells("id").Value)
+        LoadPurchaseItems(purchaseId)
+    End Sub
+
 
     Private Async Sub BtnUploadPurchase_Click(sender As Object, e As EventArgs) Handles BtnUploadPurchase.Click
         DgvPurchaseHeader.EndEdit()
@@ -296,11 +314,24 @@ Public Class Purchases
         With DgvPurchaseHeader
             .Columns.Clear()
             .AllowUserToAddRows = True
+            .AutoGenerateColumns = False
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            Dim colId As New DataGridViewTextBoxColumn With {
+                .Name = "id",
+                .HeaderText = "ID",
+                .Visible = False
+            }
+            .Columns.Add(colId)
+            ' Checkbox for selection
             .Columns.Add(New DataGridViewCheckBoxColumn() With {.Name = "chkSelect", .HeaderText = "Select"})
-            .Columns.Add("invcNo", "Invoice No")
-            .Columns.Add("pchsDt", "Purchase Date (yyyyMMdd)")
-            .Columns.Add("remark", "Remark")
+            ' Invoice No
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "invcNo", .HeaderText = "Invoice No", .DataPropertyName = "invc_no"})
+            ' Purchase Date
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "pchsDt", .HeaderText = "Purchase Date", .DataPropertyName = "pchs_dt"})
+            ' Remark
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "remark", .HeaderText = "Remark", .DataPropertyName = "remark"})
+            ' Uploaded status (read-only)
+            .Columns.Add(New DataGridViewCheckBoxColumn() With {.Name = "is_uploaded", .HeaderText = "Uploaded", .DataPropertyName = "is_uploaded", .ReadOnly = True})
         End With
     End Sub
 
@@ -308,35 +339,37 @@ Public Class Purchases
         With DgvPurchaseItems
             .Columns.Clear()
             .AllowUserToAddRows = True
+            .AutoGenerateColumns = False
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            .Columns.Add("itemSeq", "Seq")
-            .Columns.Add("itemCd", "Item Code")
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "itemSeq", .HeaderText = "Seq", .DataPropertyName = "item_seq"})
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "itemCd", .HeaderText = "Item Code", .DataPropertyName = "item_cd"})
+            ' Item Class ComboBox
             Dim itemClsColumn As New DataGridViewComboBoxColumn With {
                 .Name = "itemClsCd",
                 .HeaderText = "Item Class",
-                .DataPropertyName = "itemClsCd",
+                .DataPropertyName = "item_cls_cd",
                 .DisplayMember = "itemClsNm",
                 .ValueMember = "itemClsCd"
             }
             Dim clsRepo As New ItemClassificationRepository(_connString)
             itemClsColumn.DataSource = clsRepo.GetAll()
             .Columns.Add(itemClsColumn)
-            .Columns.Add("itemNm", "Item Name")
-            .Columns.Add("qty", "Qty")
-            .Columns.Add("prc", "Price")
-            ' Tax Type Combo
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "itemNm", .HeaderText = "Item Name", .DataPropertyName = "item_nm"})
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "qty", .HeaderText = "Qty", .DataPropertyName = "qty"})
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "prc", .HeaderText = "Price", .DataPropertyName = "prc"})
+            ' Tax Type ComboBox
             Dim taxCol As New DataGridViewComboBoxColumn With {
                 .Name = "taxTyCd",
                 .HeaderText = "Tax Type",
-                .DataPropertyName = "taxTyCd",
+                .DataPropertyName = "tax_ty_cd",
                 .DisplayMember = "CodeName",
                 .ValueMember = "Code"
             }
             Dim taxTypeRepo As New TaxTypeRepository(_connString)
             taxCol.DataSource = taxTypeRepo.GetAll()
-            DgvPurchaseItems.Columns.Add(taxCol)
-            .Columns.Add("taxAmt", "Tax Amt")
-            .Columns.Add("totAmt", "Total")
+            .Columns.Add(taxCol)
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "taxAmt", .HeaderText = "Tax Amt", .DataPropertyName = "tax_amt"})
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "totAmt", .HeaderText = "Total", .DataPropertyName = "tot_amt"})
         End With
     End Sub
 

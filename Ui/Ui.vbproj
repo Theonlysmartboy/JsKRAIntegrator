@@ -209,6 +209,8 @@
     <Compile Include="Repo\ProductRepo\PurchaseRepository.vb" />
     <Compile Include="Repo\ProductRepo\SalesRepository.vb" />
     <Compile Include="Repo\TaxTypeRepository.vb" />
+    <Compile Include="Repo\UnitRepo\PackagingUnitRepository.vb" />
+    <Compile Include="Repo\UnitRepo\UnitOfQuantityRepository.vb" />
     <Compile Include="Sales.Designer.vb">
       <DependentUpon>Sales.vb</DependentUpon>
     </Compile>

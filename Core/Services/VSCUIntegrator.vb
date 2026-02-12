@@ -59,12 +59,10 @@ Namespace Services
             End If
             'Log the raw response
             Await _logger.LogAsync(LogLevel.Info, $"Response from {fullUrl}", raw)
-
             'Try deserializing
             Dim result As T = Nothing
             Try
                 result = JsonUtil.FromJson(Of T)(raw)
-
             Catch ex As Exception
                 deserializeEx = ex
             End Try
@@ -84,7 +82,6 @@ Namespace Services
                 Dim propCd = typ.GetProperty("resultCd")
                 Dim propMsg = typ.GetProperty("resultMsg")
                 Dim propDt = typ.GetProperty("resultDt")
-
                 If propCd IsNot Nothing Then propCd.SetValue(inst, "500")
                 If propMsg IsNot Nothing Then propMsg.SetValue(inst, msg)
                 If propDt IsNot Nothing Then propDt.SetValue(inst, DateTime.Now.ToString("yyyyMMddHHmmss"))
@@ -99,12 +96,10 @@ Namespace Services
         ' -----------------------
         Public Async Function InitializeAsync(req As InitInfoRequest) As Task(Of InitInfoResponse)
             Dim endpoint = ApiEndpoints.SELECT_INIT
-
             Dim resp = Await SendAndDeserializeAsync(Of InitInfoResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then
                 Return resp
             End If
-
             ' fallback structured response when the call failed
             Dim fallback = MakeBaseFallback(Of InitInfoResponse)("VSCU error: failed to call Initialize")
             fallback.resultCd = "ERROR"  ' or -1
@@ -118,15 +113,10 @@ Namespace Services
         ' -----------------------
         Public Async Function GetCodeDataAsync(request As CodeDataRequest) As Task(Of CodeDataResponse)
             Dim endpoint = ApiEndpoints.CODE_DATA
-
-            ' POST request with payload
             Dim resp = Await SendAndDeserializeAsync(Of CodeDataResponse)(endpoint, request, isGet:=False)
-
             If resp IsNot Nothing Then
                 Return resp
             End If
-
-            ' Build fallback response
             Dim fallback As New CodeDataResponse With {
                 .resultCd = "Error",
                 .resultMsg = "VSCU error: failed to call CodeData",
@@ -346,7 +336,7 @@ Namespace Services
         Public Async Function GetPurchaseAsync(query As PurchaseInfoRequest) As Task(Of PurchaseInfoResponse)
             Dim endpoint = ApiEndpoints.PURCHASE_SELECT
             Dim resp = Await SendAndDeserializeAsync(Of PurchaseInfoResponse)(endpoint, query, isGet:=False)
-            If resp IsNot Nothing AndAlso resp.data IsNot Nothing Then
+            If resp IsNot Nothing Then
                 Return resp
             End If
             ' fallback if API failed
@@ -377,7 +367,7 @@ Namespace Services
         Public Async Function GetStockMoveAsync(query As StockMovementRequest) As Task(Of StockMovementResponse)
             Dim endpoint = ApiEndpoints.STOCK_MOVEMENT_SELECT
             Dim resp = Await SendAndDeserializeAsync(Of StockMovementResponse)(endpoint, query, isGet:=False)
-            If resp IsNot Nothing AndAlso resp.data IsNot Nothing Then
+            If resp IsNot Nothing Then
                 Return resp
             End If
             ' fallback if API failed

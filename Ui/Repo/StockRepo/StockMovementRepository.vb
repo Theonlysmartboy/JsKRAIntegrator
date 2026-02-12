@@ -23,13 +23,17 @@ Namespace Repo.StockRepo
                 conn.Open()
                 Dim tran = conn.BeginTransaction()
                 Try
-                    Dim sql As String = "INSERT INTO etims_stock_moves (cust_tin, cust_bhf_id, sar_no, ocrn_dt, tot_item_cnt, tot_taxbl_amt, " &
-                        "tot_tax_amt, tot_amt, remark) VALUES (@custTin, @custBhfId, @sarNo, @ocrnDt, @totItemCnt, @totTaxblAmt, @totTaxAmt, " &
-                        "@totAmt, @remark); SELECT LAST_INSERT_ID();"
+                    Dim sql As String = "INSERT INTO etims_stock_moves (sar_no, org_sar_no, reg_ty_cd, cust_tin, cust_nm, cust_bhf_id, sar_ty_cd, " &
+                        "ocrn_dt, tot_item_cnt, tot_taxbl_amt, tot_tax_amt, tot_amt, remark) VALUES (@sarNo, @orgSarNo, @regTyCd, @custTin, @custNm, " &
+                        "@custBhfId, @sarTyCd, @ocrnDt, @totItemCnt, @totTaxblAmt, @totTaxAmt, @totAmt, @remark); SELECT LAST_INSERT_ID();"
                     Dim cmd As New MySqlCommand(sql, conn, tran)
-                    cmd.Parameters.AddWithValue("@custTin", move.custTin)
-                    cmd.Parameters.AddWithValue("@custBhfId", move.custBhfId)
                     cmd.Parameters.AddWithValue("@sarNo", move.sarNo)
+                    cmd.Parameters.AddWithValue("@orgSarNo", move.orgSarNo)
+                    cmd.Parameters.AddWithValue("@regTyCd", move.regTyCd)
+                    cmd.Parameters.AddWithValue("@custTin", move.custTin)
+                    cmd.Parameters.AddWithValue("@custNm", move.custNm)
+                    cmd.Parameters.AddWithValue("@custBhfId", move.custBhfId)
+                    cmd.Parameters.AddWithValue("@sarTyCd", move.sarTyCd)
                     cmd.Parameters.AddWithValue("@ocrnDt", move.ocrnDt)
                     cmd.Parameters.AddWithValue("@totItemCnt", move.totItemCnt)
                     cmd.Parameters.AddWithValue("@totTaxblAmt", move.totTaxblAmt)
