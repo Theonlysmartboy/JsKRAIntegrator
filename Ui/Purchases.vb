@@ -6,6 +6,7 @@ Imports Ui.Helpers
 Imports Ui.Repo
 Imports Ui.Repo.ItemRepo
 Imports Ui.Repo.ProductRepo
+Imports Ui.Repo.UnitRepo
 
 Public Class Purchases
     Private _settingsManager As SettingsManager
@@ -49,23 +50,14 @@ Public Class Purchases
 
     Private Sub PurchaseForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' Add placeholder text
-        SetPlaceholder(TxtSearchPurchases, "Start typing to search...")
         SetPlaceholder(TxtPurchaseSendSearch, "Start typing to search...")
         ' Attach placeholder handlers
-        AddHandler TxtSearchPurchases.Enter, AddressOf TextBox_Enter
-        AddHandler TxtSearchPurchases.Leave, AddressOf TextBox_Leave
         AddHandler TxtPurchaseSendSearch.Enter, AddressOf TextBox_Enter
         AddHandler TxtPurchaseSendSearch.Leave, AddressOf TextBox_Leave
+        AddHandler DgvPurchaseHeader.SelectionChanged, AddressOf DgvPurchaseHeader_SelectionChanged
         ' Setup grid
-        SetupPurchaseGetGrid()
         SetupPurchaseHeaderGrid()
         SetupPurchaseItemsGrid()
-    End Sub
-
-    Private Sub TxtSearchPurchases_TextChanged(sender As Object, e As EventArgs) Handles TxtSearchPurchases.TextChanged
-        ' Prevent filtering when placeholder is active
-        If TxtSearchPurchases.ForeColor = Color.Gray Then Exit Sub
-        FilterGrid(DtgvPurchasesGet, TxtSearchPurchases.Text.Trim())
     End Sub
 
     Private Sub TxtPurchaseSendSearch_TextChanged(sender As Object, e As EventArgs) Handles TxtPurchaseSendSearch.TextChanged
@@ -74,69 +66,9 @@ Public Class Purchases
         FilterGrid(DgvPurchaseHeader, TxtPurchaseSendSearch.Text.Trim())
     End Sub
 
-    Private Sub SetPlaceholder(txt As TextBox, placeholder As String)
-        If txt Is Nothing Then Exit Sub
-        If String.IsNullOrEmpty(txt.Text) Then
-            txt.ForeColor = Color.Gray
-            txt.Text = placeholder
-            txt.Tag = placeholder
-        End If
-    End Sub
-
-    Private Sub TextBox_Enter(sender As Object, e As EventArgs)
-        Dim txt = DirectCast(sender, TextBox)
-        If txt.Text = CStr(txt.Tag) Then
-            txt.Text = ""
-            txt.ForeColor = Color.Black
-        End If
-    End Sub
-
-    Private Sub TextBox_Leave(sender As Object, e As EventArgs)
-        Dim txt = DirectCast(sender, TextBox)
-        If txt.Text = "" Then
-            txt.ForeColor = Color.Gray
-            txt.Text = CStr(txt.Tag)
-        End If
-    End Sub
-
-    Private Sub FilterGrid(grid As DataGridView, search As String)
-        If Not OriginalTables.ContainsKey(grid) Then Exit Sub
-        Dim dt As DataTable = OriginalTables(grid)
-        Dim dv As DataView = dt.DefaultView
-        If String.IsNullOrWhiteSpace(search) Then
-            dv.RowFilter = ""
-        Else
-            Dim safeSearch As String = search.Replace("'", "''")
-            Dim filters As New List(Of String)
-            For Each col As DataColumn In dt.Columns
-                filters.Add($"CONVERT([{col.ColumnName}], 'System.String') LIKE '%{safeSearch}%'")
-            Next
-            dv.RowFilter = String.Join(" OR ", filters)
-        End If
-        ' Clear rows but keep columns
-        grid.Rows.Clear()
-        ' Repopulate dynamically
-        For Each rowView As DataRowView In dv
-            Dim values As New List(Of Object)
-            For Each col As DataGridViewColumn In grid.Columns
-                ' Skip checkbox or unbound columns
-                If dt.Columns.Contains(col.Name) Then
-                    values.Add(rowView(col.Name))
-                Else
-                    ' Set default value for unbound column (e.g., checkbox)
-                    values.Add(If(TypeOf col Is DataGridViewCheckBoxColumn, False, Nothing))
-                End If
-            Next
-            grid.Rows.Add(values.ToArray())
-        Next
-    End Sub
-
-    Private Async Sub BtnPurchaseGet_Click(sender As Object, e As EventArgs) Handles BtnPurchaseGet.Click
+    Private Async Sub BtnPurchaseFetchRemote_Click(sender As Object, e As EventArgs) Handles BtnPurchaseFetchRemote.Click
         Try
-            Loader.Visible = True
-            Loader.Text = "Fetching..."
-            BtnPurchaseGet.Enabled = False
-            BtnPurchaseGet.Text = "Processing..."
+            ToggleLoader(True, "Fetching data...")
             ' Get integrator settings
             Dim tin = Await _settingsManager.GetSettingAsync("pin")
             Dim bhfId = Await _settingsManager.GetSettingAsync("branch_id")
@@ -160,7 +92,7 @@ Public Class Purchases
             Dim purchases = res.data.saleList
             ' Load rows
             For Each p In purchases
-                DtgvPurchasesGet.Rows.Add(
+                DgvPurchaseHeader.Rows.Add(
                     p.spplrTin,
                     p.spplrNm,
                     p.spplrBhfId,
@@ -172,7 +104,7 @@ Public Class Purchases
                 )
             Next
             ' Store a DataTable for searching
-            OriginalTables(DtgvPurchasesGet) = (From p In purchases Select p.spplrTin,
+            OriginalTables(DgvPurchaseHeader) = (From p In purchases Select p.spplrTin,
                         p.spplrNm,
                         p.spplrBhfId,
                         p.spplrInvcNo,
@@ -188,31 +120,11 @@ Public Class Purchases
         Catch ex As Exception
             CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
-            Loader.Visible = False
-            BtnPurchaseGet.Enabled = True
-            BtnPurchaseGet.Text = "FETCH"
+            ToggleLoader(False, "")
         End Try
     End Sub
 
-    Private Sub SetupPurchaseGetGrid()
-        With DtgvPurchasesGet
-            .Columns.Clear()
-            .Rows.Clear()
-            .AllowUserToAddRows = False
-            .ReadOnly = True
-            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            .Columns.Add("spplrTin", "Supplier TIN")
-            .Columns.Add("spplrNm", "Supplier Name")
-            .Columns.Add("spplrBhfId", "Branch ID")
-            .Columns.Add("spplrInvcNo", "Invoice No")
-            .Columns.Add("salesDt", "Sales Date")
-            .Columns.Add("totItemCnt", "Item Count")
-            .Columns.Add("totAmt", "Total Amount")
-            .Columns.Add("totTaxAmt", "Total Tax")
-        End With
-    End Sub
-
-    Private Sub BtnPurchaseFetch_Click(sender As Object, e As EventArgs) Handles BtnPurchaseFetch.Click
+    Private Sub BtnPurchaseFetch_Click(sender As Object, e As EventArgs) Handles BtnPurchaseFetchLocal.Click
         ' Load header
         Dim dtHeader = _purchaseRepo.GetAll()
         DgvPurchaseHeader.DataSource = dtHeader
@@ -223,17 +135,17 @@ Public Class Purchases
         End If
     End Sub
 
-    Private Sub LoadPurchaseItems(purchaseId As Integer)
-        Dim dtItems = _purchaseRepo.GetById(purchaseId)
-        DgvPurchaseItems.DataSource = dtItems
-    End Sub
-
     Private Sub DgvPurchaseHeader_SelectionChanged(sender As Object, e As EventArgs) Handles DgvPurchaseHeader.SelectionChanged
         If DgvPurchaseHeader.CurrentRow Is Nothing Then Exit Sub
-        Dim purchaseId = Convert.ToInt32(DgvPurchaseHeader.CurrentRow.Cells("id").Value)
+        ' ignore the new row
+        If DgvPurchaseHeader.CurrentRow.IsNewRow Then Exit Sub
+        ' ignore rows without id
+        Dim cellValue = DgvPurchaseHeader.CurrentRow.Cells("id").Value
+        If cellValue Is Nothing OrElse IsDBNull(cellValue) Then Exit Sub
+        Dim purchaseId As Integer
+        If Not Integer.TryParse(cellValue.ToString(), purchaseId) Then Exit Sub
         LoadPurchaseItems(purchaseId)
     End Sub
-
 
     Private Async Sub BtnUploadPurchase_Click(sender As Object, e As EventArgs) Handles BtnUploadPurchase.Click
         DgvPurchaseHeader.EndEdit()
@@ -246,6 +158,215 @@ Public Class Purchases
             Await UploadPurchase(id)
         Next
         BtnPurchaseFetch_Click(Nothing, Nothing)
+    End Sub
+
+    Private Sub BtnSavePurchaseInfo_Click(sender As Object, e As EventArgs) Handles BtnSavePurchaseInfo.Click
+        Try
+            DgvPurchaseHeader.EndEdit()
+            DgvPurchaseItems.EndEdit()
+            If DgvPurchaseHeader.Rows.Count = 0 OrElse DgvPurchaseHeader.Rows(0).IsNewRow Then
+                Throw New Exception("Enter purchase header information.")
+            End If
+            Dim headerRow = DgvPurchaseHeader.Rows(0)
+            Dim purchase As New PurchaseTransaction With {
+                .InvcNo = Convert.ToInt32(headerRow.Cells("invcNo").Value),
+                .PchsDt = headerRow.Cells("pchsDt").Value.ToString(),
+                .RegTyCd = headerRow.Cells("reg_ty_cd").Value?.ToString(),
+                .PchsTyCd = headerRow.Cells("pchs_ty_cd").Value?.ToString(),
+                .RcptTyCd = headerRow.Cells("rcpt_ty_cd").Value?.ToString(),
+                .PmtTyCd = headerRow.Cells("pmt_ty_cd").Value?.ToString(),
+                .PchsSttsCd = headerRow.Cells("pchs_stts_cd").Value?.ToString(),
+                .Remark = headerRow.Cells("remark").Value?.ToString(),
+                .Items = New List(Of PurchaseTransactionItem)
+            }
+            Dim totalAmt As Decimal = 0
+            Dim totalTax As Decimal = 0
+            For Each row As DataGridViewRow In DgvPurchaseItems.Rows
+                If row.IsNewRow Then Continue For
+                Dim item As New PurchaseTransactionItem
+                item.ItemSeq = If(IsNumeric(row.Cells("itemSeq").Value), Convert.ToInt32(row.Cells("itemSeq").Value), 0)
+                item.ItemCd = row.Cells("itemCd").Value?.ToString()
+                item.ItemClsCd = row.Cells("itemClsCd").Value?.ToString()
+                item.ItemNm = row.Cells("itemNm").Value?.ToString()
+                Dim qtyVal As Decimal
+                Decimal.TryParse(row.Cells("qty").Value?.ToString(), qtyVal)
+                item.Qty = qtyVal
+                Dim prcVal As Decimal
+                Decimal.TryParse(row.Cells("prc").Value?.ToString(), prcVal)
+                item.Prc = prcVal
+                item.TaxTyCd = row.Cells("taxTyCd").Value?.ToString()
+                Dim taxVal As Decimal
+                Decimal.TryParse(row.Cells("taxAmt").Value?.ToString(), taxVal)
+                item.TaxAmt = taxVal
+                Dim totVal As Decimal
+                Decimal.TryParse(row.Cells("totAmt").Value?.ToString(), totVal)
+                item.TotAmt = totVal
+                totalAmt += item.TotAmt
+                totalTax += item.TaxAmt
+                purchase.Items.Add(item)
+            Next
+            purchase.TotAmt = totalAmt
+            purchase.TotTaxAmt = totalTax
+            purchase.TotTaxblAmt = totalAmt - totalTax
+            _purchaseRepo.Insert(purchase)
+            CustomAlert.ShowAlert(Me, "Purchase saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+            DgvPurchaseItems.Rows.Clear()
+        Catch ex As Exception
+            CustomAlert.ShowAlert(Me, ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+        End Try
+    End Sub
+
+    Private Sub BtnReset_Click(sender As Object, e As EventArgs) Handles BtnReset.Click
+        ' Header grid
+        If DgvPurchaseHeader.DataSource IsNot Nothing Then
+            DgvPurchaseHeader.DataSource = Nothing
+        Else
+            DgvPurchaseHeader.Rows.Clear()
+        End If
+        ' Items grid
+        If DgvPurchaseItems.DataSource IsNot Nothing Then
+            DgvPurchaseItems.DataSource = Nothing
+        Else
+            DgvPurchaseItems.Rows.Clear()
+        End If
+        TxtPurchaseSendSearch.Clear()
+    End Sub
+
+    'Helpers
+    Private Sub SetupPurchaseHeaderGrid()
+        With DgvPurchaseHeader
+            .Columns.Clear()
+            .AllowUserToAddRows = True
+            .AutoGenerateColumns = False
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            Dim colId As New DataGridViewTextBoxColumn With {
+                .Name = "id",
+                .HeaderText = "ID",
+                .DataPropertyName = "id",
+                .Visible = False
+            }
+            .Columns.Add(colId)
+            ' Checkbox for selection
+            .Columns.Add(New DataGridViewCheckBoxColumn() With {.Name = "chkSelect", .HeaderText = "Select"})
+            ' Invoice No
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "invcNo", .HeaderText = "Invoice No", .DataPropertyName = "invc_no"})
+            'Orginal Invoice No
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "orgInvcNo", .HeaderText = "Original Invoice No", .DataPropertyName = "org_invc_no"})
+            ' Registration Type
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "regTyCd", .HeaderText = "Registration Type", .DataPropertyName = "reg_ty_cd"})
+            ' Purchase Type
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "pchsTyCd", .HeaderText = "Purchase Type", .DataPropertyName = "pchs_ty_cd"})
+            ' Receipt Type
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "rcptTyCd", .HeaderText = "Receipt Type", .DataPropertyName = "rcpt_ty_cd"})
+            ' Payment Type
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "pmtTyCd", .HeaderText = "Payment Type", .DataPropertyName = "pmt_ty_cd"})
+            ' Purchase Status
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "pchsSttsCd", .HeaderText = "Purchase Status", .DataPropertyName = "pchs_stts_cd"})
+            ' Confirmation Date
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "cfmDt", .HeaderText = "Confirmation Date", .DataPropertyName = "cfm_dt"})
+            ' Purchase Date
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "pchsDt", .HeaderText = "Purchase Date", .DataPropertyName = "pchs_dt"})
+            'Warehouse Date
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "wrhsDt", .HeaderText = "Warehouse Date", .DataPropertyName = "wrhs_dt"})
+            'Cancellation Date
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "cnclDt", .HeaderText = "Cancellation Date", .DataPropertyName = "cncl_dt"})
+            'Refund Date
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "rfdDt", .HeaderText = "Refund Date", .DataPropertyName = "rfd_dt"})
+            ' Total Item Count
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "totItemCnt", .HeaderText = "Total Items", .DataPropertyName = "tot_item_cnt", .ReadOnly = True})
+            ' Total Taxable Amount
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "totTaxblAmt", .HeaderText = "Total Taxable Amt", .DataPropertyName = "tot_taxbl_amt", .ReadOnly = True})
+            ' Total Tax Amount
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "totTaxAmt", .HeaderText = "Total Tax Amt", .DataPropertyName = "tot_tax_amt", .ReadOnly = True})
+            ' Remark
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "remark", .HeaderText = "Remark", .DataPropertyName = "remark"})
+            ' Uploaded status (read-only)
+            .Columns.Add(New DataGridViewCheckBoxColumn() With {.Name = "is_uploaded", .HeaderText = "Uploaded", .DataPropertyName = "is_uploaded", .ReadOnly = True})
+        End With
+    End Sub
+
+    Private Async Sub SetupPurchaseItemsGrid()
+        With DgvPurchaseItems
+            .Columns.Clear()
+            .AllowUserToAddRows = True
+            .AutoGenerateColumns = False
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            'Item sequence
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "itemSeq", .HeaderText = "Seq", .DataPropertyName = "item_seq"})
+            'Item code
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "itemCd", .HeaderText = "Item Code", .DataPropertyName = "item_cd"})
+            ' Item Class ComboBox
+            Dim itemClsColumn As New DataGridViewComboBoxColumn With {
+                .Name = "itemClsCd",
+                .HeaderText = "Item Class",
+                .DataPropertyName = "item_cls_cd",
+                .DisplayMember = "itemClsNm",
+                .ValueMember = "itemClsCd"
+            }
+            Dim clsRepo As New ItemClassificationRepository(_connString)
+            itemClsColumn.DataSource = clsRepo.GetAll()
+            .Columns.Add(itemClsColumn)
+            ' Item Name
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "itemNm", .HeaderText = "Item Name", .DataPropertyName = "item_nm"})
+            ' Package Unit ComboBox
+            Dim pkgUnitCol As New DataGridViewComboBoxColumn With {
+                .Name = "pkgUnitCd",
+                .HeaderText = "Package Unit",
+                .DataPropertyName = "pkg_unit_cd",
+                .DisplayMember = "CodeName",
+                .ValueMember = "Code"
+            }
+            Dim pkgUnitRepo As New PackagingUnitRepository(_connString)
+            pkgUnitCol.DataSource = Await pkgUnitRepo.GetAll()
+            .Columns.Add(pkgUnitCol)
+            ' Package Quantity
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "pkg", .HeaderText = "Package Qty", .DataPropertyName = "pkg"})
+            ' Quantity Unit ComboBox
+            Dim qtyUnitCol As New DataGridViewComboBoxColumn With {
+                .Name = "qtyUnitCd",
+                .HeaderText = "Quantity Unit",
+                .DataPropertyName = "qty_unit_cd",
+                .DisplayMember = "CodeName",
+                .ValueMember = "Code"
+            }
+            Dim qtyUnitRepo As New UnitOfQuantityRepository(_connString)
+            qtyUnitCol.DataSource = Await qtyUnitRepo.GetAll()
+            .Columns.Add(qtyUnitCol)
+            ' Quantity
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "qty", .HeaderText = "Qty", .DataPropertyName = "qty"})
+            'Price
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "prc", .HeaderText = "Price", .DataPropertyName = "prc"})
+            ' Supply Amount
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "splyAmt", .HeaderText = "Supply Amt", .DataPropertyName = "sply_amt"})
+            ' Discount Rate
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "dcRt", .HeaderText = "Discount Rate", .DataPropertyName = "dc_rt"})
+            ' Discount Amount
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "dcAmt", .HeaderText = "Discount Amt", .DataPropertyName = "dc_amt"})
+            ' Taxable Amount
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "taxblAmt", .HeaderText = "Taxable Amt", .DataPropertyName = "taxbl_amt"})
+            ' Tax Type ComboBox
+            Dim taxCol As New DataGridViewComboBoxColumn With {
+                .Name = "taxTyCd",
+                .HeaderText = "Tax Type",
+                .DataPropertyName = "tax_ty_cd",
+                .DisplayMember = "CodeName",
+                .ValueMember = "Code"
+            }
+            Dim taxTypeRepo As New TaxTypeRepository(_connString)
+            taxCol.DataSource = taxTypeRepo.GetAll()
+            .Columns.Add(taxCol)
+            ' Tax Amount
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "taxAmt", .HeaderText = "Tax Amt", .DataPropertyName = "tax_amt"})
+            ' Total Amount
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "totAmt", .HeaderText = "Total", .DataPropertyName = "tot_amt"})
+            ' Item Expiration Date
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "itemExprDt", .HeaderText = "Expiration Date", .DataPropertyName = "item_expr_dt"})
+        End With
+    End Sub
+
+    Private Sub LoadPurchaseItems(purchaseId As Integer)
+        Dim dtItems = _purchaseRepo.GetItemsByPurchaseId(purchaseId)
+        DgvPurchaseItems.DataSource = dtItems
     End Sub
 
     Private Async Function UploadPurchase(id As Integer) As Task
@@ -310,122 +431,71 @@ Public Class Purchases
         Return req
     End Function
 
-    Private Sub SetupPurchaseHeaderGrid()
-        With DgvPurchaseHeader
-            .Columns.Clear()
-            .AllowUserToAddRows = True
-            .AutoGenerateColumns = False
-            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            Dim colId As New DataGridViewTextBoxColumn With {
-                .Name = "id",
-                .HeaderText = "ID",
-                .Visible = False
-            }
-            .Columns.Add(colId)
-            ' Checkbox for selection
-            .Columns.Add(New DataGridViewCheckBoxColumn() With {.Name = "chkSelect", .HeaderText = "Select"})
-            ' Invoice No
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "invcNo", .HeaderText = "Invoice No", .DataPropertyName = "invc_no"})
-            ' Purchase Date
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "pchsDt", .HeaderText = "Purchase Date", .DataPropertyName = "pchs_dt"})
-            ' Remark
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "remark", .HeaderText = "Remark", .DataPropertyName = "remark"})
-            ' Uploaded status (read-only)
-            .Columns.Add(New DataGridViewCheckBoxColumn() With {.Name = "is_uploaded", .HeaderText = "Uploaded", .DataPropertyName = "is_uploaded", .ReadOnly = True})
-        End With
+    Private Sub SetPlaceholder(txt As TextBox, placeholder As String)
+        If txt Is Nothing Then Exit Sub
+        If String.IsNullOrEmpty(txt.Text) Then
+            txt.ForeColor = Color.Gray
+            txt.Text = placeholder
+            txt.Tag = placeholder
+        End If
     End Sub
 
-    Private Sub SetupPurchaseItemsGrid()
-        With DgvPurchaseItems
-            .Columns.Clear()
-            .AllowUserToAddRows = True
-            .AutoGenerateColumns = False
-            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "itemSeq", .HeaderText = "Seq", .DataPropertyName = "item_seq"})
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "itemCd", .HeaderText = "Item Code", .DataPropertyName = "item_cd"})
-            ' Item Class ComboBox
-            Dim itemClsColumn As New DataGridViewComboBoxColumn With {
-                .Name = "itemClsCd",
-                .HeaderText = "Item Class",
-                .DataPropertyName = "item_cls_cd",
-                .DisplayMember = "itemClsNm",
-                .ValueMember = "itemClsCd"
-            }
-            Dim clsRepo As New ItemClassificationRepository(_connString)
-            itemClsColumn.DataSource = clsRepo.GetAll()
-            .Columns.Add(itemClsColumn)
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "itemNm", .HeaderText = "Item Name", .DataPropertyName = "item_nm"})
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "qty", .HeaderText = "Qty", .DataPropertyName = "qty"})
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "prc", .HeaderText = "Price", .DataPropertyName = "prc"})
-            ' Tax Type ComboBox
-            Dim taxCol As New DataGridViewComboBoxColumn With {
-                .Name = "taxTyCd",
-                .HeaderText = "Tax Type",
-                .DataPropertyName = "tax_ty_cd",
-                .DisplayMember = "CodeName",
-                .ValueMember = "Code"
-            }
-            Dim taxTypeRepo As New TaxTypeRepository(_connString)
-            taxCol.DataSource = taxTypeRepo.GetAll()
-            .Columns.Add(taxCol)
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "taxAmt", .HeaderText = "Tax Amt", .DataPropertyName = "tax_amt"})
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "totAmt", .HeaderText = "Total", .DataPropertyName = "tot_amt"})
-        End With
+    Private Sub TextBox_Enter(sender As Object, e As EventArgs)
+        Dim txt = DirectCast(sender, TextBox)
+        If txt.Text = CStr(txt.Tag) Then
+            txt.Text = ""
+            txt.ForeColor = Color.Black
+        End If
     End Sub
 
-    Private Sub BtnSavePurchaseInfo_Click(sender As Object, e As EventArgs) Handles BtnSavePurchaseInfo.Click
-        Try
-            DgvPurchaseHeader.EndEdit()
-            DgvPurchaseItems.EndEdit()
-            If DgvPurchaseHeader.Rows.Count = 0 OrElse DgvPurchaseHeader.Rows(0).IsNewRow Then
-                Throw New Exception("Enter purchase header information.")
-            End If
-            Dim headerRow = DgvPurchaseHeader.Rows(0)
-            Dim purchase As New PurchaseTransaction With {
-                .InvcNo = Convert.ToInt32(headerRow.Cells("invcNo").Value),
-                .PchsDt = headerRow.Cells("pchsDt").Value.ToString(),
-                .RegTyCd = "M",
-                .PchsTyCd = "N",
-                .RcptTyCd = "P",
-                .PmtTyCd = "01",
-                .PchsSttsCd = "02",
-                .Remark = headerRow.Cells("remark").Value?.ToString(),
-                .Items = New List(Of PurchaseTransactionItem)
-            }
-            Dim totalAmt As Decimal = 0
-            Dim totalTax As Decimal = 0
-            For Each row As DataGridViewRow In DgvPurchaseItems.Rows
-                If row.IsNewRow Then Continue For
-                Dim item As New PurchaseTransactionItem
-                item.ItemSeq = If(IsNumeric(row.Cells("itemSeq").Value), Convert.ToInt32(row.Cells("itemSeq").Value), 0)
-                item.ItemCd = row.Cells("itemCd").Value?.ToString()
-                item.ItemClsCd = row.Cells("itemClsCd").Value?.ToString()
-                item.ItemNm = row.Cells("itemNm").Value?.ToString()
-                Dim qtyVal As Decimal
-                Decimal.TryParse(row.Cells("qty").Value?.ToString(), qtyVal)
-                item.Qty = qtyVal
-                Dim prcVal As Decimal
-                Decimal.TryParse(row.Cells("prc").Value?.ToString(), prcVal)
-                item.Prc = prcVal
-                item.TaxTyCd = row.Cells("taxTyCd").Value?.ToString()
-                Dim taxVal As Decimal
-                Decimal.TryParse(row.Cells("taxAmt").Value?.ToString(), taxVal)
-                item.TaxAmt = taxVal
-                Dim totVal As Decimal
-                Decimal.TryParse(row.Cells("totAmt").Value?.ToString(), totVal)
-                item.TotAmt = totVal
-                totalAmt += item.TotAmt
-                totalTax += item.TaxAmt
-                purchase.Items.Add(item)
+    Private Sub TextBox_Leave(sender As Object, e As EventArgs)
+        Dim txt = DirectCast(sender, TextBox)
+        If txt.Text = "" Then
+            txt.ForeColor = Color.Gray
+            txt.Text = CStr(txt.Tag)
+        End If
+    End Sub
+
+    Private Sub FilterGrid(grid As DataGridView, search As String)
+        If Not OriginalTables.ContainsKey(grid) Then Exit Sub
+        Dim dt As DataTable = OriginalTables(grid)
+        Dim dv As DataView = dt.DefaultView
+        If String.IsNullOrWhiteSpace(search) Then
+            dv.RowFilter = ""
+        Else
+            Dim safeSearch As String = search.Replace("'", "''")
+            Dim filters As New List(Of String)
+            For Each col As DataColumn In dt.Columns
+                filters.Add($"CONVERT([{col.ColumnName}], 'System.String') LIKE '%{safeSearch}%'")
             Next
-            purchase.TotAmt = totalAmt
-            purchase.TotTaxAmt = totalTax
-            purchase.TotTaxblAmt = totalAmt - totalTax
-            _purchaseRepo.Insert(purchase)
-            CustomAlert.ShowAlert(Me, "Purchase saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
-            DgvPurchaseItems.Rows.Clear()
-        Catch ex As Exception
-            CustomAlert.ShowAlert(Me, ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
-        End Try
+            dv.RowFilter = String.Join(" OR ", filters)
+        End If
+        ' Clear rows but keep columns
+        grid.Rows.Clear()
+        ' Repopulate dynamically
+        For Each rowView As DataRowView In dv
+            Dim values As New List(Of Object)
+            For Each col As DataGridViewColumn In grid.Columns
+                ' Skip checkbox or unbound columns
+                If dt.Columns.Contains(col.Name) Then
+                    values.Add(rowView(col.Name))
+                Else
+                    ' Set default value for unbound column (e.g., checkbox)
+                    values.Add(If(TypeOf col Is DataGridViewCheckBoxColumn, False, Nothing))
+                End If
+            Next
+            grid.Rows.Add(values.ToArray())
+        Next
     End Sub
+
+    'Toggler
+    Private Sub ToggleLoader(isLoading As Boolean, message As String)
+        Loader.Visible = isLoading
+        Loader.Text = message
+        BtnPurchaseFetchLocal.Enabled = Not isLoading
+        BtnPurchaseFetchRemote.Enabled = Not isLoading
+        BtnUploadPurchase.Enabled = Not isLoading
+        BtnReset.Enabled = Not isLoading
+    End Sub
+
 End Class

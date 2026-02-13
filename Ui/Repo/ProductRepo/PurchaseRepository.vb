@@ -1,4 +1,5 @@
-﻿Imports Core.Models.Purchase
+﻿Imports System.Windows.Forms.VisualStyles.VisualStyleElement
+Imports Core.Models.Purchase
 Imports MySql.Data.MySqlClient
 
 Namespace Repo.ProductRepo
@@ -78,7 +79,10 @@ End Interface
             Dim dt As New DataTable()
             Using conn As New MySqlConnection(_connString)
                 conn.Open()
-                Dim cmd As New MySqlCommand("SELECT id, invc_no, pchs_dt, tot_amt, is_uploaded FROM purchase_transactions ORDER BY id DESC", conn)
+                Dim sql As String = "SELECT id, invc_no, org_invc_no, reg_ty_cd, pchs_ty_cd, rcpt_ty_cd, pmt_ty_cd, pchs_stts_cd, cfm_dt, " &
+                    "pchs_dt, wrhs_dt, cncl_req_dt, cncl_dt, rfd_dt, tot_item_cnt, tot_taxbl_amt, tot_tax_amt, tot_amt, remark, is_uploaded " &
+                    "FROM purchase_transactions ORDER BY id ASC"
+                Dim cmd As New MySqlCommand(sql, conn)
                 Using da As New MySqlDataAdapter(cmd)
                     da.Fill(dt)
                 End Using
@@ -130,6 +134,21 @@ End Interface
                 End Using
             End Using
             Return purchase
+        End Function
+
+        Public Function GetItemsByPurchaseId(id As Integer) As DataTable
+            Dim dt As New DataTable()
+            Using conn As New MySqlConnection(_connString)
+                conn.Open()
+                Dim cmd As New MySqlCommand("SELECT item_seq, item_cd, item_cls_cd, item_nm, pkg_unit_cd, pkg, qty_unit_cd, qty, prc, sply_amt, " &
+                                            "dc_rt, dc_amt, taxbl_amt, tax_ty_cd, tax_amt, tot_amt, item_expr_dt FROM purchase_transaction_items " &
+                                            "WHERE purchase_id = @id ORDER BY item_seq", conn)
+                cmd.Parameters.AddWithValue("@id", id)
+                Using da As New MySqlDataAdapter(cmd)
+                    da.Fill(dt)
+                End Using
+            End Using
+            Return dt
         End Function
     End Class
 End Namespace
