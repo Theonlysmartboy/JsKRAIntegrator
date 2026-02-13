@@ -135,6 +135,96 @@ Public Class Purchases
         End If
     End Sub
 
+    Private Sub BtnSavePurchaseInfo_Click(sender As Object, e As EventArgs) Handles BtnSavePurchaseInfo.Click
+        Try
+            DgvPurchaseHeader.EndEdit()
+            DgvPurchaseItems.EndEdit()
+            If DgvPurchaseHeader.Rows.Count = 0 OrElse DgvPurchaseHeader.Rows(0).IsNewRow Then
+                Throw New Exception("Enter purchase header information.")
+            End If
+            Dim headerRow = DgvPurchaseHeader.Rows(0)
+            Dim invcNo As Integer
+            Integer.TryParse(headerRow.Cells("invcNo").Value?.ToString(), invcNo)
+            Dim purchase As New PurchaseTransaction With {
+                .InvcNo = invcNo,
+                .OrgInvcNo = If(IsNumeric(headerRow.Cells("orgInvcNo").Value), Convert.ToInt32(headerRow.Cells("orgInvcNo").Value), 0),
+                .RegTyCd = SafeStr(headerRow.Cells("regTyCd")),
+                .PchsTyCd = SafeStr(headerRow.Cells("pchsTyCd")),
+                .RcptTyCd = SafeStr(headerRow.Cells("rcptTyCd")),
+                .PmtTyCd = SafeStr(headerRow.Cells("pmtTyCd")),
+                .PchsSttsCd = SafeStr(headerRow.Cells("pchsSttsCd")),
+                .CfmDt = SafeStr(headerRow.Cells("cfmDt")),
+                .PchsDt = SafeStr(headerRow.Cells("pchsDt")),
+                .WrhsDt = SafeStr(headerRow.Cells("wrhsDt")),
+                .cnclReqDt = SafeStr(headerRow.Cells("cnclReqDt")),
+                .CnclDt = SafeStr(headerRow.Cells("cnclDt")),
+                .RfdDt = SafeStr(headerRow.Cells("rfdDt")),
+                .Remark = SafeStr(headerRow.Cells("remark")),
+                .Items = New List(Of PurchaseTransactionItem)
+            }
+            Dim itemCount As Integer = 0
+            Dim totalTax As Decimal = 0
+            Dim totalAmt As Decimal = 0
+            For Each row As DataGridViewRow In DgvPurchaseItems.Rows
+                If row.IsNewRow Then Continue For
+                Dim item As New PurchaseTransactionItem
+                item.ItemSeq = If(IsNumeric(row.Cells("itemSeq").Value), Convert.ToInt32(row.Cells("itemSeq").Value), 0)
+                item.ItemCd = row.Cells("itemCd").Value?.ToString()
+                item.ItemClsCd = row.Cells("itemClsCd").Value?.ToString()
+                item.ItemNm = row.Cells("itemNm").Value?.ToString()
+                item.pkgUnitCd = row.Cells("pkgUnitCd").Value?.ToString()
+                Dim pkgVal As Decimal
+                Decimal.TryParse(row.Cells("pkg").Value?.ToString(), pkgVal)
+                item.pkg = pkgVal
+                item.qtyUnitCd = row.Cells("qtyUnitCd").Value?.ToString()
+                Dim qtyVal As Decimal
+                Decimal.TryParse(row.Cells("qty").Value?.ToString(), qtyVal)
+                item.Qty = qtyVal
+                Dim prcVal As Decimal
+                Decimal.TryParse(row.Cells("prc").Value?.ToString(), prcVal)
+                item.Prc = prcVal
+                item.splyAmt = qtyVal * prcVal
+                Dim dcRtVal As Decimal
+                Decimal.TryParse(row.Cells("dcRt").Value?.ToString(), dcRtVal)
+                item.dcRt = dcRtVal
+                Dim dcAmtVal As Decimal
+                Decimal.TryParse(row.Cells("dcAmt").Value?.ToString(), dcAmtVal)
+                item.dcAmt = dcAmtVal
+                item.taxblAmt = item.splyAmt - item.dcAmt
+                item.TaxTyCd = row.Cells("taxTyCd").Value?.ToString()
+                Dim taxVal As Decimal
+                Decimal.TryParse(row.Cells("taxAmt").Value?.ToString(), taxVal)
+                item.TaxAmt = taxVal
+                Dim totVal As Decimal
+                Decimal.TryParse(row.Cells("totAmt").Value?.ToString(), totVal)
+                item.itemExprDt = SafeStr(row.Cells("itemExprDt"))
+                itemCount += 1
+                item.TotAmt = totVal
+                totalAmt += item.TotAmt
+                totalTax += item.TaxAmt
+                purchase.Items.Add(item)
+            Next
+            purchase.TotItemCnt = itemCount
+            purchase.TotAmt = totalAmt
+            purchase.TotTaxAmt = totalTax
+            purchase.TotTaxblAmt = totalAmt - totalTax
+            _purchaseRepo.Insert(purchase)
+            CustomAlert.ShowAlert(Me, "Purchase saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+            ResetGridDataSource(DgvPurchaseHeader)
+            ResetGridDataSource(DgvPurchaseItems)
+        Catch ex As Exception
+            CustomAlert.ShowAlert(Me, ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+        End Try
+    End Sub
+
+    Private Sub BtnReset_Click(sender As Object, e As EventArgs) Handles BtnReset.Click
+        ' Header grid
+        ResetGridDataSource(DgvPurchaseHeader)
+        ' Items grid
+        ResetGridDataSource(DgvPurchaseItems)
+        TxtPurchaseSendSearch.Clear()
+    End Sub
+
     Private Sub DgvPurchaseHeader_SelectionChanged(sender As Object, e As EventArgs) Handles DgvPurchaseHeader.SelectionChanged
         If DgvPurchaseHeader.CurrentRow Is Nothing Then Exit Sub
         ' ignore the new row
@@ -149,87 +239,28 @@ Public Class Purchases
 
     Private Async Sub BtnUploadPurchase_Click(sender As Object, e As EventArgs) Handles BtnUploadPurchase.Click
         DgvPurchaseHeader.EndEdit()
+        ToggleLoader(True, "Uploading...")
+        Dim successCount As Integer = 0
+        Dim failCount As Integer = 0
         For Each row As DataGridViewRow In DgvPurchaseHeader.Rows
             If row.IsNewRow Then Continue For
             Dim isChecked = If(row.Cells("chkSelect").Value, False)
             If Not isChecked Then Continue For
             If CBool(row.Cells("is_uploaded").Value) Then Continue For
             Dim id = CInt(row.Cells("id").Value)
-            Await UploadPurchase(id)
-        Next
-        BtnPurchaseFetch_Click(Nothing, Nothing)
-    End Sub
-
-    Private Sub BtnSavePurchaseInfo_Click(sender As Object, e As EventArgs) Handles BtnSavePurchaseInfo.Click
-        Try
-            DgvPurchaseHeader.EndEdit()
-            DgvPurchaseItems.EndEdit()
-            If DgvPurchaseHeader.Rows.Count = 0 OrElse DgvPurchaseHeader.Rows(0).IsNewRow Then
-                Throw New Exception("Enter purchase header information.")
+            Dim ok = Await UploadPurchase(id)
+            If ok Then
+                successCount += 1
+            Else
+                failCount += 1
             End If
-            Dim headerRow = DgvPurchaseHeader.Rows(0)
-            Dim purchase As New PurchaseTransaction With {
-                .InvcNo = Convert.ToInt32(headerRow.Cells("invcNo").Value),
-                .PchsDt = headerRow.Cells("pchsDt").Value.ToString(),
-                .RegTyCd = headerRow.Cells("reg_ty_cd").Value?.ToString(),
-                .PchsTyCd = headerRow.Cells("pchs_ty_cd").Value?.ToString(),
-                .RcptTyCd = headerRow.Cells("rcpt_ty_cd").Value?.ToString(),
-                .PmtTyCd = headerRow.Cells("pmt_ty_cd").Value?.ToString(),
-                .PchsSttsCd = headerRow.Cells("pchs_stts_cd").Value?.ToString(),
-                .Remark = headerRow.Cells("remark").Value?.ToString(),
-                .Items = New List(Of PurchaseTransactionItem)
-            }
-            Dim totalAmt As Decimal = 0
-            Dim totalTax As Decimal = 0
-            For Each row As DataGridViewRow In DgvPurchaseItems.Rows
-                If row.IsNewRow Then Continue For
-                Dim item As New PurchaseTransactionItem
-                item.ItemSeq = If(IsNumeric(row.Cells("itemSeq").Value), Convert.ToInt32(row.Cells("itemSeq").Value), 0)
-                item.ItemCd = row.Cells("itemCd").Value?.ToString()
-                item.ItemClsCd = row.Cells("itemClsCd").Value?.ToString()
-                item.ItemNm = row.Cells("itemNm").Value?.ToString()
-                Dim qtyVal As Decimal
-                Decimal.TryParse(row.Cells("qty").Value?.ToString(), qtyVal)
-                item.Qty = qtyVal
-                Dim prcVal As Decimal
-                Decimal.TryParse(row.Cells("prc").Value?.ToString(), prcVal)
-                item.Prc = prcVal
-                item.TaxTyCd = row.Cells("taxTyCd").Value?.ToString()
-                Dim taxVal As Decimal
-                Decimal.TryParse(row.Cells("taxAmt").Value?.ToString(), taxVal)
-                item.TaxAmt = taxVal
-                Dim totVal As Decimal
-                Decimal.TryParse(row.Cells("totAmt").Value?.ToString(), totVal)
-                item.TotAmt = totVal
-                totalAmt += item.TotAmt
-                totalTax += item.TaxAmt
-                purchase.Items.Add(item)
-            Next
-            purchase.TotAmt = totalAmt
-            purchase.TotTaxAmt = totalTax
-            purchase.TotTaxblAmt = totalAmt - totalTax
-            _purchaseRepo.Insert(purchase)
-            CustomAlert.ShowAlert(Me, "Purchase saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
-            DgvPurchaseItems.Rows.Clear()
-        Catch ex As Exception
-            CustomAlert.ShowAlert(Me, ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
-        End Try
-    End Sub
-
-    Private Sub BtnReset_Click(sender As Object, e As EventArgs) Handles BtnReset.Click
-        ' Header grid
-        If DgvPurchaseHeader.DataSource IsNot Nothing Then
-            DgvPurchaseHeader.DataSource = Nothing
-        Else
-            DgvPurchaseHeader.Rows.Clear()
-        End If
-        ' Items grid
-        If DgvPurchaseItems.DataSource IsNot Nothing Then
-            DgvPurchaseItems.DataSource = Nothing
-        Else
-            DgvPurchaseItems.Rows.Clear()
-        End If
-        TxtPurchaseSendSearch.Clear()
+        Next
+        ToggleLoader(False, "")
+        BtnPurchaseFetch_Click(Nothing, Nothing)
+        'single summary alert
+        CustomAlert.ShowAlert(Me, $"Upload complete. Success: {successCount}, Failed: {failCount}", "Upload Result",
+        CustomAlert.AlertType.Info,
+        CustomAlert.ButtonType.OK)
     End Sub
 
     'Helpers
@@ -263,15 +294,17 @@ Public Class Purchases
             ' Purchase Status
             .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "pchsSttsCd", .HeaderText = "Purchase Status", .DataPropertyName = "pchs_stts_cd"})
             ' Confirmation Date
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "cfmDt", .HeaderText = "Confirmation Date", .DataPropertyName = "cfm_dt"})
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "cfmDt", .HeaderText = "Confirmation Date", .DataPropertyName = "cfm_dt", .ValueType = GetType(String)})
             ' Purchase Date
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "pchsDt", .HeaderText = "Purchase Date", .DataPropertyName = "pchs_dt"})
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "pchsDt", .HeaderText = "Purchase Date", .DataPropertyName = "pchs_dt", .ValueType = GetType(String)})
             'Warehouse Date
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "wrhsDt", .HeaderText = "Warehouse Date", .DataPropertyName = "wrhs_dt"})
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "wrhsDt", .HeaderText = "Warehouse Date", .DataPropertyName = "wrhs_dt", .ValueType = GetType(String)})
+            ' Cancellation Reason
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "cnclReqDt", .HeaderText = "Cancel Requested", .DataPropertyName = "cncl_req_dt"})
             'Cancellation Date
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "cnclDt", .HeaderText = "Cancellation Date", .DataPropertyName = "cncl_dt"})
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "cnclDt", .HeaderText = "Cancellation Date", .DataPropertyName = "cncl_dt", .ValueType = GetType(String)})
             'Refund Date
-            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "rfdDt", .HeaderText = "Refund Date", .DataPropertyName = "rfd_dt"})
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "rfdDt", .HeaderText = "Refund Date", .DataPropertyName = "rfd_dt", .ValueType = GetType(String)})
             ' Total Item Count
             .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "totItemCnt", .HeaderText = "Total Items", .DataPropertyName = "tot_item_cnt", .ReadOnly = True})
             ' Total Taxable Amount
@@ -369,34 +402,66 @@ Public Class Purchases
         DgvPurchaseItems.DataSource = dtItems
     End Sub
 
-    Private Async Function UploadPurchase(id As Integer) As Task
+    Private Async Function UploadPurchase(id As Integer) As Task(Of Boolean)
         Dim purchase = _purchaseRepo.GetById(id)
         Dim request = BuildRequest(purchase)
         Dim response = Await _integrator.SavePurchaseAsync(request)
         If response IsNot Nothing AndAlso response.resultCd = "000" Then
             _purchaseRepo.MarkAsUploaded(id)
-            CustomAlert.ShowAlert(Me, $"Successfully uploaded purchase with Invoice No: {purchase.InvcNo}", "Success",
-                                    CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
-        Else
-            CustomAlert.ShowAlert(Me, $"Failed to upload purchase with Invoice No: {purchase.InvcNo}. Error: {response?.resultMsg}", "Error",
-                                    CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            Return True
         End If
+        Return False
     End Function
 
     Private Function BuildRequest(purchase As PurchaseTransaction) As PurchaseTransactionRequest
+        Dim taxblA As Decimal = 0
+        Dim taxblB As Decimal = 0
+        Dim taxblC As Decimal = 0
+        Dim taxblD As Decimal = 0
+        Dim taxblE As Decimal = 0
+        Dim taxAmtA As Decimal = 0
+        Dim taxAmtB As Decimal = 0
+        Dim taxAmtC As Decimal = 0
+        Dim taxAmtD As Decimal = 0
+        Dim taxAmtE As Decimal = 0
+        ComputeTaxBuckets(purchase.Items, taxblA, taxblB, taxblC, taxblD, taxblE, taxAmtA, taxAmtB, taxAmtC, taxAmtD, taxAmtE)
         Dim req As New PurchaseTransactionRequest With {
             .tin = _tin,
             .bhfId = _branchId,
+            .spplrTin = purchase.SpplrTin,
             .invcNo = purchase.InvcNo,
-            .orgInvcNo = 0,
+            .orgInvcNo = purchase.OrgInvcNo,
+            .spplrBhfId = purchase.SpplrBhfId,
+            .spplrNm = purchase.SpplrNm,
+            .spplrInvcNo = purchase.SpplrInvcNo,
+            .spplrSdcId = purchase.SpplrSdcId,
             .regTyCd = purchase.RegTyCd,
             .pchsTyCd = purchase.PchsTyCd,
             .rcptTyCd = purchase.RcptTyCd,
             .pmtTyCd = purchase.PmtTyCd,
             .pchsSttsCd = purchase.PchsSttsCd,
-            .cfmDt = DateTime.Now.ToString("yyyyMMddHHmmss"),
-            .pchsDt = purchase.PchsDt,
+            .cfmDt = FormatEtimsDate(purchase.CfmDt),
+            .pchsDt = FormatDate8(purchase.PchsDt),
+            .wrhsDt = FormatEtimsDate(purchase.WrhsDt),
+            .cnclReqDt = FormatEtimsDate(purchase.cnclReqDt),
+            .cnclDt = FormatEtimsDate(purchase.CnclDt),
+            .rfdDt = FormatEtimsDate(purchase.RfdDt),
             .totItemCnt = purchase.Items.Count,
+            .taxblAmtA = taxblA,
+            .taxblAmtB = taxblB,
+            .taxblAmtC = taxblC,
+            .taxblAmtD = taxblD,
+            .taxblAmtE = taxblE,
+            .taxAmtA = taxAmtA,
+            .taxAmtB = taxAmtB,
+            .taxAmtC = taxAmtC,
+            .taxAmtD = taxAmtD,
+            .taxAmtE = taxAmtE,
+            .taxRtA = 0,
+            .taxRtB = 16,
+            .taxRtC = 0,
+            .taxRtD = 0,
+            .taxRtE = 8,
             .totTaxblAmt = purchase.TotTaxblAmt,
             .totTaxAmt = purchase.TotTaxAmt,
             .totAmt = purchase.TotAmt,
@@ -413,19 +478,19 @@ Public Class Purchases
                 .ItemCd = it.ItemCd,
                 .ItemClsCd = it.ItemClsCd,
                 .ItemNm = it.ItemNm,
-                .pkgUnitCd = "NT",
-                .pkg = 1,
-                .qtyUnitCd = "U",
+                .pkgUnitCd = it.pkgUnitCd,
+                .pkg = it.pkg,
+                .qtyUnitCd = it.qtyUnitCd,
                 .Qty = it.Qty,
                 .Prc = it.Prc,
-                .splyAmt = it.TotAmt,
-                .dcRt = 0,
-                .dcAmt = 0,
-                .taxblAmt = it.TotAmt,
+                .splyAmt = it.splyAmt,
+                .dcRt = it.dcRt,
+                .dcAmt = it.dcAmt,
+                .taxblAmt = it.taxblAmt,
                 .TaxTyCd = it.TaxTyCd,
                 .TaxAmt = it.TaxAmt,
                 .TotAmt = it.TotAmt,
-                .itemExprDt = Nothing
+                .itemExprDt = FormatDate8(it.itemExprDt)
             })
         Next
         Return req
@@ -497,5 +562,75 @@ Public Class Purchases
         BtnUploadPurchase.Enabled = Not isLoading
         BtnReset.Enabled = Not isLoading
     End Sub
+
+    'Reset data source of a grid
+    Private Sub ResetGridDataSource(grid As DataGridView)
+        If grid.DataSource IsNot Nothing Then
+            grid.DataSource = Nothing
+        Else
+            grid.Rows.Clear()
+        End If
+    End Sub
+
+    'Safely get string value from a cell, handling nulls and DBNull
+    Private Function SafeStr(cell As DataGridViewCell) As String
+        If cell Is Nothing OrElse cell.Value Is Nothing OrElse IsDBNull(cell.Value) Then
+            Return ""
+        End If
+        Return cell.Value.ToString()
+    End Function
+
+    Private Function FormatDate8(value As String) As String
+        If String.IsNullOrWhiteSpace(value) Then Return ""
+        Dim dt As DateTime
+        If DateTime.TryParse(value, dt) Then
+            Return dt.ToString("yyyyMMdd")
+        End If
+        Return value
+    End Function
+
+    Public Function FormatEtimsDate(dt As DateTime) As String
+        Return dt.ToString("yyyyMMddHHmmss")
+    End Function
+
+
+    Private Sub ComputeTaxBuckets(
+    items As List(Of PurchaseTransactionItem),
+    ByRef taxblA As Decimal,
+    ByRef taxblB As Decimal,
+    ByRef taxblC As Decimal,
+    ByRef taxblD As Decimal,
+    ByRef taxblE As Decimal,
+    ByRef taxAmtA As Decimal,
+    ByRef taxAmtB As Decimal,
+    ByRef taxAmtC As Decimal,
+    ByRef taxAmtD As Decimal,
+    ByRef taxAmtE As Decimal)
+
+        For Each it In items
+            Select Case it.TaxTyCd?.Trim().ToUpper()
+                Case "A"
+                    taxblA += it.taxblAmt
+                    taxAmtA += it.TaxAmt
+
+                Case "B"
+                    taxblB += it.taxblAmt
+                    taxAmtB += it.TaxAmt
+
+                Case "C"
+                    taxblC += it.taxblAmt
+                    taxAmtC += it.TaxAmt
+
+                Case "D"
+                    taxblD += it.taxblAmt
+                    taxAmtD += it.TaxAmt
+
+                Case "E"
+                    taxblE += it.taxblAmt
+                    taxAmtE += it.TaxAmt
+            End Select
+        Next
+    End Sub
+
 
 End Class

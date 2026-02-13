@@ -50,6 +50,12 @@ Public Class HomeForm
         _integrator = New VSCUIntegrator(settings, _logger)
     End Function
 
+    Public Async Sub HomeForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ToolStripStatusLabel1.Text = My.Application.Info.Title
+        ToolStripStatusLabel2.Text = $"Version: {My.Application.Info.Version}"
+        ToolStripStatusLabel3.Text = $"Connected to VSCU at: {Await _settingsManager.GetSettingAsync("base_url")}"
+    End Sub
+
     Private Sub ToolStripSettings_Click(sender As Object, e As EventArgs) Handles ToolStripSettings.Click
         If String.IsNullOrEmpty(_conn) Then Return
         Dim settings As New Settings(_conn)
