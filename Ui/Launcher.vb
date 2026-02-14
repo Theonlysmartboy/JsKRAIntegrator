@@ -134,7 +134,7 @@ Public Class Launcher
 
         Dim version = My.Application.Info.Version.ToString()
         lblLeft.Text = $"V{version} "
-        Dim model = My.Application.Info.AssemblyName  ' or your custom model string
+        Dim model = My.Application.Info.Title  ' or your custom model string
         LblTitle.Text = model
 
         ' === RIGHT LABEL (Developer / Company) ===

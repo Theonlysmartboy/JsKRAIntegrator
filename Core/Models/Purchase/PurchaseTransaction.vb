@@ -2,6 +2,12 @@
     Public Class PurchaseTransaction
         Public Property Id As Integer
         Public Property InvcNo As Integer
+        Public Property SpplrTin As String
+        Public Property OrgInvcNo As Integer
+        Public Property SpplrBhfId As String
+        Public Property SpplrNm As String
+        Public Property SpplrInvcNo As Integer
+        Public Property SpplrSdcId As String
         Public Property RegTyCd As String
         Public Property PchsTyCd As String
         Public Property RcptTyCd As String
@@ -9,6 +15,10 @@
         Public Property PchsSttsCd As String
         Public Property CfmDt As String
         Public Property PchsDt As String
+        Public Property WrhsDt As String
+        Public Property cnclReqDt As String
+        Public Property CnclDt As String
+        Public Property RfdDt As String
         Public Property TotItemCnt As Integer
         Public Property TotTaxblAmt As Decimal
         Public Property TotTaxAmt As Decimal
