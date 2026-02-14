@@ -1,5 +1,7 @@
 ﻿Namespace Models.Purchase
     Public Class PurchaseTransactionItem
+        Public Property Id As Object
+        Public Property PurchaseId As Integer
         Public Property itemSeq As Integer
         Public Property itemCd As String
         Public Property itemClsCd As String

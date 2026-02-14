@@ -73,9 +73,7 @@ Public Class Purchases
             Dim tin = Await _settingsManager.GetSettingAsync("pin")
             Dim bhfId = Await _settingsManager.GetSettingAsync("branch_id")
             Dim lastReqDt = Await _settingsManager.GetSettingAsync("last_purchase_get_dt")
-            If String.IsNullOrWhiteSpace(lastReqDt) Then
-                lastReqDt = "20180101000000"
-            End If
+            If String.IsNullOrWhiteSpace(lastReqDt) Then lastReqDt = "20180101000000"
             ' Build request
             Dim req As New PurchaseInfoRequest With {
                 .tin = tin,
@@ -84,39 +82,86 @@ Public Class Purchases
             }
             ' Call integrator
             Dim res = Await _integrator.GetPurchaseAsync(req)
-
             If res Is Nothing OrElse res.data Is Nothing OrElse res.data.saleList Is Nothing Then
                 CustomAlert.ShowAlert(Me, "No purchase data returned.", "Info", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
             Dim purchases = res.data.saleList
-            ' Load rows
+            Dim newCount As Integer = 0
+            Dim matchCount As Integer = 0
             For Each p In purchases
-                DgvPurchaseHeader.Rows.Add(
-                    p.spplrTin,
-                    p.spplrNm,
-                    p.spplrBhfId,
-                    p.spplrInvcNo,
-                    p.salesDt,
-                    p.totItemCnt,
-                    p.totAmt,
-                    p.totTaxAmt
-                )
+                ' Fetch local purchase by unique key
+                Dim localPurchase = _purchaseRepo.GetByUniqueKey(p.spplrTin, p.spplrInvcNo, p.spplrBhfId)
+                Dim isSame As Boolean = False
+                If localPurchase IsNot Nothing Then
+                    ' Compare header totals first
+                    If localPurchase.TotAmt = p.totAmt AndAlso localPurchase.TotTaxAmt = p.totTaxAmt AndAlso localPurchase.Items.Count = p.itemList.Count Then
+                        ' Compare each item line
+                        isSame = True
+                        For i As Integer = 0 To p.itemList.Count - 1
+                            Dim remoteItem = p.itemList(i)
+                            Dim localItem = localPurchase.Items(i)
+                            If remoteItem.itemCd <> localItem.itemCd OrElse remoteItem.qty <> localItem.qty OrElse remoteItem.prc <> localItem.prc OrElse remoteItem.dcAmt <> localItem.dcAmt OrElse remoteItem.taxAmt <> localItem.taxAmt Then
+                                isSame = False
+                                Exit For
+                            End If
+                        Next
+                    End If
+                End If
+                If isSame Then
+                    matchCount += 1
+                    Continue For
+                End If
+                ' Either new or changed → save to DB and mark uploaded
+                Dim purchaseEntity As New PurchaseTransaction With {
+                    .SpplrTin = p.spplrTin,
+                    .SpplrNm = p.spplrNm,
+                    .SpplrBhfId = p.spplrBhfId,
+                    .SpplrInvcNo = p.spplrInvcNo,
+                    .TotItemCnt = p.totItemCnt,
+                    .TotAmt = p.totAmt,
+                    .TotTaxAmt = p.totTaxAmt,
+                    .TotTaxblAmt = p.totAmt - p.totTaxAmt,
+                    .Items = New List(Of PurchaseTransactionItem),
+                    .IsUploaded = True ' mark as uploaded since it comes from VSCU
+                }
+                ' Map items
+                For Each it In p.itemList
+                    Dim item As New PurchaseTransactionItem With {
+                        .itemSeq = it.itemSeq,
+                        .itemCd = it.itemCd,
+                        .itemClsCd = it.itemClsCd,
+                        .itemNm = it.itemNm,
+                        .pkgUnitCd = it.pkgUnitCd,
+                        .pkg = it.pkg,
+                        .qtyUnitCd = it.qtyUnitCd,
+                        .qty = it.qty,
+                        .prc = it.prc,
+                        .splyAmt = it.qty * it.prc,
+                        .dcRt = it.dcRt,
+                        .dcAmt = it.dcAmt,
+                        .taxblAmt = (it.qty * it.prc) - it.dcAmt,
+                        .taxTyCd = it.taxTyCd,
+                        .taxAmt = it.taxAmt,
+                        .totAmt = it.totAmt,
+                        .itemExprDt = it.itemExprDt
+                    }
+                    purchaseEntity.Items.Add(item)
+                Next
+                ' Insert or update
+                If localPurchase IsNot Nothing Then
+                    _purchaseRepo.Update(purchaseEntity)
+                Else
+                    _purchaseRepo.Insert(purchaseEntity)
+                End If
+                newCount += 1
             Next
-            ' Store a DataTable for searching
-            OriginalTables(DgvPurchaseHeader) = (From p In purchases Select p.spplrTin,
-                        p.spplrNm,
-                        p.spplrBhfId,
-                        p.spplrInvcNo,
-                        p.salesDt,
-                        p.totItemCnt,
-                        p.totAmt,
-                        p.totTaxAmt
-                ).ToDataTable()
             ' Update last request timestamp
             Await _settingsManager.SetSettingAsync("last_purchase_get_dt", DateTime.Now.ToString("yyyyMMddHHmmss"))
-            CustomAlert.ShowAlert(Me, $"Loaded {purchases.Count} purchase records.", "Success", CustomAlert.AlertType.Success,
-                                    CustomAlert.ButtonType.OK)
+            ' Show summary alert
+            CustomAlert.ShowAlert(Me, $"VSCU Sync complete. New/Updated: {newCount}, Matched existing: {matchCount}", "Info", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+            ' Refresh local grid
+            BtnPurchaseFetch_Click(Nothing, Nothing)
         Catch ex As Exception
             CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
@@ -279,10 +324,20 @@ Public Class Purchases
             .Columns.Add(colId)
             ' Checkbox for selection
             .Columns.Add(New DataGridViewCheckBoxColumn() With {.Name = "chkSelect", .HeaderText = "Select"})
+            'Supplier Tin
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "spplrTin", .HeaderText = "Supplier Tin", .DataPropertyName = "spplr_tin"})
             ' Invoice No
             .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "invcNo", .HeaderText = "Invoice No", .DataPropertyName = "invc_no"})
             'Orginal Invoice No
             .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "orgInvcNo", .HeaderText = "Original Invoice No", .DataPropertyName = "org_invc_no"})
+            'Supplier Branch Id
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "spplrBhfId", .HeaderText = "Supplier Branch Id", .DataPropertyName = "spplr_bhf_id"})
+            'Supplier Name
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "spplrNm", .HeaderText = "Supplier Name", .DataPropertyName = "spplr_nm"})
+            'Supplier Invoice No
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "spplrInvcNo", .HeaderText = "Supplier Invoice No", .DataPropertyName = "spplr_invc_no"})
+            'Supplier CU ID
+            .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "spplrSdcId", .HeaderText = "Supplier CU Id", .DataPropertyName = "spplr_sdc_id"})
             ' Registration Type
             .Columns.Add(New DataGridViewTextBoxColumn() With {.Name = "regTyCd", .HeaderText = "Registration Type", .DataPropertyName = "reg_ty_cd"})
             ' Purchase Type
@@ -593,7 +648,6 @@ Public Class Purchases
         Return dt.ToString("yyyyMMddHHmmss")
     End Function
 
-
     Private Sub ComputeTaxBuckets(
     items As List(Of PurchaseTransactionItem),
     ByRef taxblA As Decimal,
@@ -631,6 +685,4 @@ Public Class Purchases
             End Select
         Next
     End Sub
-
-
 End Class

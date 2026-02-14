@@ -1,8 +1,8 @@
 ﻿Namespace Models.Purchase
     Public Class PurchaseTransaction
         Public Property Id As Integer
-        Public Property InvcNo As Integer
         Public Property SpplrTin As String
+        Public Property InvcNo As Integer
         Public Property OrgInvcNo As Integer
         Public Property SpplrBhfId As String
         Public Property SpplrNm As String
@@ -25,6 +25,6 @@
         Public Property TotAmt As Decimal
         Public Property Remark As String
         Public Property IsUploaded As Boolean
-        Public Property Items As List(Of PurchaseTransactionItem)
+        Public Property Items As List(Of PurchaseTransactionItem) = New List(Of PurchaseTransactionItem)()
     End Class
 End Namespace
