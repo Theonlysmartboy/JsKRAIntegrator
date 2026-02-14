@@ -101,6 +101,7 @@
     <Compile Include="Models\Code\CodeDataRequest.vb" />
     <Compile Include="Models\Code\CodeDataResponse.vb" />
     <Compile Include="Models\Item\Classification\ItemClassificationEntity.vb" />
+    <Compile Include="Models\Item\Composition\ItemComposition.vb" />
     <Compile Include="Models\Item\Import\ImportItemsResponse.vb" />
     <Compile Include="Models\Item\Import\ImportItemsRequest.vb" />
     <Compile Include="Models\Item\Classification\ItemClassificationEntry.vb" />

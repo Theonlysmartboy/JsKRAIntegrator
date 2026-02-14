@@ -1,10 +1,13 @@
 ﻿Imports Core.Config
 Imports Core.Logging
+Imports Core.Models.Item.Composition
 Imports Core.Models.Item.Import
 Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
 Imports Core.Services
+Imports Newtonsoft.Json.Linq
 Imports Ui.Helpers
+Imports Ui.Repo
 Imports Ui.Repo.BranchRepo
 Imports Ui.Repo.ItemRepo
 Imports Ui.Repo.ProductRepo
@@ -15,6 +18,7 @@ Public Class ProductManagement
     Private _logger As Logger
     Private _connString As String
     Private _branchImportRepo As IBranchImportItemRepository
+    Private ReadOnly _branchRepo As IBranchRepository
     Private OriginalTables As New Dictionary(Of DataGridView, DataTable)
     Private headerCheckBox As New CheckBox()
 
@@ -25,6 +29,7 @@ Public Class ProductManagement
         Dim repo As New LogRepository(_connString)
         _logger = New Logger(repo)
         _branchImportRepo = New BranchImportItemRepository(_connString)
+        _branchRepo = New BranchRepository(connectionString)
         Task.WhenAll(
             _settingsManager.GetSettingAsync("base_url"),
             _settingsManager.GetSettingAsync("pin"),
@@ -41,7 +46,7 @@ Public Class ProductManagement
                                                                       End Sub)
     End Sub
 
-    Private Sub ProductManagementForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Async Sub ProductManagementForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SetPlaceholder(TxtSearchItemSave, "Start typing to search...")
         SetPlaceholder(TxtItemRequestSearch, "Start typing to search...")
         SetPlaceholder(TxtImportItemUpdateSearch, "Start typing to search...")
@@ -62,6 +67,7 @@ Public Class ProductManagement
         SetupItemRequestGrid()
         SetupImportItemRequestGrid()
         SetupImportItemUploadGrid()
+        Await LoadBranchesAsync()
     End Sub
 
     '=======================================================
@@ -667,9 +673,76 @@ Public Class ProductManagement
             itemCd = it.ItemCd,
             imptItemSttsCd = it.ImptItemSttsCd,
             remark = it.Remark,
-            is_uploaded = it.IsUploaded
-        ).ToDataTable()
+            is_uploaded = it.IsUploaded).ToDataTable()
         OriginalTables(DtgvImportItemUpload) = dt
         DtgvImportItemUpload.DataSource = dt
     End Sub
+
+    Private Sub CmbBranches_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbBranches.SelectedIndexChanged
+        If CmbBranches.SelectedIndex <= 0 Then
+            ' Default selection
+            txtTin.Text = ""
+            txtBhfId.Text = ""
+            Return
+        End If
+        ' Get selected DataRow
+        Dim drv As DataRowView = TryCast(CmbBranches.SelectedItem, DataRowView)
+        If drv IsNot Nothing Then
+            txtTin.Text = drv("tin").ToString()
+            txtBhfId.Text = drv("bhf_id").ToString()
+        End If
+    End Sub
+
+    Private Async Function LoadBranchesAsync() As Task
+        Dim dt As DataTable = Await _branchRepo.GetAllAsync()
+        ' Add default row
+        Dim defaultRow = dt.NewRow()
+        defaultRow("bhf_id") = ""
+        defaultRow("bhf_nm") = "-- Select Branch --"
+        defaultRow("tin") = ""
+        dt.Rows.InsertAt(defaultRow, 0)
+        CmbBranches.DataSource = dt
+        CmbBranches.DisplayMember = "bhf_nm"
+        CmbBranches.ValueMember = "bhf_id"
+    End Function
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Dim tin = txtTin.Text.ToString()
+        Dim bhfId = txtBhfId.Text.ToString()
+        Dim itemCd = TxtItemCode.Text.ToString()
+        Dim cpstItemCd = TxtCompositionCode.Text.ToString()
+        Dim cpstQty = Convert.ToDecimal(TxtQuantity.Text)
+        Dim regrId = "Admin"
+        Dim regrNm = "Admin"
+        Dim repo As New ItemCompositionRepository(_connString)
+        Dim existing = repo.GetByUniqueKey(tin, bhfId, itemCd, cpstItemCd)
+        Dim entity As New ItemComposition With {
+            .Tin = tin,
+            .BhfId = bhfId,
+            .ItemCd = itemCd,
+            .CpstItemCd = cpstItemCd,
+            .CpstQty = cpstQty,
+            .RegrId = regrId,
+            .RegrNm = regrNm
+        }
+        If existing IsNot Nothing Then
+            repo.Update(entity)
+        Else
+            repo.Insert(entity)
+        End If
+    End Sub
+
+    Private Function BuildVscuPayload(item As ItemComposition) As JObject
+        Dim payload As New JObject From {
+            {"tin", item.Tin},
+            {"bhfId", item.BhfId},
+            {"itemCd", item.ItemCd},
+            {"cpstItemCd", item.CpstItemCd},
+            {"cpstQty", item.CpstQty},
+            {"regrId", item.RegrId},
+            {"regrNm", item.RegrNm}
+        }
+        Return payload
+    End Function
+
 End Class

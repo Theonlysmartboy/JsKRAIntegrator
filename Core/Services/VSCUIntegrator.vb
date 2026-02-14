@@ -8,7 +8,6 @@ Imports Core.Models.Branch.Customer
 Imports Core.Models.Branch.Insurance
 Imports Core.Models.Branch.User
 Imports Core.Models.Code
-Imports Core.Models.Import
 Imports Core.Models.Init
 Imports Core.Models.Item.Classification
 Imports Core.Models.Item.Import

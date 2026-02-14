@@ -202,6 +202,7 @@
     <Compile Include="Repo\CustomerRepository.vb" />
     <Compile Include="Repo\ItemRepo\ImportItemStatusCodeRepository.vb" />
     <Compile Include="Repo\ItemRepo\ItemClassificationRepository.vb" />
+    <Compile Include="Repo\ItemRepo\ItemCompositionRepository.vb" />
     <Compile Include="Repo\ItemRepo\ItemInfoRepository.vb" />
     <Compile Include="Repo\StockRepo\StockMovementRepository.vb" />
     <Compile Include="Repo\NoticeRepository.vb" />

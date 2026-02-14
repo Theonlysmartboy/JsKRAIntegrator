@@ -44,15 +44,30 @@ Partial Class ProductManagement
         Me.BtnImportItemUpload = New System.Windows.Forms.Button()
         Me.TxtImportItemUpdateSearch = New System.Windows.Forms.TextBox()
         Me.DtgvImportItemUpload = New System.Windows.Forms.DataGridView()
+        Me.TableLayoutPanel9 = New System.Windows.Forms.TableLayoutPanel()
+        Me.BtnSaveImportItemStatus = New System.Windows.Forms.Button()
         Me.TabImportItemRequest = New System.Windows.Forms.TabPage()
         Me.TableLayoutPanel7 = New System.Windows.Forms.TableLayoutPanel()
         Me.TableLayoutPanel8 = New System.Windows.Forms.TableLayoutPanel()
         Me.BtnImportItemRequest = New System.Windows.Forms.Button()
         Me.TxtImportItemSearch = New System.Windows.Forms.TextBox()
         Me.DtgvImportItemRequest = New System.Windows.Forms.DataGridView()
+        Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.Button1 = New System.Windows.Forms.Button()
+        Me.TxtCompositionCode = New System.Windows.Forms.TextBox()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.TxtQuantity = New System.Windows.Forms.TextBox()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.txtBhfId = New System.Windows.Forms.TextBox()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.txtTin = New System.Windows.Forms.TextBox()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.CmbBranches = New System.Windows.Forms.ComboBox()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.TxtItemCode = New System.Windows.Forms.TextBox()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.Loader = New JsToolBox.Loaders.DualRingLoader()
-        Me.TableLayoutPanel9 = New System.Windows.Forms.TableLayoutPanel()
-        Me.BtnSaveImportItemStatus = New System.Windows.Forms.Button()
         Me.TabControl1.SuspendLayout()
         Me.TabItemSave.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
@@ -66,11 +81,13 @@ Partial Class ProductManagement
         Me.TableLayoutPanel3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
         CType(Me.DtgvImportItemUpload, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TableLayoutPanel9.SuspendLayout()
         Me.TabImportItemRequest.SuspendLayout()
         Me.TableLayoutPanel7.SuspendLayout()
         Me.TableLayoutPanel8.SuspendLayout()
         CType(Me.DtgvImportItemRequest, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TableLayoutPanel9.SuspendLayout()
+        Me.TabPage1.SuspendLayout()
+        Me.Panel1.SuspendLayout()
         Me.SuspendLayout()
         '
         'TabControl1
@@ -80,6 +97,7 @@ Partial Class ProductManagement
         Me.TabControl1.Controls.Add(Me.TabItemRequest)
         Me.TabControl1.Controls.Add(Me.TabImportItemUpdate)
         Me.TabControl1.Controls.Add(Me.TabImportItemRequest)
+        Me.TabControl1.Controls.Add(Me.TabPage1)
         Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
         Me.TabControl1.Name = "TabControl1"
@@ -323,6 +341,31 @@ Partial Class ProductManagement
         Me.DtgvImportItemUpload.Size = New System.Drawing.Size(1179, 441)
         Me.DtgvImportItemUpload.TabIndex = 1
         '
+        'TableLayoutPanel9
+        '
+        Me.TableLayoutPanel9.ColumnCount = 3
+        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
+        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
+        Me.TableLayoutPanel9.Controls.Add(Me.BtnSaveImportItemStatus, 1, 0)
+        Me.TableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel9.Location = New System.Drawing.Point(3, 492)
+        Me.TableLayoutPanel9.Name = "TableLayoutPanel9"
+        Me.TableLayoutPanel9.RowCount = 1
+        Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel9.Size = New System.Drawing.Size(1179, 38)
+        Me.TableLayoutPanel9.TabIndex = 2
+        '
+        'BtnSaveImportItemStatus
+        '
+        Me.BtnSaveImportItemStatus.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me.BtnSaveImportItemStatus.Location = New System.Drawing.Point(297, 12)
+        Me.BtnSaveImportItemStatus.Name = "BtnSaveImportItemStatus"
+        Me.BtnSaveImportItemStatus.Size = New System.Drawing.Size(583, 23)
+        Me.BtnSaveImportItemStatus.TabIndex = 0
+        Me.BtnSaveImportItemStatus.Text = "Save"
+        Me.BtnSaveImportItemStatus.UseVisualStyleBackColor = True
+        '
         'TabImportItemRequest
         '
         Me.TabImportItemRequest.Controls.Add(Me.TableLayoutPanel7)
@@ -390,6 +433,147 @@ Partial Class ProductManagement
         Me.DtgvImportItemRequest.Size = New System.Drawing.Size(1179, 474)
         Me.DtgvImportItemRequest.TabIndex = 1
         '
+        'TabPage1
+        '
+        Me.TabPage1.Controls.Add(Me.Panel1)
+        Me.TabPage1.Location = New System.Drawing.Point(4, 25)
+        Me.TabPage1.Name = "TabPage1"
+        Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage1.Size = New System.Drawing.Size(1185, 533)
+        Me.TabPage1.TabIndex = 4
+        Me.TabPage1.Text = "Item Composition"
+        Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'Panel1
+        '
+        Me.Panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.Panel1.Controls.Add(Me.Button1)
+        Me.Panel1.Controls.Add(Me.TxtCompositionCode)
+        Me.Panel1.Controls.Add(Me.Label8)
+        Me.Panel1.Controls.Add(Me.TxtQuantity)
+        Me.Panel1.Controls.Add(Me.Label5)
+        Me.Panel1.Controls.Add(Me.txtBhfId)
+        Me.Panel1.Controls.Add(Me.Label6)
+        Me.Panel1.Controls.Add(Me.txtTin)
+        Me.Panel1.Controls.Add(Me.Label3)
+        Me.Panel1.Controls.Add(Me.CmbBranches)
+        Me.Panel1.Controls.Add(Me.Label2)
+        Me.Panel1.Controls.Add(Me.TxtItemCode)
+        Me.Panel1.Controls.Add(Me.Label1)
+        Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel1.Location = New System.Drawing.Point(3, 3)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(1179, 527)
+        Me.Panel1.TabIndex = 0
+        '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(294, 219)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(138, 23)
+        Me.Button1.TabIndex = 69
+        Me.Button1.Text = "Save and Upload"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
+        'TxtCompositionCode
+        '
+        Me.TxtCompositionCode.Location = New System.Drawing.Point(114, 159)
+        Me.TxtCompositionCode.Name = "TxtCompositionCode"
+        Me.TxtCompositionCode.Size = New System.Drawing.Size(247, 20)
+        Me.TxtCompositionCode.TabIndex = 68
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(15, 159)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(95, 13)
+        Me.Label8.TabIndex = 67
+        Me.Label8.Text = "Composition Code:"
+        '
+        'TxtQuantity
+        '
+        Me.TxtQuantity.Location = New System.Drawing.Point(433, 159)
+        Me.TxtQuantity.Name = "TxtQuantity"
+        Me.TxtQuantity.Size = New System.Drawing.Size(247, 20)
+        Me.TxtQuantity.TabIndex = 64
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(376, 159)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(49, 13)
+        Me.Label5.TabIndex = 63
+        Me.Label5.Text = "Quantity:"
+        '
+        'txtBhfId
+        '
+        Me.txtBhfId.Enabled = False
+        Me.txtBhfId.Location = New System.Drawing.Point(433, 103)
+        Me.txtBhfId.Name = "txtBhfId"
+        Me.txtBhfId.Size = New System.Drawing.Size(247, 20)
+        Me.txtBhfId.TabIndex = 60
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(367, 110)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(56, 13)
+        Me.Label6.TabIndex = 59
+        Me.Label6.Text = "Branch Id:"
+        '
+        'txtTin
+        '
+        Me.txtTin.Enabled = False
+        Me.txtTin.Location = New System.Drawing.Point(433, 66)
+        Me.txtTin.Name = "txtTin"
+        Me.txtTin.Size = New System.Drawing.Size(247, 20)
+        Me.txtTin.TabIndex = 58
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(367, 69)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(65, 13)
+        Me.Label3.TabIndex = 57
+        Me.Label3.Text = "Branch TIN:"
+        '
+        'CmbBranches
+        '
+        Me.CmbBranches.FormattingEnabled = True
+        Me.CmbBranches.Location = New System.Drawing.Point(114, 66)
+        Me.CmbBranches.Name = "CmbBranches"
+        Me.CmbBranches.Size = New System.Drawing.Size(247, 21)
+        Me.CmbBranches.TabIndex = 56
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(15, 66)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(47, 13)
+        Me.Label2.TabIndex = 55
+        Me.Label2.Text = "Branch: "
+        '
+        'TxtItemCode
+        '
+        Me.TxtItemCode.Location = New System.Drawing.Point(114, 110)
+        Me.TxtItemCode.Name = "TxtItemCode"
+        Me.TxtItemCode.Size = New System.Drawing.Size(247, 20)
+        Me.TxtItemCode.TabIndex = 1
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(15, 110)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(58, 13)
+        Me.Label1.TabIndex = 0
+        Me.Label1.Text = "Item Code:"
+        '
         'Loader
         '
         Me.Loader.ArcLength = 220
@@ -404,31 +588,6 @@ Partial Class ProductManagement
         Me.Loader.TabIndex = 1
         Me.Loader.Text = "Loading"
         Me.Loader.Visible = False
-        '
-        'TableLayoutPanel9
-        '
-        Me.TableLayoutPanel9.ColumnCount = 3
-        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
-        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
-        Me.TableLayoutPanel9.Controls.Add(Me.BtnSaveImportItemStatus, 1, 0)
-        Me.TableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel9.Location = New System.Drawing.Point(3, 492)
-        Me.TableLayoutPanel9.Name = "TableLayoutPanel9"
-        Me.TableLayoutPanel9.RowCount = 1
-        Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel9.Size = New System.Drawing.Size(1179, 38)
-        Me.TableLayoutPanel9.TabIndex = 2
-        '
-        'BtnSaveImportItemStatus
-        '
-        Me.BtnSaveImportItemStatus.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.BtnSaveImportItemStatus.Location = New System.Drawing.Point(297, 12)
-        Me.BtnSaveImportItemStatus.Name = "BtnSaveImportItemStatus"
-        Me.BtnSaveImportItemStatus.Size = New System.Drawing.Size(583, 23)
-        Me.BtnSaveImportItemStatus.TabIndex = 0
-        Me.BtnSaveImportItemStatus.Text = "Save"
-        Me.BtnSaveImportItemStatus.UseVisualStyleBackColor = True
         '
         'ProductManagement
         '
@@ -456,12 +615,15 @@ Partial Class ProductManagement
         Me.TableLayoutPanel4.ResumeLayout(False)
         Me.TableLayoutPanel4.PerformLayout()
         CType(Me.DtgvImportItemUpload, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TableLayoutPanel9.ResumeLayout(False)
         Me.TabImportItemRequest.ResumeLayout(False)
         Me.TableLayoutPanel7.ResumeLayout(False)
         Me.TableLayoutPanel8.ResumeLayout(False)
         Me.TableLayoutPanel8.PerformLayout()
         CType(Me.DtgvImportItemRequest, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TableLayoutPanel9.ResumeLayout(False)
+        Me.TabPage1.ResumeLayout(False)
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -496,4 +658,19 @@ Partial Class ProductManagement
     Friend WithEvents Loader As JsToolBox.Loaders.DualRingLoader
     Friend WithEvents TableLayoutPanel9 As TableLayoutPanel
     Friend WithEvents BtnSaveImportItemStatus As Button
+    Friend WithEvents TabPage1 As TabPage
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents TxtItemCode As TextBox
+    Friend WithEvents Label1 As Label
+    Friend WithEvents TxtCompositionCode As TextBox
+    Friend WithEvents Label8 As Label
+    Friend WithEvents TxtQuantity As TextBox
+    Friend WithEvents Label5 As Label
+    Friend WithEvents txtBhfId As TextBox
+    Friend WithEvents Label6 As Label
+    Friend WithEvents txtTin As TextBox
+    Friend WithEvents Label3 As Label
+    Friend WithEvents CmbBranches As ComboBox
+    Friend WithEvents Label2 As Label
+    Friend WithEvents Button1 As Button
 End Class
