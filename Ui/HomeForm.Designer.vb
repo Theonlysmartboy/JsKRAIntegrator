@@ -62,6 +62,7 @@ Partial Class HomeForm
         Me.UserAccountsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.InsurancesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ProductManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.StockToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SalesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PurchasesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSettings = New System.Windows.Forms.ToolStripMenuItem()
@@ -69,12 +70,17 @@ Partial Class HomeForm
         Me.NoticesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LblStatus = New System.Windows.Forms.Label()
         Me.Loader = New JsToolBox.Loaders.DualRingLoader()
+        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
+        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ToolStripStatusLabel2 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ToolStripStatusLabel3 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.MenuStrip1.SuspendLayout()
+        Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'MenuStrip1
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializationToolStripMenuItem, Me.DataMgtToolStripMenuItem, Me.BranchesToolStripMenuItem, Me.ProductManagementToolStripMenuItem, Me.SalesToolStripMenuItem, Me.PurchasesToolStripMenuItem, Me.ToolStripSettings, Me.ToolStripLogs, Me.NoticesToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializationToolStripMenuItem, Me.DataMgtToolStripMenuItem, Me.BranchesToolStripMenuItem, Me.ProductManagementToolStripMenuItem, Me.StockToolStripMenuItem, Me.SalesToolStripMenuItem, Me.PurchasesToolStripMenuItem, Me.ToolStripSettings, Me.ToolStripLogs, Me.NoticesToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Size = New System.Drawing.Size(984, 24)
@@ -313,6 +319,12 @@ Partial Class HomeForm
         Me.ProductManagementToolStripMenuItem.Size = New System.Drawing.Size(135, 20)
         Me.ProductManagementToolStripMenuItem.Text = "Product Management"
         '
+        'StockToolStripMenuItem
+        '
+        Me.StockToolStripMenuItem.Name = "StockToolStripMenuItem"
+        Me.StockToolStripMenuItem.Size = New System.Drawing.Size(48, 20)
+        Me.StockToolStripMenuItem.Text = "Stock"
+        '
         'SalesToolStripMenuItem
         '
         Me.SalesToolStripMenuItem.Name = "SalesToolStripMenuItem"
@@ -346,9 +358,8 @@ Partial Class HomeForm
         'LblStatus
         '
         Me.LblStatus.AutoSize = True
-        Me.LblStatus.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.LblStatus.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LblStatus.Location = New System.Drawing.Point(0, 441)
+        Me.LblStatus.Location = New System.Drawing.Point(0, 400)
         Me.LblStatus.Name = "LblStatus"
         Me.LblStatus.Size = New System.Drawing.Size(0, 20)
         Me.LblStatus.TabIndex = 7
@@ -369,11 +380,39 @@ Partial Class HomeForm
         Me.Loader.Text = "Loading"
         Me.Loader.Visible = False
         '
+        'StatusStrip1
+        '
+        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1, Me.ToolStripStatusLabel2, Me.ToolStripStatusLabel3})
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 439)
+        Me.StatusStrip1.Name = "StatusStrip1"
+        Me.StatusStrip1.Size = New System.Drawing.Size(984, 22)
+        Me.StatusStrip1.TabIndex = 9
+        Me.StatusStrip1.Text = "StatusStrip1"
+        '
+        'ToolStripStatusLabel1
+        '
+        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
+        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(119, 17)
+        Me.ToolStripStatusLabel1.Text = "ToolStripStatusLabel1"
+        '
+        'ToolStripStatusLabel2
+        '
+        Me.ToolStripStatusLabel2.Name = "ToolStripStatusLabel2"
+        Me.ToolStripStatusLabel2.Size = New System.Drawing.Size(119, 17)
+        Me.ToolStripStatusLabel2.Text = "ToolStripStatusLabel2"
+        '
+        'ToolStripStatusLabel3
+        '
+        Me.ToolStripStatusLabel3.Name = "ToolStripStatusLabel3"
+        Me.ToolStripStatusLabel3.Size = New System.Drawing.Size(119, 17)
+        Me.ToolStripStatusLabel3.Text = "ToolStripStatusLabel3"
+        '
         'HomeForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(984, 461)
+        Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.Loader)
         Me.Controls.Add(Me.LblStatus)
         Me.Controls.Add(Me.MenuStrip1)
@@ -383,6 +422,8 @@ Partial Class HomeForm
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
+        Me.StatusStrip1.ResumeLayout(False)
+        Me.StatusStrip1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -434,4 +475,9 @@ Partial Class HomeForm
     Friend WithEvents CustomerBranchToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents UserAccountsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents InsurancesToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents StockToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents StatusStrip1 As StatusStrip
+    Friend WithEvents ToolStripStatusLabel1 As ToolStripStatusLabel
+    Friend WithEvents ToolStripStatusLabel2 As ToolStripStatusLabel
+    Friend WithEvents ToolStripStatusLabel3 As ToolStripStatusLabel
 End Class

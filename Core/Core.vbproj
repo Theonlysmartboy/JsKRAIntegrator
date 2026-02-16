@@ -101,6 +101,7 @@
     <Compile Include="Models\Code\CodeDataRequest.vb" />
     <Compile Include="Models\Code\CodeDataResponse.vb" />
     <Compile Include="Models\Item\Classification\ItemClassificationEntity.vb" />
+    <Compile Include="Models\Item\Composition\ItemComposition.vb" />
     <Compile Include="Models\Item\Import\ImportItemsResponse.vb" />
     <Compile Include="Models\Item\Import\ImportItemsRequest.vb" />
     <Compile Include="Models\Item\Classification\ItemClassificationEntry.vb" />
@@ -116,10 +117,12 @@
     <Compile Include="Models\Item\Product\ItemSaveRequest.vb" />
     <Compile Include="Models\Item\Product\ItemSaveResponse.vb" />
     <Compile Include="Models\Item\Product\Product.vb" />
-    <Compile Include="Models\Item\Stock\StockInfoRequest.vb" />
-    <Compile Include="Models\Item\Stock\StockInfoResponse.vb" />
     <Compile Include="Models\Item\Stock\StockMasterSaveRequest.vb" />
     <Compile Include="Models\Item\Stock\StockMasterSaveResponse.vb" />
+    <Compile Include="Models\Item\Stock\StockMovementRequest.vb" />
+    <Compile Include="Models\Item\Stock\StockMovementResponse.vb" />
+    <Compile Include="Models\Item\Stock\StockMovementSaveRequest.vb" />
+    <Compile Include="Models\Item\Stock\StockMovementSaveResponse.vb" />
     <Compile Include="Models\Notice\NoticeRequest.vb" />
     <Compile Include="Models\Notice\NoticeResponse.vb" />
     <Compile Include="Models\Notice\VscuNotice.vb" />
@@ -138,6 +141,8 @@
     <Compile Include="Models\Item\Info\ItemInfoRequest.vb" />
     <Compile Include="Models\Item\Info\ItemInfoResponse.vb" />
     <Compile Include="Models\Tax\TaxType.vb" />
+    <Compile Include="Models\Units\PackagingUnit.vb" />
+    <Compile Include="Models\Units\UnitOfQuantity.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

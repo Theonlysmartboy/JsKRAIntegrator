@@ -48,5 +48,6 @@
         Public Property taxblAmt As Decimal
         Public Property taxAmt As Decimal
         Public Property totAmt As Decimal
+        Public Property itemExprDt As String
     End Class
 End Namespace

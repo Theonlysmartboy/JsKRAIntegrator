@@ -126,6 +126,12 @@
     <Compile Include="DataManagement\Notices.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DataManagement\Stocks.Designer.vb">
+      <DependentUpon>Stocks.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DataManagement\Stocks.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DataManagement\UserAccounts.Designer.vb">
       <DependentUpon>UserAccounts.vb</DependentUpon>
     </Compile>
@@ -196,12 +202,16 @@
     <Compile Include="Repo\CustomerRepository.vb" />
     <Compile Include="Repo\ItemRepo\ImportItemStatusCodeRepository.vb" />
     <Compile Include="Repo\ItemRepo\ItemClassificationRepository.vb" />
+    <Compile Include="Repo\ItemRepo\ItemCompositionRepository.vb" />
     <Compile Include="Repo\ItemRepo\ItemInfoRepository.vb" />
+    <Compile Include="Repo\StockRepo\StockMovementRepository.vb" />
     <Compile Include="Repo\NoticeRepository.vb" />
     <Compile Include="Repo\ProductRepo\ProductRepository.vb" />
     <Compile Include="Repo\ProductRepo\PurchaseRepository.vb" />
     <Compile Include="Repo\ProductRepo\SalesRepository.vb" />
     <Compile Include="Repo\TaxTypeRepository.vb" />
+    <Compile Include="Repo\UnitRepo\PackagingUnitRepository.vb" />
+    <Compile Include="Repo\UnitRepo\UnitOfQuantityRepository.vb" />
     <Compile Include="Sales.Designer.vb">
       <DependentUpon>Sales.vb</DependentUpon>
     </Compile>
@@ -233,6 +243,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataManagement\Notices.resx">
       <DependentUpon>Notices.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataManagement\Stocks.resx">
+      <DependentUpon>Stocks.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataManagement\UserAccounts.resx">
       <DependentUpon>UserAccounts.vb</DependentUpon>

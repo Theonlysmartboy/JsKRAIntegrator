@@ -8,7 +8,6 @@ Imports Core.Models.Branch.Customer
 Imports Core.Models.Branch.Insurance
 Imports Core.Models.Branch.User
 Imports Core.Models.Code
-Imports Core.Models.Import
 Imports Core.Models.Init
 Imports Core.Models.Item.Classification
 Imports Core.Models.Item.Import
@@ -59,12 +58,10 @@ Namespace Services
             End If
             'Log the raw response
             Await _logger.LogAsync(LogLevel.Info, $"Response from {fullUrl}", raw)
-
             'Try deserializing
             Dim result As T = Nothing
             Try
                 result = JsonUtil.FromJson(Of T)(raw)
-
             Catch ex As Exception
                 deserializeEx = ex
             End Try
@@ -84,7 +81,6 @@ Namespace Services
                 Dim propCd = typ.GetProperty("resultCd")
                 Dim propMsg = typ.GetProperty("resultMsg")
                 Dim propDt = typ.GetProperty("resultDt")
-
                 If propCd IsNot Nothing Then propCd.SetValue(inst, "500")
                 If propMsg IsNot Nothing Then propMsg.SetValue(inst, msg)
                 If propDt IsNot Nothing Then propDt.SetValue(inst, DateTime.Now.ToString("yyyyMMddHHmmss"))
@@ -95,16 +91,14 @@ Namespace Services
         End Function
 
         ' -----------------------
-        ' 1) Device Initialization (POST)
+        ' Device Initialization (POST)
         ' -----------------------
         Public Async Function InitializeAsync(req As InitInfoRequest) As Task(Of InitInfoResponse)
             Dim endpoint = ApiEndpoints.SELECT_INIT
-
             Dim resp = Await SendAndDeserializeAsync(Of InitInfoResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then
                 Return resp
             End If
-
             ' fallback structured response when the call failed
             Dim fallback = MakeBaseFallback(Of InitInfoResponse)("VSCU error: failed to call Initialize")
             fallback.resultCd = "ERROR"  ' or -1
@@ -114,19 +108,14 @@ Namespace Services
         End Function
 
         ' -----------------------
-        ' 2) Code Data (POST)
+        ' Code Data (POST)
         ' -----------------------
         Public Async Function GetCodeDataAsync(request As CodeDataRequest) As Task(Of CodeDataResponse)
             Dim endpoint = ApiEndpoints.CODE_DATA
-
-            ' POST request with payload
             Dim resp = Await SendAndDeserializeAsync(Of CodeDataResponse)(endpoint, request, isGet:=False)
-
             If resp IsNot Nothing Then
                 Return resp
             End If
-
-            ' Build fallback response
             Dim fallback As New CodeDataResponse With {
                 .resultCd = "Error",
                 .resultMsg = "VSCU error: failed to call CodeData",
@@ -138,7 +127,7 @@ Namespace Services
         End Function
 
         ' -----------------------
-        ' 3) Branch Information (POST)
+        ' Branch Information (POST)
         ' -----------------------
         Public Async Function GetBranchListAsync(req As BranchListRequest) As Task(Of BranchListResponse)
             Dim endpoint = ApiEndpoints.BRANCH_LIST
@@ -159,7 +148,7 @@ Namespace Services
         End Function
 
         ' -----------------------
-        ' 4) Customer List (POST)
+        ' Customer List (POST)
         ' -----------------------
         Public Async Function GetCustomerListAsync(req As CustomerRequest) As Task(Of CustomerResponse)
             Dim endpoint = ApiEndpoints.CUSTOMER_LIST
@@ -178,7 +167,7 @@ Namespace Services
         End Function
 
         '--------------------------
-        ' 4b) Branch-Customer Save (POST)
+        ' Branch-Customer Save (POST)
         '--------------------------
         Public Async Function SaveBranchCustomerAsync(req As SaveBranchCustomerRequest) As Task(Of SaveBranchCustomerResponse)
             Dim endpoint = ApiEndpoints.SAVE_BRANCH_CUSTOMER
@@ -198,7 +187,7 @@ Namespace Services
         End Function
 
         '-----------------------------
-        ' 4 c) Branch User Save (POST)
+        ' Branch User Save (POST)
         '------------------------------
         Public Async Function SaveBranchUserAsync(req As BranchUserSaveRequest) As Task(Of BranchUserSaveResponse)
             Dim endpoint = ApiEndpoints.BRANCH_USER_SAVE
@@ -217,7 +206,7 @@ Namespace Services
         End Function
 
         '---------------------------------------
-        ' 4 d) Branch Insurance Save (POST)
+        ' Branch Insurance Save (POST)
         '---------------------------------------
         Public Async Function SaveBranchInsuranceAsync(req As BranchInsuranceRequest) As Task(Of BranchInsuranceResponse)
             Dim endpoint = ApiEndpoints.BRANCH_INSURANCE_SAVE
@@ -234,7 +223,7 @@ Namespace Services
         End Function
 
         ' -----------------------------------------
-        ' 5) Item Classification Information (POST)
+        ' Item Classification Information (POST)
         ' ------------------------------------------
         Public Async Function SendItemClassificationInfoAsync(req As ItemClassificationRequest) As Task(Of ItemClassificationResponse)
             Dim endpoint = ApiEndpoints.ITEM_CLASSIFICATION_SELECTOR
@@ -252,7 +241,7 @@ Namespace Services
         End Function
 
         '-----------------------------
-        ' 5b) Item  Information (POST)
+        ' Item  Information (POST)
         '-----------------------------
         Public Async Function GetItemAsync(query As ItemInfoRequest) As Task(Of ItemInfoResponse)
             Dim endpoint = ApiEndpoints.ITEM_SELECT
@@ -267,7 +256,7 @@ Namespace Services
         End Function
 
         '------------------------
-        ' 5C) Item  Save (POST)
+        ' Item  Save (POST)
         '------------------------
         Public Async Function SaveItemAsync(req As ItemSaveRequest) As Task(Of ItemSaveResponse)
             Dim endPoint = ApiEndpoints.ITEM_SAVE
@@ -279,7 +268,7 @@ Namespace Services
         End Function
 
         ' ---------------------------------
-        ' 5d) Imported Item Update (POST)
+        ' Imported Item Update (POST)
         ' ----------------------------------
         Public Async Function UpdateImportItemStatusAsync(req As ImportItemStatusUpdateRequest) As Task(Of ImportItemStatusUpdateResponse)
             Dim endpoint = ApiEndpoints.IMPORT_ITEM_UPDATE
@@ -294,7 +283,7 @@ Namespace Services
         End Function
 
         ' -----------------------------------
-        ' 5e) Imported Items select (POST)
+        ' Imported Items select (POST)
         ' -----------------------------------
         Public Async Function GetImportItemsAsync(req As ImportItemsRequest) As Task(Of ImportItemsResponse)
             Dim endpoint = ApiEndpoints.IMPORT_ITEM_SELECT
@@ -310,7 +299,7 @@ Namespace Services
         End Function
 
         ' -----------------------
-        ' 6) Sales (POST)
+        ' Sales (POST)
         ' -----------------------
         Public Async Function SendSalesAsync(req As SalesRequest) As Task(Of SalesResponse)
             Dim endpoint = ApiEndpoints.SALES ' set this constant in Core.ApiEndpoints
@@ -324,7 +313,7 @@ Namespace Services
         End Function
 
         ' -----------------------
-        ' 7) Purchase (POST)
+        ' Purchase (POST)
         ' -----------------------
         Public Async Function SavePurchaseAsync(request As PurchaseTransactionRequest) As Task(Of PurchaseTransactionResponse)
             Dim endpoint = ApiEndpoints.PURCHASE_SAVE
@@ -341,12 +330,12 @@ Namespace Services
         End Function
 
         ' ---------------------------
-        ' 7b) Purchase Request (POST)
+        ' Purchase Request (POST)
         ' ---------------------------
         Public Async Function GetPurchaseAsync(query As PurchaseInfoRequest) As Task(Of PurchaseInfoResponse)
             Dim endpoint = ApiEndpoints.PURCHASE_SELECT
             Dim resp = Await SendAndDeserializeAsync(Of PurchaseInfoResponse)(endpoint, query, isGet:=False)
-            If resp IsNot Nothing AndAlso resp.data IsNot Nothing Then
+            If resp IsNot Nothing Then
                 Return resp
             End If
             ' fallback if API failed
@@ -358,7 +347,7 @@ Namespace Services
         End Function
 
         ' -----------------------
-        ' 8) Stock (POST)
+        ' Stock (POST)
         ' -----------------------
         Public Async Function SendStockMasterAsync(req As StockMasterSaveRequest) As Task(Of StockMasterSaveResponse)
             Dim endpoint = ApiEndpoints.STOCK_MASTER_SAVE
@@ -367,24 +356,43 @@ Namespace Services
             Dim fallback As New StockMasterSaveResponse()
             fallback.resultCd = "Error"
             fallback.resultMsg = "VSCU error: failed to call StockSave"
-            fallback.data = New StockMasterSaveResponse()
+            fallback.data = Nothing
             Return fallback
         End Function
 
-        ' -----------------------
-        ' 8 a) Stock Request(POST)
-        ' -----------------------
-        Public Async Function GetStockAsync(req As StockInfoRequest) As Task(Of StockInfoResponse)
-            Dim endpoint = ApiEndpoints.STOCK_SAVE
-            Dim resp = Await SendAndDeserializeAsync(Of StockInfoResponse)(endpoint, req, isGet:=False)
+        '------------------------------
+        ' Stock Movement Request (POST)
+        '------------------------------
+        Public Async Function GetStockMoveAsync(query As StockMovementRequest) As Task(Of StockMovementResponse)
+            Dim endpoint = ApiEndpoints.STOCK_MOVEMENT_SELECT
+            Dim resp = Await SendAndDeserializeAsync(Of StockMovementResponse)(endpoint, query, isGet:=False)
+            If resp IsNot Nothing Then
+                Return resp
+            End If
+            ' fallback if API failed
+            Dim fb As New StockMovementResponse()
+            fb.resultCd = "Error"
+            fb.resultMsg = "VSCU error: failed to call selectStockItems"
+            fb.data = Nothing
+            Return fb
+        End Function
+
+        '--------------------------
+        ' Stock Movement Save (POST)
+        '--------------------------
+        Public Async Function SaveStockMoveAsync(req As StockMovementSaveRequest) As Task(Of StockMovementSaveResponse)
+            Dim endpoint = ApiEndpoints.STOCK_MOVEMENT_SAVE
+            Dim resp = Await SendAndDeserializeAsync(Of StockMovementSaveResponse)(endpoint, req, isGet:=False)
             If resp IsNot Nothing Then Return resp
-            Dim fallback = MakeBaseFallback(Of StockInfoResponse)("VSCU error: failed to call Stock")
-            fallback.result = New StockInfoData() With {.itemCode = req.itemCode, .currentQuantity = 0, .updated = False}
+            Dim fallback As New StockMovementSaveResponse()
+            fallback.resultCd = "Error"
+            fallback.resultMsg = "VSCU error: failed to call SaveStockMove"
+            fallback.data = Nothing
             Return fallback
         End Function
 
         ' -----------------------
-        ' 9) Notices (POST)
+        ' Notices (POST)
         ' -----------------------
         Public Async Function GetNoticesAsync(req As NoticeRequest) As Task(Of NoticeResponse)
             Dim endpoint = ApiEndpoints.NOTICE_SELECT
