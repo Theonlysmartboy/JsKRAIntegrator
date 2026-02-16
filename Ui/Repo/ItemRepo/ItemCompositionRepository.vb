@@ -6,6 +6,7 @@ Namespace Repo.ItemRepo
         Function GetByUniqueKey(tin As String, bhfId As String, itemCd As String, cpstItemCd As String) As ItemComposition
         Sub Insert(item As ItemComposition)
         Sub Update(item As ItemComposition)
+        Function MarkAsUploaded(tin As String, bhfId As String, itemCd As String, cpstItemCd As String) As Boolean
     End Interface
 
     Public Class ItemCompositionRepository
@@ -51,14 +52,14 @@ Namespace Repo.ItemRepo
                 conn.Open()
                 Dim cmd As New MySqlCommand(sql, conn)
                 cmd.Parameters.AddWithValue("@tin", item.Tin)
-                    cmd.Parameters.AddWithValue("@bhfId", item.BhfId)
-                    cmd.Parameters.AddWithValue("@itemCd", item.ItemCd)
-                    cmd.Parameters.AddWithValue("@cpstItemCd", item.CpstItemCd)
-                    cmd.Parameters.AddWithValue("@cpstQty", item.CpstQty)
-                    cmd.Parameters.AddWithValue("@regrId", item.RegrId)
-                    cmd.Parameters.AddWithValue("@regrNm", item.RegrNm)
-                    cmd.ExecuteNonQuery()
-                End Using
+                cmd.Parameters.AddWithValue("@bhfId", item.BhfId)
+                cmd.Parameters.AddWithValue("@itemCd", item.ItemCd)
+                cmd.Parameters.AddWithValue("@cpstItemCd", item.CpstItemCd)
+                cmd.Parameters.AddWithValue("@cpstQty", item.CpstQty)
+                cmd.Parameters.AddWithValue("@regrId", item.RegrId)
+                cmd.Parameters.AddWithValue("@regrNm", item.RegrNm)
+                cmd.ExecuteNonQuery()
+            End Using
         End Sub
 
         Public Sub Update(item As ItemComposition) Implements IItemCompositionRepository.Update
@@ -68,14 +69,28 @@ Namespace Repo.ItemRepo
                 conn.Open()
                 Dim cmd As New MySqlCommand(sql, conn)
                 cmd.Parameters.AddWithValue("@cpstQty", item.CpstQty)
-                    cmd.Parameters.AddWithValue("@regrId", item.RegrId)
-                    cmd.Parameters.AddWithValue("@regrNm", item.RegrNm)
-                    cmd.Parameters.AddWithValue("@tin", item.Tin)
-                    cmd.Parameters.AddWithValue("@bhfId", item.BhfId)
-                    cmd.Parameters.AddWithValue("@itemCd", item.ItemCd)
-                    cmd.Parameters.AddWithValue("@cpstItemCd", item.CpstItemCd)
-                    cmd.ExecuteNonQuery()
-                End Using
+                cmd.Parameters.AddWithValue("@regrId", item.RegrId)
+                cmd.Parameters.AddWithValue("@regrNm", item.RegrNm)
+                cmd.Parameters.AddWithValue("@tin", item.Tin)
+                cmd.Parameters.AddWithValue("@bhfId", item.BhfId)
+                cmd.Parameters.AddWithValue("@itemCd", item.ItemCd)
+                cmd.Parameters.AddWithValue("@cpstItemCd", item.CpstItemCd)
+                cmd.ExecuteNonQuery()
+            End Using
         End Sub
+
+        Public Function MarkAsUploaded(tin As String, bhfId As String, itemCd As String, cpstItemCd As String) As Boolean _
+    Implements IItemCompositionRepository.MarkAsUploaded
+            Dim sql = "UPDATE item_compositions SET UploadYn = 'Y' WHERE tin=@tin AND bhf_id=@bhfId AND item_cd=@itemCd AND cpst_item_cd=@cpstItemCd"
+            Using conn As New MySqlConnection(_conn)
+                conn.Open()
+                Dim cmd As New MySqlCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@tin", tin)
+                cmd.Parameters.AddWithValue("@bhfId", bhfId)
+                cmd.Parameters.AddWithValue("@itemCd", itemCd)
+                cmd.Parameters.AddWithValue("@cpstItemCd", cpstItemCd)
+                Return cmd.ExecuteNonQuery() > 0
+            End Using
+        End Function
     End Class
 End Namespace

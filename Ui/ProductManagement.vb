@@ -1,11 +1,11 @@
 ﻿Imports Core.Config
+Imports Core.Enums
 Imports Core.Logging
 Imports Core.Models.Item.Composition
 Imports Core.Models.Item.Import
 Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
 Imports Core.Services
-Imports Newtonsoft.Json.Linq
 Imports Ui.Helpers
 Imports Ui.Repo
 Imports Ui.Repo.BranchRepo
@@ -706,43 +706,67 @@ Public Class ProductManagement
         CmbBranches.ValueMember = "bhf_id"
     End Function
 
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        Dim tin = txtTin.Text.ToString()
-        Dim bhfId = txtBhfId.Text.ToString()
-        Dim itemCd = TxtItemCode.Text.ToString()
-        Dim cpstItemCd = TxtCompositionCode.Text.ToString()
-        Dim cpstQty = Convert.ToDecimal(TxtQuantity.Text)
-        Dim regrId = "Admin"
-        Dim regrNm = "Admin"
-        Dim repo As New ItemCompositionRepository(_connString)
-        Dim existing = repo.GetByUniqueKey(tin, bhfId, itemCd, cpstItemCd)
-        Dim entity As New ItemComposition With {
-            .Tin = tin,
-            .BhfId = bhfId,
-            .ItemCd = itemCd,
-            .CpstItemCd = cpstItemCd,
-            .CpstQty = cpstQty,
-            .RegrId = regrId,
-            .RegrNm = regrNm
-        }
-        If existing IsNot Nothing Then
-            repo.Update(entity)
-        Else
-            repo.Insert(entity)
-        End If
+    Private Async Sub BtnSaveItemComposition_Click(sender As Object, e As EventArgs) Handles BtnSaveItemComposition.Click
+        Try
+            BtnSaveItemComposition.Enabled = False
+            Loader.Visible = True
+            Loader.Text = "Saving ..."
+            Dim tin = txtTin.Text.ToString()
+            Dim bhfId = txtBhfId.Text.ToString()
+            Dim itemCd = TxtItemCode.Text.ToString()
+            Dim cpstItemCd = TxtCompositionCode.Text.ToString()
+            Dim cpstQty = Convert.ToDecimal(TxtQuantity.Text)
+            Dim regrId = "Admin"
+            Dim regrNm = "Admin"
+            Dim repo As New ItemCompositionRepository(_connString)
+            Dim existing = repo.GetByUniqueKey(tin, bhfId, itemCd, cpstItemCd)
+            Dim entity As New ItemComposition With {
+                .Tin = tin,
+                .BhfId = bhfId,
+                .ItemCd = itemCd,
+                .CpstItemCd = cpstItemCd,
+                .CpstQty = cpstQty,
+                .RegrId = regrId,
+                .RegrNm = regrNm
+            }
+            If existing IsNot Nothing Then
+                repo.Update(entity)
+            Else
+                repo.Insert(entity)
+            End If
+            Loader.Text = "Uploading ..."
+            Dim req = BuildCompositionRequest(entity)
+            Dim resp = Await _integrator.SaveItemCompositionAsync(req)
+
+            If resp IsNot Nothing AndAlso resp.resultCd = "000" Then
+                repo.MarkAsUploaded(
+                    entity.Tin,
+                    entity.BhfId,
+                    entity.ItemCd,
+                    entity.CpstItemCd)
+                Await _logger.LogAsync(LogLevel.Error, $"Composition upload failed: {resp?.resultMsg}")
+                CustomAlert.ShowAlert(Me, "Item Composition saved and up0loaded successfully", "Success",
+                                        CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+            End If
+            CustomAlert.ShowAlert(Me, $"Composition upload failed: {resp?.resultMsg}", "Error",
+                                    CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+        Catch ex As Exception
+            CustomAlert.ShowAlert(Me, "An Unknown error occured", "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+        Finally
+            Loader.Visible = False
+            BtnSaveItemComposition.Enabled = True
+        End Try
     End Sub
 
-    Private Function BuildVscuPayload(item As ItemComposition) As JObject
-        Dim payload As New JObject From {
-            {"tin", item.Tin},
-            {"bhfId", item.BhfId},
-            {"itemCd", item.ItemCd},
-            {"cpstItemCd", item.CpstItemCd},
-            {"cpstQty", item.CpstQty},
-            {"regrId", item.RegrId},
-            {"regrNm", item.RegrNm}
+    Private Function BuildCompositionRequest(entity As ItemComposition) As ItemCompositionSaveRequest
+        Return New ItemCompositionSaveRequest With {
+            .tin = entity.Tin,
+            .bhfId = entity.BhfId,
+            .itemCd = entity.ItemCd,
+            .cpstItemCd = entity.CpstItemCd,
+            .cpstQty = entity.CpstQty,
+            .regrId = entity.RegrId,
+            .regrNm = entity.RegrNm
         }
-        Return payload
     End Function
-
 End Class

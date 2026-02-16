@@ -9,6 +9,6 @@
         Public Property RegrId As String
         Public Property RegrNm As String
         Public Property CreatedAt As DateTime
+        Public Property IsUploaded As Boolean
     End Class
-
 End Namespace

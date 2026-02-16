@@ -54,7 +54,7 @@ Partial Class ProductManagement
         Me.DtgvImportItemRequest = New System.Windows.Forms.DataGridView()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.Panel1 = New System.Windows.Forms.Panel()
-        Me.Button1 = New System.Windows.Forms.Button()
+        Me.BtnSaveItemComposition = New System.Windows.Forms.Button()
         Me.TxtCompositionCode = New System.Windows.Forms.TextBox()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.TxtQuantity = New System.Windows.Forms.TextBox()
@@ -447,7 +447,7 @@ Partial Class ProductManagement
         'Panel1
         '
         Me.Panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-        Me.Panel1.Controls.Add(Me.Button1)
+        Me.Panel1.Controls.Add(Me.BtnSaveItemComposition)
         Me.Panel1.Controls.Add(Me.TxtCompositionCode)
         Me.Panel1.Controls.Add(Me.Label8)
         Me.Panel1.Controls.Add(Me.TxtQuantity)
@@ -466,14 +466,14 @@ Partial Class ProductManagement
         Me.Panel1.Size = New System.Drawing.Size(1179, 527)
         Me.Panel1.TabIndex = 0
         '
-        'Button1
+        'BtnSaveItemComposition
         '
-        Me.Button1.Location = New System.Drawing.Point(294, 219)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(138, 23)
-        Me.Button1.TabIndex = 69
-        Me.Button1.Text = "Save and Upload"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.BtnSaveItemComposition.Location = New System.Drawing.Point(294, 219)
+        Me.BtnSaveItemComposition.Name = "BtnSaveItemComposition"
+        Me.BtnSaveItemComposition.Size = New System.Drawing.Size(138, 23)
+        Me.BtnSaveItemComposition.TabIndex = 69
+        Me.BtnSaveItemComposition.Text = "Save and Upload"
+        Me.BtnSaveItemComposition.UseVisualStyleBackColor = True
         '
         'TxtCompositionCode
         '
@@ -672,5 +672,5 @@ Partial Class ProductManagement
     Friend WithEvents Label3 As Label
     Friend WithEvents CmbBranches As ComboBox
     Friend WithEvents Label2 As Label
-    Friend WithEvents Button1 As Button
+    Friend WithEvents BtnSaveItemComposition As Button
 End Class
