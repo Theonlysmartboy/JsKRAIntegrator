@@ -10,6 +10,7 @@ Imports Core.Models.Branch.User
 Imports Core.Models.Code
 Imports Core.Models.Init
 Imports Core.Models.Item.Classification
+Imports Core.Models.Item.Composition
 Imports Core.Models.Item.Import
 Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
@@ -264,6 +265,20 @@ Namespace Services
             If resp IsNot Nothing Then Return resp
             Dim fallback = MakeBaseFallback(Of ItemSaveResponse)("VSCU error: failed to call ItemSave")
 
+            Return fallback
+        End Function
+
+        '--------------------------
+        ' Item Composition Save (POST)
+        '--------------------------
+        Public Async Function SaveItemCompositionAsync(req As ItemCompositionSaveRequest) As Task(Of ItemCompositionSaveResponse)
+            Dim endpoint = ApiEndpoints.ITEM_COMPOSITION_SAVE
+            Dim resp = Await SendAndDeserializeAsync(Of ItemCompositionSaveResponse)(endpoint, req, isGet:=False)
+            If resp IsNot Nothing Then Return resp
+            Dim fallback As New ItemCompositionSaveResponse()
+            fallback.resultCd = "Error"
+            fallback.resultMsg = "VSCU error: failed to call SaveItemComposition"
+            fallback.data = Nothing
             Return fallback
         End Function
 
