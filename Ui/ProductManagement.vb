@@ -744,14 +744,15 @@ Public Class ProductManagement
                     entity.BhfId,
                     entity.ItemCd,
                     entity.CpstItemCd)
-                Await _logger.LogAsync(LogLevel.Error, $"Composition upload failed: {resp?.resultMsg}")
-                CustomAlert.ShowAlert(Me, "Item Composition saved and up0loaded successfully", "Success",
+                CustomAlert.ShowAlert(Me, "Item Composition saved and uploaded successfully", "Success",
                                         CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+            Else
+                Await _logger.LogAsync(LogLevel.Error, $"Composition upload failed: {resp?.resultMsg}")
+                CustomAlert.ShowAlert(Me, $"Composition upload failed: {resp?.resultMsg}", "Error",
+                                CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
             End If
-            CustomAlert.ShowAlert(Me, $"Composition upload failed: {resp?.resultMsg}", "Error",
-                                    CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "An Unknown error occured", "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            CustomAlert.ShowAlert(Me, $"An unexpected error occurred: {ex.Message}", "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
             Loader.Visible = False
             BtnSaveItemComposition.Enabled = True
