@@ -81,7 +81,7 @@ Namespace Repo.ItemRepo
 
         Public Function MarkAsUploaded(tin As String, bhfId As String, itemCd As String, cpstItemCd As String) As Boolean _
     Implements IItemCompositionRepository.MarkAsUploaded
-            Dim sql = "UPDATE item_compositions SET UploadYn = 'Y' WHERE tin=@tin AND bhf_id=@bhfId AND item_cd=@itemCd AND cpst_item_cd=@cpstItemCd"
+            Dim sql = "UPDATE item_compositions SET is_uploaded = 1 WHERE tin=@tin AND bhf_id=@bhfId AND item_cd=@itemCd AND cpst_item_cd=@cpstItemCd"
             Using conn As New MySqlConnection(_conn)
                 conn.Open()
                 Dim cmd As New MySqlCommand(sql, conn)
