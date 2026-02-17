@@ -29,7 +29,7 @@ Repository: [JsKRAIntegrator GitHub Repository](https://github.com/Theonlysmartb
 - For development and automated usage, build and test the `Core` project.
 - To run manual tests or reproduce scenarios, set the `UI` project as the startup project and run (F5).
 
-## UI(Ui) — Test Harness
+## UI — Test Harness
 
 ### Purpose
 The `UI` project is a lightweight Windows Forms test harness for manual testing, debugging, and demonstration of the `Core` module. It is not the production front-end and should not contain business logic; all production code lives in `Core`.
