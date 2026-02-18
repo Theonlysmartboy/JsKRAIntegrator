@@ -22,7 +22,7 @@ Repository: [JsKRAIntegrator GitHub Repository](https://github.com/Theonlysmartb
 
    ```bash
    git clone https://github.com/Theonlysmartboy/JsKRAIntegrator
-   git checkout V1
+   git checkout Main
    ```
 2. Open the solution in Visual Studio 2022 (`.sln`) and restore NuGet packages if prompted.
 3. Set the startup project as needed:
