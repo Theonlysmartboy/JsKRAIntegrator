@@ -18,7 +18,7 @@ Repository: [JsKRAIntegrator GitHub Repository](https://github.com/Theonlysmartb
 - .NET SDK matching the solution's target framework (open the project properties to check the TFM)
 
 ## Build & Run
-1. Clone the repository and checkout the `V1.1` branch:
+1. Clone the repository and checkout the `Main` branch:
 
    ```bash
    git clone https://github.com/Theonlysmartboy/JsKRAIntegrator
