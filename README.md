@@ -6,7 +6,7 @@ JsKRAIntegrator is a .NET application that integrates with the KRA (Kenya Revenu
 - **`Core`** — The main module containing the production business logic, integration code, models, and services. This is the primary codebase to review and extend.
 - **`UI`** — A lightweight Windows Forms-based user interface used for manual testing, debugging, and demonstration. It is not intended as the production front-end.
 
-Repository: [JsKRAIntegrator GitHub Repository](https://github.com/Theonlysmartboy/JsKRAIntegrator) (branch: V1.1)
+Repository: [JsKRAIntegrator GitHub Repository](https://github.com/Theonlysmartboy/JsKRAIntegrator) (branch: Main)
 
 ## How it works (high-level)
 1. The `Core` module implements integration components that prepare requests, manage authentication, and handle responses with the external KRA endpoints.
@@ -18,18 +18,18 @@ Repository: [JsKRAIntegrator GitHub Repository](https://github.com/Theonlysmartb
 - .NET SDK matching the solution's target framework (open the project properties to check the TFM)
 
 ## Build & Run
-1. Clone the repository and checkout the `V1.1` branch:
+1. Clone the repository and checkout the `Main` branch:
 
    ```bash
    git clone https://github.com/Theonlysmartboy/JsKRAIntegrator
-   git checkout V1
+   git checkout Main
    ```
 2. Open the solution in Visual Studio 2022 (`.sln`) and restore NuGet packages if prompted.
 3. Set the startup project as needed:
 - For development and automated usage, build and test the `Core` project.
 - To run manual tests or reproduce scenarios, set the `UI` project as the startup project and run (F5).
 
-## UI(Ui) — Test Harness
+## UI — Test Harness
 
 ### Purpose
 The `UI` project is a lightweight Windows Forms test harness for manual testing, debugging, and demonstration of the `Core` module. It is not the production front-end and should not contain business logic; all production code lives in `Core`.
@@ -88,9 +88,9 @@ The `UI` project is a lightweight Windows Forms test harness for manual testing,
 Thanks for contributing! Please follow these guidelines to keep the codebase consistent:
 
 - **Core-first**: Make changes in `Core` unless you are updating the test harness in `UI`.
-- **Branching**: Create descriptive feature branches off `V1.1` (for example, `feature/add-auth-refresh`).
+- **Branching**: Create descriptive feature branches off `Main` (for example, `feature/add-auth-refresh`).
 - **Commits**: Use clear, small commits. Include a short description.
-- **Pull Requests**: Open PRs against the `V1.1` branch. Describe the problem, your approach, and any testing steps.
+- **Pull Requests**: Open PRs against the `Main` branch. Describe the problem, your approach, and any testing steps.
 - **Code Style**: Follow the project's `.editorconfig` and rules in `CONTRIBUTING.md`. The repository will contain these files; ensure your changes comply with them.
 - **Tests**: Add unit tests for new logic and ensure all tests pass before requesting review.
 - **Reviews**: Request at least one reviewer. Address review comments promptly.
