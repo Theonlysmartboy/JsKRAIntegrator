@@ -7,7 +7,6 @@ Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
 Imports Core.Services
 Imports Ui.Helpers
-Imports Ui.Repo
 Imports Ui.Repo.BranchRepo
 Imports Ui.Repo.ItemRepo
 Imports Ui.Repo.ProductRepo
@@ -711,6 +710,7 @@ Public Class ProductManagement
             BtnSaveItemComposition.Enabled = False
             Loader.Visible = True
             Loader.Text = "Saving ..."
+            Await Task.Yield()
             Dim tin = txtTin.Text.ToString()
             Dim bhfId = txtBhfId.Text.ToString()
             Dim itemCd = TxtItemCode.Text.ToString()
@@ -719,7 +719,9 @@ Public Class ProductManagement
             Dim regrId = "Admin"
             Dim regrNm = "Admin"
             Dim repo As New ItemCompositionRepository(_connString)
-            Dim existing = repo.GetByUniqueKey(tin, bhfId, itemCd, cpstItemCd)
+            Dim existing = Await Task.Run(Function()
+                                              Return repo.GetByUniqueKey(tin, bhfId, itemCd, cpstItemCd)
+                                          End Function)
             Dim entity As New ItemComposition With {
                 .Tin = tin,
                 .BhfId = bhfId,
@@ -730,11 +732,12 @@ Public Class ProductManagement
                 .RegrNm = regrNm
             }
             If existing IsNot Nothing Then
-                repo.Update(entity)
+                Await Task.Run(Sub() repo.Update(entity))
             Else
-                repo.Insert(entity)
+                Await Task.Run(Sub() repo.Insert(entity))
             End If
             Loader.Text = "Uploading ..."
+            Await Task.Yield()
             Dim req = BuildCompositionRequest(entity)
             Dim resp = Await _integrator.SaveItemCompositionAsync(req)
 
@@ -746,6 +749,7 @@ Public Class ProductManagement
                     entity.CpstItemCd)
                 CustomAlert.ShowAlert(Me, "Item Composition saved and uploaded successfully", "Success",
                                         CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+                clearInputs()
             Else
                 Await _logger.LogAsync(LogLevel.Error, $"Composition upload failed: {resp?.resultMsg}")
                 CustomAlert.ShowAlert(Me, $"Composition upload failed: {resp?.resultMsg}", "Error",
@@ -770,4 +774,13 @@ Public Class ProductManagement
             .regrNm = entity.RegrNm
         }
     End Function
+
+    Public Sub clearInputs()
+        CmbBranches.SelectedIndex = 0
+        txtTin.Text = ""
+        txtBhfId.Text = ""
+        TxtItemCode.Text = ""
+        TxtCompositionCode.Text = ""
+        TxtQuantity.Text = ""
+    End Sub
 End Class
