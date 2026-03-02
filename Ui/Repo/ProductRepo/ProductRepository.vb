@@ -52,10 +52,8 @@ Namespace Repo.ProductRepo
 
         Public Function GetProductByProductCode(itemCd As String) As Product
             Dim product As Product = Nothing
-
             Using conn As New MySqlConnection(_connString)
                 conn.Open()
-
                 Dim sql As String = "SELECT ProductCode, ItemClsCd, ProductName, Product_Cost_Price, HSCode, ItemTyCd, ItemStdNm, OrgNatCd," &
                                     "SupplierPacking, ProductUnit, SupplyUnit, Product_VAT_Code, TagPrice, Product_Selling_Price," &
                                     "Product_Wholelsale_Price, Product_Custom_Price1, Product_Custom_Price2, ReOrd_Level, isActive, IsrcAplcbYn," &
@@ -78,8 +76,7 @@ Namespace Repo.ProductRepo
                             .GroupPrice1 = If(IsDBNull(reader("Product_Wholelsale_Price")), 0D, Convert.ToDecimal(reader("Product_Wholelsale_Price"))),
                             .GroupPrice2 = If(IsDBNull(reader("Product_Custom_Price1")), 0D, Convert.ToDecimal(reader("Product_Custom_Price1"))),
                             .GroupPrice3 = If(IsDBNull(reader("Product_Custom_Price2")), 0D, Convert.ToDecimal(reader("Product_Custom_Price2"))),
-                            .SafetyQty = If(IsDBNull(reader("ReOrd_Level")), 0D,
-                                            Convert.ToDecimal(reader("ReOrd_Level"))),
+                            .SafetyQty = If(IsDBNull(reader("ReOrd_Level")), 0D, Convert.ToDecimal(reader("ReOrd_Level"))),
                             .IsActive = reader("isActive").ToString(),
                             .CreatedBy = reader("CreatedBy").ToString(),
                             .ModifiedBy = reader("ModifiedBy").ToString()
@@ -88,9 +85,7 @@ Namespace Repo.ProductRepo
                     End Using
                 End Using
             End Using
-
             Return product
         End Function
-
     End Class
 End Namespace
