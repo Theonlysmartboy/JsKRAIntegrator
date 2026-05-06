@@ -412,18 +412,34 @@ Namespace Services
         Public Async Function GetNoticesAsync(req As NoticeRequest) As Task(Of NoticeResponse)
             Dim endpoint = ApiEndpoints.NOTICE_SELECT
             Dim resp = Await SendAndDeserializeAsync(Of NoticeResponse)(endpoint, req, isGet:=False)
-            If resp IsNot Nothing AndAlso resp.data IsNot Nothing Then
+            ' If HTTP/API call fails completely
+            If resp Is Nothing Then
+                Return New NoticeResponse With {
+                    .resultCd = "999",
+                    .resultMsg = "VSCU service unreachable",
+                    .resultDt = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    .data = New NoticeData With {
+                        .noticeList = New List(Of NoticeItem)
+                    }
+                }
+            End If
+            If resp.resultCd = "000" OrElse resp.resultCd = "001" Then
+                If resp.data Is Nothing Then
+                    resp.data = New NoticeData With {
+                        .noticeList = New List(Of NoticeItem)
+                    }
+                End If
                 Return resp
             End If
-            ' fallback if API failed
-            Dim fallback As New NoticeResponse
-            fallback.resultCd = "999"
-            fallback.resultMsg = "VSCU error: failed to call NoticeSelect"
-            fallback.resultDt = DateTime.Now.ToString("yyyyMMddHHmmss")
-            fallback.data = New NoticeData With {
-                .noticeList = New List(Of NoticeItem)
+            ' REAL ERROR ONLY
+            Return New NoticeResponse With {
+                .resultCd = "999",
+                .resultMsg = $"VSCU error: {resp.resultMsg}",
+                .resultDt = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                .data = New NoticeData With {
+                    .noticeList = New List(Of NoticeItem)
+                }
             }
-            Return fallback
         End Function
 
         ' -----------------------

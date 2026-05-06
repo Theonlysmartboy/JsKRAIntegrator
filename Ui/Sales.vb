@@ -446,7 +446,8 @@ Public Class Sales
     ' =========================
     Private Sub btnPrintPreview_Click(sender As Object, e As EventArgs) Handles BtnPrintPreview.Click
         If fullReceiptBitmap Is Nothing Then
-            MessageBox.Show("No receipt to preview. Send invoice first.", "Print Preview", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            CustomAlert.ShowAlert(Me, "No receipt to preview. Send invoice first.", "Print Preview",
+                                  CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
             Return
         End If
         currentPrintY = 0
@@ -456,7 +457,8 @@ Public Class Sales
         Try
             printPreviewDlg.ShowDialog()
         Catch ex As Exception
-            MessageBox.Show("Could not show print preview: " & ex.Message)
+            CustomAlert.ShowAlert(Me, "Could not show print preview: " & ex.Message, "Error",
+                                  CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         End Try
     End Sub
 
@@ -464,7 +466,8 @@ Public Class Sales
     Private Sub btnPrint_Click(sender As Object, e As EventArgs) Handles BtnPrint.Click
         ' If you add a real print button in the designer, hook it to this handler.
         If fullReceiptBitmap Is Nothing Then
-            MessageBox.Show("No receipt to print. Send invoice first.")
+            CustomAlert.ShowAlert(Me, "No receipt to print. Send invoice first.", "Print",
+                                  CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
             Return
         End If
         Dim dlg As New PrintDialog()

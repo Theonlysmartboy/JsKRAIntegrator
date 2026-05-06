@@ -60,17 +60,21 @@ Public Class Notices
                 .lastReqDt = lastSync
             }
             Dim response = Await _integrator.GetNoticesAsync(request)
-            If response Is Nothing OrElse response.resultCd <> "000" Then
-                Dim errMsg As String = "Failed to fetch Notices."
-                If response IsNot Nothing AndAlso Not String.IsNullOrEmpty(response.resultMsg) Then
-                    errMsg = response.resultMsg
-                End If
-                CustomAlert.ShowAlert(Me, errMsg, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            If response Is Nothing Then
+                CustomAlert.ShowAlert(Me, "VSCU service unreachable.", "Error", CustomAlert.AlertType.Error,
+                                      CustomAlert.ButtonType.OK)
+                Exit Sub
+            End If
+            ' Only real system failure
+            If response.resultCd = "999" Then
+                CustomAlert.ShowAlert(Me, response.resultMsg, "Error", CustomAlert.AlertType.Error,
+                                      CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
             ' ===== CHECK FOR NO NEW MESSAGES =====
-            If response.data Is Nothing OrElse response.data.noticeList Is Nothing OrElse response.data.noticeList.Count = 0 Then
-                CustomAlert.ShowAlert(Me, "No new messages found since last sync.", "Information", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+            If response.resultCd = "001" OrElse response.data Is Nothing OrElse response.data.noticeList Is Nothing OrElse response.data.noticeList.Count = 0 Then
+                CustomAlert.ShowAlert(Me, "No new notices found since last sync.", "Information",
+                                      CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
             ' Map API model → Entity

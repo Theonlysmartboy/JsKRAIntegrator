@@ -22,12 +22,10 @@ Namespace Main
             Dim errorMessage As String = Nothing
             Try
                 _jarPath = Await _settingsManager.GetSettingAsync("vscu_jar_path")
-
                 If String.IsNullOrWhiteSpace(_jarPath) OrElse Not IO.File.Exists(_jarPath) Then
                     errorMessage = $"VSCU jar file invalid at: {_jarPath}"
                     GoTo Finish
                 End If
-
                 Dim folder = Path.GetDirectoryName(_jarPath)
                 Dim psi As New ProcessStartInfo() With {
                     .FileName = "java",
@@ -37,17 +35,14 @@ Namespace Main
                     .CreateNoWindow = False,
                     .WindowStyle = ProcessWindowStyle.Normal
                 }
-
                 Dim p = Process.Start(psi)
                 If p IsNot Nothing Then
                     _vscuProcess = p
                 End If
-
 Finish:
             Catch ex As Exception
                 errorMessage = "Failed to start KRA VSCU service: " & ex.Message
             End Try
-
             If errorMessage IsNot Nothing Then
                 Await _logger.LogAsync(LogLevel.Error, "StartKraVscuJar", errorMessage)
                 Return False
@@ -90,7 +85,6 @@ Finish:
                 End If
             Catch ex As Exception
                 errorMessage = "Failed to stop KRA VSCU service: " & ex.Message
-
             End Try
             If errorMessage IsNot Nothing Then
                 Await _logger.LogAsync(LogLevel.Error, "StopVscu", errorMessage)
@@ -100,46 +94,51 @@ Finish:
             Return _vscuProcess.Id.ToString()
         End Function
 
-        Public Sub StopVscuByPort(port As Integer)
+        Public Async Function StopVscuByPort(port As Integer) As Task(Of Integer)
             Dim pid As Integer = -1
-
+            Dim errorMessage As String = Nothing
+            Dim infoMessage As String = Nothing
             Try
                 ' Run netstat command
-                Dim psi As New ProcessStartInfo("cmd.exe",
-            $"/c netstat -aof | findstr :{port}") With {
-            .RedirectStandardOutput = True,
-            .UseShellExecute = False,
-            .CreateNoWindow = True
-        }
-
+                Dim psi As New ProcessStartInfo("cmd.exe", $"/c netstat -aof | findstr :{port}") With {
+                                .RedirectStandardOutput = True,
+                                .UseShellExecute = False,
+                                .CreateNoWindow = True
+                            }
                 Using p = Process.Start(psi)
-                    Dim output = p.StandardOutput.ReadToEnd()
-
-                    ' Parse PID from output
+                    Dim output = Await p.StandardOutput.ReadToEndAsync()
                     Dim lines = output.Split({Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
-
                     For Each line In lines
                         Dim parts = line.Split(New Char() {" "c}, StringSplitOptions.RemoveEmptyEntries)
-
-                        ' PID is always last column
-                        Dim last = parts(parts.Length - 1)
-
-                        If Integer.TryParse(last, pid) Then
-                            Exit For
+                        If parts.Length > 0 Then
+                            Dim last = parts(parts.Length - 1)
+                            If Integer.TryParse(last, pid) Then
+                                Exit For
+                            End If
                         End If
                     Next
                 End Using
-
                 If pid > 0 Then
                     Dim proc = Process.GetProcessById(pid)
-                    proc.Kill()
+                    If Not proc.HasExited Then
+                        proc.Kill()
+                        infoMessage = $"KRA VSCU service on port {port}, (PID: {pid}) stopped successfully."
+                    Else
+                        infoMessage = $"KRA VSCU service on port {port}, (PID: {pid}) was already stopped."
+                    End If
+                Else
+                    errorMessage = $"No process found using port {port}."
                 End If
-
             Catch ex As Exception
-                ' Log error if needed
+                errorMessage = $"Failed to stop KRA VSCU service. on port {port}: {ex.Message}."
             End Try
-        End Sub
-
-
+            ' Logging (consistent with your pattern)
+            If errorMessage IsNot Nothing Then
+                Await _logger.LogAsync(LogLevel.Error, "StopVscuByPort", errorMessage)
+            Else
+                Await _logger.LogAsync(LogLevel.Info, "StopVscuByPort", infoMessage)
+            End If
+            Return pid
+        End Function
     End Class
 End Namespace

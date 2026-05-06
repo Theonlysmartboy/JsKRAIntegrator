@@ -90,10 +90,10 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataManagement.Designer.vb">
+    <Compile Include="DataManagement\DataManagement.Designer.vb">
       <DependentUpon>DataManagement.vb</DependentUpon>
     </Compile>
-    <Compile Include="DataManagement.vb">
+    <Compile Include="DataManagement\DataManagement.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="DataManagement\Branches.Designer.vb">
@@ -226,7 +226,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DataManagement.resx">
+    <EmbeddedResource Include="DataManagement\DataManagement.resx">
       <DependentUpon>DataManagement.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataManagement\Branches.resx">
