@@ -14,6 +14,7 @@ Public Class HomeForm
     Private _settingsManager As SettingsManager
     Private _logger As Logger
     Private _conn As String
+    Private _isClosingHandled As Boolean = False
 
     Public Sub New(integrator As VSCUIntegrator, logRepo As LogRepository)
         InitializeComponent()
@@ -126,12 +127,10 @@ Public Class HomeForm
         Await _settingsManager.SetSettingAsync("district_name", info.dstrtNm)
         Await _settingsManager.SetSettingAsync("sector_name", info.sctrNm)
         Await _settingsManager.SetSettingAsync("location_description", If(info.locDesc, ""))
-
         Await _settingsManager.SetSettingAsync("hq", info.hqYn)
         Await _settingsManager.SetSettingAsync("manager_name", info.mgrNm)
         Await _settingsManager.SetSettingAsync("manager_phone", info.mgrTelNo)
         Await _settingsManager.SetSettingAsync("manager_email", info.mgrEmail)
-
         Await _settingsManager.SetSettingAsync("device_id", info.dvcId)
         Await _settingsManager.SetSettingAsync("vat_type", info.vatTyCd)
     End Function
@@ -151,9 +150,16 @@ Public Class HomeForm
         purchasesForm.ShowDialog()
     End Sub
 
-    Private Sub Main_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+    Private Async Sub Main_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        If _isClosingHandled Then
+            Return ' Allow normal close, do nothing
+        End If
+        e.Cancel = True
+        _isClosingHandled = True
         Dim starter As New VscuStarter(_conn)
-        starter.StopVscuByPort(8088)
+        Await starter.StopVscuByPort(8088)
+        ' Close without re-triggering logic
+        Me.Close()
     End Sub
 
     Private Async Sub SyncToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SyncToolStripMenuItem.Click

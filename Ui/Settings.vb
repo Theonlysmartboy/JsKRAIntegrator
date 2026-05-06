@@ -88,7 +88,14 @@ Public Class Settings
                     End If
                 End If
             Next
-            CustomAlert.ShowAlert(Me, "Database settings saved successfully", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+            ' Ask user if they want to restart
+            Dim result = CustomAlert.ShowAlert(Me, "Settings saved successfully." & vbCrLf &
+        "Some changes require restarting the application." & vbCrLf &
+        "Do you want to restart now?", "Restart Required",
+        CustomAlert.AlertType.Confirm, CustomAlert.ButtonType.YesNo)
+            If result = DialogResult.Yes Then
+                RestartApplication()
+            End If
         Catch ex As Exception
             CustomAlert.ShowAlert(Me, "Error saving database settings: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         End Try
@@ -125,7 +132,13 @@ Public Class Settings
         My.Settings("db_prefix") = txtDbPrefix.Text
         ' Persist changes to config
         My.Settings.Save()
-        CustomAlert.ShowAlert(Me, "System settings saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+        ' Ask user if they want to restart
+        Dim result = CustomAlert.ShowAlert(Me, "Database Config saved successfully." & vbCrLf & vbCrLf &
+            "Do you want to restart now?", "Restart Required",
+            CustomAlert.AlertType.Confirm, CustomAlert.ButtonType.YesNo)
+        If result = DialogResult.Yes Then
+            RestartApplication()
+        End If
     End Sub
 
     ' --- For exposing system settings to core application ---
@@ -146,6 +159,7 @@ Public Class Settings
             .Item("Delete").FillWeight = 50  ' Small
         End With
     End Sub
+
     Private Sub dgvSettings_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs)
         If e.RowIndex < 0 Then Exit Sub ' Ignore headers
         Dim row = dgvSettings.Rows(e.RowIndex)
@@ -155,5 +169,16 @@ Public Class Settings
         Next
         Clipboard.SetText(copiedText.ToString())
         CustomAlert.ShowAlert(Me, "Row copied to clipboard!", "Copied", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+    End Sub
+
+    Private Sub RestartApplication()
+        Try
+            ' Optional: clean up resources
+            Application.ExitThread() ' closes all forms cleanly
+            ' Restart application
+            Application.Restart()
+        Catch ex As Exception
+            MessageBox.Show("Failed to restart application: " & ex.Message)
+        End Try
     End Sub
 End Class
