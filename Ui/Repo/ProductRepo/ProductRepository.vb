@@ -13,7 +13,7 @@ Namespace Repo.ProductRepo
             Dim products As New List(Of Product)()
             Using conn As New MySqlConnection(_connString)
                 conn.Open()
-                Dim sql As String = "SELECT ProductCode, ItemClsCd, ProductName, Product_Cost_Price, HSCode, ItemTyCd, ItemStdNm, OrgNatCd," &
+                Dim sql As String = "SELECT ProductCode, ItemCode, ProductName, Product_Cost_Price, HSCode, ItemTyCd, ItemStdNm, OrgNatCd," &
                                     "SupplierPacking, ProductUnit, SupplyUnit, Product_VAT_Code, TagPrice, Product_Selling_Price," &
                                     "Product_Wholelsale_Price, Product_Custom_Price1, Product_Custom_Price2, ReOrd_Level, IsrcAplcbYn," &
                                     "isActive, CreatedBy, ModifiedBy FROM productmaster WHERE isActive = 1"
@@ -22,7 +22,7 @@ Namespace Repo.ProductRepo
                         While reader.Read()
                             products.Add(New Product With {
                                 .ItemCd = reader("ProductCode").ToString(),
-                                .ItemClsCd = reader("ItemClsCd").ToString(),
+                                .ItemClsCd = reader("ItemCode").ToString(),
                                 .ItemNm = reader("ProductName").ToString(),
                                 .DftPrc = Convert.ToDecimal(reader("Product_Cost_Price")),
                                 .HSCode = If(IsDBNull(reader("HSCode")), Nothing, reader("HSCode").ToString()),
@@ -54,17 +54,17 @@ Namespace Repo.ProductRepo
             Dim product As Product = Nothing
             Using conn As New MySqlConnection(_connString)
                 conn.Open()
-                Dim sql As String = "SELECT ProductCode, ItemClsCd, ProductName, Product_Cost_Price, HSCode, ItemTyCd, ItemStdNm, OrgNatCd," &
+                Dim sql As String = "SELECT ProductCode, ItemCode, ProductName, Product_Cost_Price, HSCode, ItemTyCd, ItemStdNm, OrgNatCd," &
                                     "SupplierPacking, ProductUnit, SupplyUnit, Product_VAT_Code, TagPrice, Product_Selling_Price," &
                                     "Product_Wholelsale_Price, Product_Custom_Price1, Product_Custom_Price2, ReOrd_Level, isActive, IsrcAplcbYn," &
-                                    " CreatedBy, ModifiedBy FROM testproductmaster WHERE ProductCode = @itemCd LIMIT 1"
+                                    " CreatedBy, ModifiedBy FROM productmaster WHERE ProductCode = @itemCd LIMIT 1"
                 Using cmd As New MySqlCommand(sql, conn)
                     cmd.Parameters.AddWithValue("@itemCd", itemCd)
                     Using reader As MySqlDataReader = cmd.ExecuteReader()
                         If reader.Read() Then
                             product = New Product With {
                             .ItemCd = reader("ProductCode").ToString(),
-                            .ItemClsCd = reader("ItemClsCd").ToString(),
+                            .ItemClsCd = reader("ItemCode").ToString(),
                             .ItemNm = reader("ProductName").ToString(),
                             .DftPrc = Convert.ToDecimal(reader("Product_Cost_Price")),
                             .HSCode = If(IsDBNull(reader("HSCode")), Nothing, reader("HSCode").ToString()),

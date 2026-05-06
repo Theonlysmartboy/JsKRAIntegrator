@@ -26,7 +26,6 @@ Public Class Sales
         _conn = connectionString
         ' runtime preview picturebox and configure panel
         CreateReceiptPreviewControl()
-
         ' Initialize settings manager
         _settingsManager = New SettingsManager(_conn)
         ' Initialize logger
@@ -92,13 +91,11 @@ Public Class Sales
             Dim taxblAmtC As Decimal = 0D
             Dim taxblAmtD As Decimal = 0D
             Dim taxblAmtE As Decimal = 0D
-
             Dim taxAmtA As Decimal = 0D
             Dim taxAmtB As Decimal = 0D
             Dim taxAmtC As Decimal = 0D
             Dim taxAmtD As Decimal = 0D
             Dim taxAmtE As Decimal = 0D
-
             ' Loop through details and sum per tax type
             For Each d In details
                 Select Case d.VATCode.ToUpper() ' assuming VATCode = "A", "B", "C", "D", "E"
@@ -119,38 +116,30 @@ Public Class Sales
                         taxAmtE += d.VATAmount
                 End Select
             Next
-
             ' === Calculate total taxable, total VAT, and total amount ===
             Dim totTaxblAmt As Decimal = taxblAmtA + taxblAmtB + taxblAmtC + taxblAmtD + taxblAmtE
             Dim totTaxAmt As Decimal = taxAmtA + taxAmtB + taxAmtC + taxAmtD + taxAmtE
             Dim totAmt As Decimal = details.Sum(Function(d) d.Amount)
-
-            ' === Optional: calculate rate per type if needed ===
+            ' === calculate rate per type if needed ===
             Dim taxRtA As Decimal = If(taxblAmtA > 0, Math.Round(taxAmtA / taxblAmtA * 100, 2), 0)
             Dim taxRtB As Decimal = If(taxblAmtB > 0, Math.Round(taxAmtB / taxblAmtB * 100, 2), 0)
             Dim taxRtC As Decimal = If(taxblAmtC > 0, Math.Round(taxAmtC / taxblAmtC * 100, 2), 0)
             Dim taxRtD As Decimal = If(taxblAmtD > 0, Math.Round(taxAmtD / taxblAmtD * 100, 2), 0)
             Dim taxRtE As Decimal = If(taxblAmtE > 0, Math.Round(taxAmtE / taxblAmtE * 100, 2), 0)
-
             Dim salesDate As DateTime = If(master.InvoiceDate.HasValue, master.InvoiceDate.Value, DateTime.Now)
-
             Dim now As DateTime = DateTime.Now
             Dim cfmDate As DateTime
-
             ' Difference in days
             Dim diffDays As Integer = CInt((now - salesDate).TotalDays)
-
             If diffDays > 7 Then
                 ' Bring cfmDt closer to salesDt (within 7 days window)
                 cfmDate = salesDate.AddDays(7)
-
                 ' Optional: give it a reasonable time (not midnight)
                 cfmDate = New DateTime(cfmDate.Year, cfmDate.Month, cfmDate.Day, 10, 0, 0)
             Else
                 ' Use real-time confirmation date
                 cfmDate = now
             End If
-
             ' Build SalesRequest payload
             Dim digitsOnly As String = New String(master.InvoiceNo.Where(Function(c) Char.IsDigit(c)).ToArray())
             Dim req As New SalesRequest With {
@@ -284,13 +273,10 @@ Public Class Sales
             Await _logger.LogAsync(LogLevel.Error, "Error sending invoice", fullError)
         End If
     End Sub
-    ' =========================
     ' Build receipt textual lines (for clarity & optional debugging This is just a sample)
-    ' =========================
     Private Sub BuildReceiptLines(master As InvoiceMaster, details As List(Of InvoiceDetail), resp As SalesResponse)
         receiptLines.Clear()
         Dim dt As DateTime = ParseVSDCDate(resp.data.vsdcRcptPbctDate)
-
         receiptLines.Add("       GATEPARK-KENDUBAY")
         receiptLines.Add("   P.O.BOX : 256-40301, KENDUBAY - KENYA")
         receiptLines.Add("       TEL : 0750-564099")
@@ -298,7 +284,6 @@ Public Class Sales
         receiptLines.Add("---------------------------------------")
         receiptLines.Add($"PAYBILL NO: 522533    A/C NO: 5754786")
         receiptLines.Add("=======================================")
-
         receiptLines.Add($"Till No : 2   Cash Sale #: {master.SrNo}")
         receiptLines.Add($"M/S     : {master.PartyName}")
         receiptLines.Add($"Address : ")
@@ -306,7 +291,6 @@ Public Class Sales
         receiptLines.Add($"PIN     : ")
         receiptLines.Add($"Date & Time : {dt:yyyy-MM-dd HH:mm}")
         receiptLines.Add("---------------------------------------")
-
         receiptLines.Add("ITEM                 QTY   PRICE   AMOUNT")
         receiptLines.Add("---------------------------------------")
         For Each d In details
@@ -317,7 +301,6 @@ Public Class Sales
             receiptLines.Add($"{itemName} {qty} {price} {amt}")
         Next
         receiptLines.Add("---------------------------------------")
-
         receiptLines.Add($"TOTAL    : {master.TotalAmount:N2}")
         receiptLines.Add($"DISCOUNT : {master.Discount:N2}")
         receiptLines.Add($"CASH     : {master.TotalAmount:N2}")
@@ -327,7 +310,6 @@ Public Class Sales
         receiptLines.Add($"TOTAL QTY   : {details.Sum(Function(x) x.Qty)}")
         receiptLines.Add($"TOTAL WEIGHT: {master.TotatWeight:N2}")
         receiptLines.Add("---------------------------------------")
-
         receiptLines.Add("CODE   VATABLE AMT   VAT AMT   TOTAL")
         receiptLines.Add($"A      {master.VATAmount:N2}        {master.VATAmount:N2}    {master.TotalAmount:N2}")
         receiptLines.Add($"E      0.00           0.00       0.00")
@@ -335,7 +317,6 @@ Public Class Sales
         receiptLines.Add("VAT CODE: (A)=VATABLE, (E)=EXEMPT, (Z)=ZERO RATED")
         receiptLines.Add("PRICES INCLUSIVE OF VAT WHERE APPLICABLE")
         receiptLines.Add("---------------------------------------")
-
         receiptLines.Add($"YOU WERE SERVED BY : {master.PreparedBy}")
         receiptLines.Add("GOODS ONCE SOLD CANNOT BE ACCEPTED BACK FOR REFUND OR ANY OTHER REASON")
         receiptLines.Add("---------------------------------------")
@@ -347,10 +328,8 @@ Public Class Sales
         receiptLines.Add($"{dt:yyyy-MM-dd HH:mm}")
     End Sub
 
-    ' =========================
     ' Render the full receipt into one tall bitmap (thermal roll)
     ' QR code is drawn next to "CU SN" line in Controller Unit Info section
-    ' =========================
     Private Sub RenderFullReceiptBitmap(master As InvoiceMaster)
         ' defensive
         If receiptLines Is Nothing OrElse receiptLines.Count = 0 Then
@@ -361,10 +340,8 @@ Public Class Sales
         Dim lineHeight As Integer = CInt(Math.Ceiling(font.GetHeight()) + 6) ' spacing
         Dim paddingTop As Integer = 10
         Dim paddingLeft As Integer = 10
-
         ' width: based on panel width (allow some margin)
         Dim width As Integer = Math.Max(300, pnlReceipt.ClientSize.Width - 40)
-
         ' compute necessary height dynamically based on actual measured text
         Dim totalLinesHeight As Integer = 0
         Using tempBmp As New Bitmap(1, 1)
@@ -374,23 +351,18 @@ Public Class Sales
                 Next
             End Using
         End Using
-
         Dim qrExtra As Integer = If(String.IsNullOrEmpty(master.QR_Code), 0, 120) ' extra space for QR
         Dim estimatedHeight As Integer = paddingTop + totalLinesHeight + qrExtra + 50
-
         ' cleanup previous bitmap
         If fullReceiptBitmap IsNot Nothing Then
             fullReceiptBitmap.Dispose()
             fullReceiptBitmap = Nothing
         End If
-
         fullReceiptBitmap = New Bitmap(width, estimatedHeight)
         Using g As Graphics = Graphics.FromImage(fullReceiptBitmap)
             g.Clear(Color.White)
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit
-
             Dim y As Integer = paddingTop
-
             ' create brush for text
             Using brush As New SolidBrush(Color.Black)
                 ' prepare QR bitmap if available
@@ -406,11 +378,9 @@ Public Class Sales
                         ' ignore qr errors
                     End Try
                 End If
-
                 ' draw receipt lines
                 For i As Integer = 0 To receiptLines.Count - 1
                     Dim line As String = receiptLines(i)
-
                     ' detect CU SN line to draw QR inline
                     If line.StartsWith("CU SN:") AndAlso qrBmp IsNot Nothing Then
                         ' draw CU SN text
@@ -429,21 +399,16 @@ Public Class Sales
                 Next
             End Using
         End Using
-
         ' assign to picturebox for scrollable preview
         picReceiptPreview.Image = fullReceiptBitmap
         picReceiptPreview.Width = fullReceiptBitmap.Width
         picReceiptPreview.Height = fullReceiptBitmap.Height
-
         ' ensure panel's scrollbars appear
         pnlReceipt.AutoScroll = True
-
     End Sub
 
-    ' =========================
     ' Print preview & printing - thermal roll style
     ' PrintDocument will print vertical slices of fullReceiptBitmap until exhausted.
-    ' =========================
     Private Sub btnPrintPreview_Click(sender As Object, e As EventArgs) Handles BtnPrintPreview.Click
         If fullReceiptBitmap Is Nothing Then
             CustomAlert.ShowAlert(Me, "No receipt to preview. Send invoice first.", "Print Preview",
@@ -514,9 +479,7 @@ Public Class Sales
         End If
     End Sub
 
-    ' =========================
     ' Utilities
-    ' =========================
     Private Function GenerateQrBase64(content As String) As String
         If String.IsNullOrEmpty(content) Then Return Nothing
         Using qrGen As New QRCodeGenerator()
