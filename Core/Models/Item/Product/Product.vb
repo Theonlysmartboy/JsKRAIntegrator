@@ -7,8 +7,9 @@
         Public Property ItemStdNm As String
         Public Property OrgNatCd As String
         Public Property PackageUnit As String
-        Public Property SupplierPackageUnit As Decimal
+        Public Property SupplierPackaging As Decimal
         Public Property QuantityUnit As String
+        Public Property ProductQuantity As Decimal
         Public Property DefaultPrice As Decimal
         Public Property GroupPrice1 As Decimal
         Public Property GroupPrice2 As Decimal
@@ -22,5 +23,6 @@
         Public Property ItemClsCd As String
         Public Property DftPrc As Decimal
         Public Property TaxTyCd As String
+        Public Property SrNo As Integer
     End Class
 End Namespace
