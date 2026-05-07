@@ -58,9 +58,8 @@ Public Class Sales
         pnlReceipt.AutoScroll = True
         pnlReceipt.Controls.Add(picReceiptPreview)
     End Sub
-    ' =========================
+
     ' Send sales and show preview
-    ' =========================
     Private Async Sub ButtonSendSales_Click(sender As Object, e As EventArgs) Handles BtnSendSales.Click
         Dim capturedEx As Exception = Nothing
         Try

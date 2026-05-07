@@ -1,4 +1,6 @@
-﻿Namespace Models.Item.Stock
+﻿Imports Newtonsoft.Json
+
+Namespace Models.Item.Stock
     Public Class StockMovementResponse
         Public Property resultCd As String
         Public Property resultMsg As String
@@ -47,5 +49,14 @@
         Public Property taxAmt As Decimal
         Public Property totAmt As Decimal
         Public Property toUpload As Boolean
+
+        ' Ignore ONLY during serialization
+        Public Function ShouldSerializeId() As Boolean
+            Return False
+        End Function
+
+        Public Function ShouldSerializetoUpload() As Boolean
+            Return False
+        End Function
     End Class
 End Namespace

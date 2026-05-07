@@ -5,6 +5,7 @@ Imports Core.Models.Item.Composition
 Imports Core.Models.Item.Import
 Imports Core.Models.Item.Info
 Imports Core.Models.Item.Product
+Imports Core.Models.Item.Stock
 Imports Core.Services
 Imports Ui.Helpers
 Imports Ui.Repo.BranchRepo
@@ -204,6 +205,81 @@ Public Class ProductManagement
                                             "Upload Failed", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                     Exit Sub
                 End If
+                ' ITEM SAVED SUCCESSFULLY → NOW UPDATE STOCK
+                ' --- STOCK MASTER ---
+                Dim stockMasterReq As New StockMasterSaveRequest With {
+                    .tin = tin,
+                    .bhfId = bhfId,
+                    .itemCd = product.ItemCd,
+                    .rsdQty = product.ProductQuantity,
+                    .regrId = "Admin",
+                    .regrNm = "Admin",
+                    .modrId = "Admin",
+                    .modrNm = "Admin"
+                }
+                Dim stockRes = Await _integrator.SendStockMasterAsync(stockMasterReq)
+                If stockRes Is Nothing OrElse stockRes.resultCd <> "000" Then
+                    CustomAlert.ShowAlert(Me, $"Stock update failed for {itemCd}: {stockRes?.resultMsg}", "Stock Error",
+                                          CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+                    Exit Sub
+                End If
+                ' --- STOCK MOVEMENT ---
+                ' --- CALCULATIONS ---
+                Dim qty As Decimal = product.ProductQuantity
+                Dim price As Decimal = product.DefaultPrice
+
+                Dim supplyAmt As Decimal = Math.Round(qty * price, 2)
+                Dim taxRate As Decimal = GetTaxRate(product.TaxTyCd)
+                Dim taxAmt As Decimal = Math.Round(supplyAmt * taxRate, 2)
+                Dim totalAmt As Decimal = Math.Round(supplyAmt + taxAmt, 2)
+                Dim item As New StockMovementItem With {
+                    .itemSeq = 1,
+                    .itemCd = product.ItemCd,
+                    .itemClsCd = product.ItemClsCd,
+                    .itemNm = product.ItemNm,
+                    .bcd = Nothing,
+                    .pkgUnitCd = product.PackageUnit,
+                    .pkg = product.SupplierPackaging,
+                    .qtyUnitCd = product.QuantityUnit,
+                    .qty = product.ProductQuantity,
+                    .prc = product.DefaultPrice,
+                    .splyAmt = supplyAmt,
+                    .totDcAmt = 0,
+                    .taxblAmt = supplyAmt,
+                    .taxTyCd = product.TaxTyCd,
+                    .taxAmt = taxAmt,
+                    .totAmt = totalAmt
+                }
+                Dim nowStr = DateTime.Now.ToString("yyyyMMddHHmmss")
+                Dim sarNo = CInt(DateTime.Now.ToString("HHmmss"))
+                Dim moveReq As New StockMovementSaveRequest With {
+                    .tin = tin,
+                    .bhfId = bhfId,
+                    .sarNo = sarNo,
+                    .orgSarNo = 0,
+                    .regTyCd = "M",
+                    .custTin = "",
+                    .custNm = "",
+                    .custBhfId = "",
+                    .sarTyCd = "06",
+                    .ocrnDt = nowStr,
+                    .totItemCnt = 1,
+                    .totTaxblAmt = supplyAmt,
+                    .totTaxAmt = taxAmt,
+                    .totAmt = totalAmt,
+                    .remark = "Stock sync from system",
+                    .regrId = "Admin",
+                    .regrNm = "Admin",
+                    .modrId = "Admin",
+                    .modrNm = "Admin",
+                    .itemList = New List(Of StockMovementItem) From {item}
+                }
+                Dim moveRes = Await _integrator.SaveStockMoveAsync(moveReq)
+                If moveRes Is Nothing OrElse moveRes.resultCd <> "000" Then
+                    CustomAlert.ShowAlert(Me, $"Stock movement failed for {itemCd}: {moveRes?.resultMsg}", "Stock Movement Error",
+                                          CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+                    Exit Sub
+                End If
                 If index < total Then
                     Continue For
                 End If
@@ -219,9 +295,7 @@ Public Class ProductManagement
         End Try
     End Sub
 
-    ' =========================
     ' ITEM REQUEST GRID
-    ' =========================
     Private Sub SetupItemRequestGrid()
         With DtgvItemRequest
             .Columns.Clear()
@@ -282,9 +356,7 @@ Public Class ProductManagement
         End Try
     End Sub
 
-    ' =========================
     ' FILTERING (ALL GRIDS)
-    ' =========================
     Private Sub FilterGrid(grid As DataGridView, search As String)
         If Not OriginalTables.ContainsKey(grid) Then Exit Sub
         Dim dv As DataView = OriginalTables(grid).DefaultView
@@ -299,9 +371,7 @@ Public Class ProductManagement
         grid.DataSource = dv
     End Sub
 
-    ' =========================
     ' HEADER CHECKBOX
-    ' =========================
     Private Sub AddHeaderCheckBox()
         Dim rect = DtgvItemSave.GetCellDisplayRectangle(0, -1, True)
         headerCheckBox.Size = New Size(18, 18)
@@ -368,9 +438,7 @@ Public Class ProductManagement
         AddHandler DtgvItemSave.CellValueChanged, AddressOf DtgvItemSave_CellValueChanged
     End Sub
 
-    ' =========================
     ' PLACEHOLDER HANDLERS
-    ' =========================
     Private Sub SetPlaceholder(txt As TextBox, placeholder As String)
         If txt Is Nothing Then Exit Sub
         If String.IsNullOrEmpty(txt.Text) Then
@@ -783,4 +851,19 @@ Public Class ProductManagement
         TxtCompositionCode.Text = ""
         TxtQuantity.Text = ""
     End Sub
+
+    Private Function GetTaxRate(taxTyCd As String) As Decimal
+        Select Case taxTyCd
+            Case "A" ' Excempt
+                Return 0D
+            Case "B" ' Standard VAt
+                Return 0.16D
+            Case "C" ' Zero rated
+                Return 0D
+            Case "E" ' None vat
+                Return 0.08D
+            Case Else
+                Return 0D ' fallback (safe default)
+        End Select
+    End Function
 End Class
