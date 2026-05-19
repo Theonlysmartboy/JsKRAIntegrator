@@ -49,9 +49,9 @@ Public Class Logs
         ' Adjust based on your column names
         With GridLogs.Columns
             .Item("Id").FillWeight = 20        ' Smallest
-            .Item("Level").FillWeight = 40     ' Small
+            .Item("Level").FillWeight = 40     ' Smaller
             .Item("Timestamp").FillWeight = 70 ' Medium
-            .Item("Message").FillWeight = 150  ' Big
+            .Item("Message").FillWeight = 150  ' Larger
             .Item("Details").FillWeight = 330  ' Largest
         End With
     End Sub
@@ -102,8 +102,7 @@ Public Class Logs
         If search <> "" AndAlso txtSearch.ForeColor <> Color.Gray Then
             Dim safeSearch = search.Replace("'", "''")
             ' Build OR group
-            Dim searchFilter As String =
-        $"(Message LIKE '%{safeSearch}%' OR Level LIKE '%{safeSearch}%' OR Details LIKE '%{safeSearch}%')"
+            Dim searchFilter As String = $"(Message LIKE '%{safeSearch}%' OR Level LIKE '%{safeSearch}%' OR Details LIKE '%{safeSearch}%')"
             filter &= " AND " & searchFilter
         End If
         dv.RowFilter = filter
