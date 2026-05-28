@@ -468,38 +468,47 @@ Public Class ProductManagement
                 .lastReqDt = Await _settingsManager.GetSettingAsync("last_import_item_request_dt")
             }
             Dim response = Await _integrator.GetImportItemsAsync(request)
-            If response IsNot Nothing AndAlso response.resultCd = "000" Then
-                If response.data IsNot Nothing AndAlso response.data.itemList IsNot Nothing Then
-                    Dim items = response.data.itemList
-                    _branchImportRepo.Save(items)
-                    Dim dt As DataTable = (From it In items Select
-                        taskCd = it.taskCd,
-                        itemSeq = it.itemSeq,
-                        dclNo = it.dclNo,
-                        hsCd = it.hsCd,
-                        itemNm = it.itemNm,
-                        orgnNatCd = it.orgnNatCd,
-                        pkg = it.pkg,
-                        qty = it.qty,
-                        qtyUnitCd = it.qtyUnitCd,
-                        netWt = it.netWt,
-                        spplrNm = it.spplrNm,
-                        invcFcurAmt = it.invcFcurAmt,
-                        invcFcurCd = it.invcFcurCd).ToDataTable()
-                    OriginalTables(DtgvImportItemRequest) = dt.Copy()
-                    DtgvImportItemRequest.DataSource = dt
-                    Await _settingsManager.SetSettingAsync("last_import_item_request_dt", DateTime.Now.ToString("yyyyMMddHHmmss"))
-                    CustomAlert.ShowAlert(Me, $"{response.data.itemList.Count} items imported successfully.", "Success",
-                                    CustomAlert.AlertType.Success,
-                                    CustomAlert.ButtonType.OK)
-                End If
+            If response Is Nothing Then
+                CustomAlert.ShowAlert(Me, "No response from server.", "Error",
+                          CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+                Exit Sub
+            End If
+            ' No search result (informational)
+            If response.resultCd = "001" Then
+                CustomAlert.ShowAlert(Me, response.resultMsg, "Information",
+                          CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+                Exit Sub
+            End If
+            ' Actual failure
+            If response.resultCd <> "000" Then
+                CustomAlert.ShowAlert(Me, "Failed to fetch import items." & vbCrLf &
+                          $"Message: {response.resultMsg}", "Error",
+                          CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+                Exit Sub
+            End If
+            ' Success
+            If response.data IsNot Nothing AndAlso response.data.itemList IsNot Nothing Then
+                Dim items = response.data.itemList
+                _branchImportRepo.Save(items)
+                Dim dt As DataTable = (From it In items Select taskCd = it.taskCd, itemSeq = it.itemSeq,
+                                                            dclNo = it.dclNo, hsCd = it.hsCd, itemNm = it.itemNm,
+                                                            orgnNatCd = it.orgnNatCd, pkg = it.pkg, qty = it.qty,
+                                                            qtyUnitCd = it.qtyUnitCd, netWt = it.netWt,
+                                                            spplrNm = it.spplrNm, invcFcurAmt = it.invcFcurAmt,
+                                                            invcFcurCd = it.invcFcurCd).ToDataTable()
+                OriginalTables(DtgvImportItemRequest) = dt.Copy()
+                DtgvImportItemRequest.DataSource = dt
+                Await _settingsManager.SetSettingAsync("last_import_item_request_dt",
+                                                       DateTime.Now.ToString("yyyyMMddHHmmss"))
+                CustomAlert.ShowAlert(Me, $"{items.Count} items imported successfully.", "Success",
+                          CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
             Else
-                CustomAlert.ShowAlert(Me, "Failed to fetch import items." & vbCrLf & $"Message: {response?.resultMsg}", "Error",
-                                        CustomAlert.AlertType.Error,
-                                        CustomAlert.ButtonType.OK)
+                CustomAlert.ShowAlert(Me, "No import items found.", "Information",
+                          CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
             End If
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error,
+                                  CustomAlert.ButtonType.OK)
         Finally
             Loader.Visible = False
             BtnImportItemRequest.Enabled = True
@@ -513,19 +522,32 @@ Public Class ProductManagement
             .AllowUserToAddRows = False
             .ReadOnly = True
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "taskCd", .HeaderText = "Task Code", .DataPropertyName = "taskCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemSeq", .HeaderText = "Item Seq", .DataPropertyName = "itemSeq"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "dclNo", .HeaderText = "Declaration No", .DataPropertyName = "dclNo"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "hsCd", .HeaderText = "HS Code", .DataPropertyName = "hsCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemNm", .HeaderText = "Item Name", .DataPropertyName = "itemNm"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "orgnNatCd", .HeaderText = "Origin", .DataPropertyName = "orgnNatCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "pkg", .HeaderText = "Package", .DataPropertyName = "pkg"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qty", .HeaderText = "Quantity", .DataPropertyName = "qty"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qtyUnitCd", .HeaderText = "Qty Unit", .DataPropertyName = "qtyUnitCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "netWt", .HeaderText = "Net Weight", .DataPropertyName = "netWt"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "spplrNm", .HeaderText = "Supplier", .DataPropertyName = "spplrNm"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "invcFcurAmt", .HeaderText = "Invoice Amt", .DataPropertyName = "invcFcurAmt"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "invcFcurCd", .HeaderText = "Currency", .DataPropertyName = "invcFcurCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "taskCd", .HeaderText = "Task Code",
+                            .DataPropertyName = "taskCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemSeq", .HeaderText = "Item Seq",
+                            .DataPropertyName = "itemSeq"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "dclNo", .HeaderText = "Declaration No",
+                            .DataPropertyName = "dclNo"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "hsCd", .HeaderText = "HS Code",
+                            .DataPropertyName = "hsCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemNm", .HeaderText = "Item Name",
+                            .DataPropertyName = "itemNm"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "orgnNatCd", .HeaderText = "Origin",
+                            .DataPropertyName = "orgnNatCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "pkg", .HeaderText = "Package",
+                            .DataPropertyName = "pkg"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qty", .HeaderText = "Quantity",
+                            .DataPropertyName = "qty"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qtyUnitCd", .HeaderText = "Qty Unit",
+                            .DataPropertyName = "qtyUnitCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "netWt", .HeaderText = "Net Weight",
+                            .DataPropertyName = "netWt"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "spplrNm", .HeaderText = "Supplier",
+                            .DataPropertyName = "spplrNm"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "invcFcurAmt", .HeaderText = "Invoice Amt",
+                            .DataPropertyName = "invcFcurAmt"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "invcFcurCd", .HeaderText = "Currency",
+                            .DataPropertyName = "invcFcurCd"})
         End With
     End Sub
 
@@ -610,8 +632,8 @@ Public Class ProductManagement
                 If DateTime.TryParse(row.Cells("dclDe").Value?.ToString(), parsedDate) Then
                     req.dclDe = parsedDate.ToString("yyyyMMdd")
                 Else
-                    CustomAlert.ShowAlert(Me, $"Invalid Declaration Date for Task {req.taskCd}. Please correct the date format.", "Validation Error",
-                                            CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
+                    CustomAlert.ShowAlert(Me, $"Invalid Declaration Date for Task {req.taskCd}. Please correct the date format.",
+                                          "Validation Error", CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
                 End If
                 Dim statusValue = row.Cells("imptItemSttsCd").Value
                 If statusValue Is Nothing OrElse String.IsNullOrWhiteSpace(statusValue.ToString()) Then
@@ -624,10 +646,8 @@ Public Class ProductManagement
                     repo.MarkAsUploaded(CInt(row.Cells("id").Value))
                 Else
                     CustomAlert.ShowAlert(Me, $"Upload failed for Task {req.taskCd}" & vbCrLf & $"Code: {response?.resultCd}" & vbCrLf &
-                                            $"Message: {response?.resultMsg}",
-                                            "Error",
-                                            CustomAlert.AlertType.Error,
-                                            CustomAlert.ButtonType.OK)
+                                            $"Message: {response?.resultMsg}", "Error",
+                                            CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                     Exit Sub
                 End If
             Next
@@ -816,7 +836,8 @@ Public Class ProductManagement
                                 CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
             End If
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, $"An unexpected error occurred: {ex.Message}", "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            CustomAlert.ShowAlert(Me, $"An unexpected error occurred: {ex.Message}", "Error", CustomAlert.AlertType.Error,
+                                  CustomAlert.ButtonType.OK)
         Finally
             Loader.Visible = False
             BtnSaveItemComposition.Enabled = True
