@@ -74,12 +74,29 @@ Public Class Stocks
                 .lastReqDt = lastReqDt
             }
             Dim res = Await _integrator.GetStockMoveAsync(req)
-            If res Is Nothing OrElse res.resultCd <> "000" OrElse res.data Is Nothing Then
-                CustomAlert.ShowAlert(Me, If(res?.resultMsg, "Failed to fetch stock movement data."), "Error",
-                                        CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            If res Is Nothing Then
+                CustomAlert.ShowAlert(Me, "Failed to fetch stock movement data.",
+                          "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
-
+            ' No records found
+            If res.resultCd = "001" Then
+                CustomAlert.ShowAlert(Me, res.resultMsg, "Information", CustomAlert.AlertType.Info,
+                          CustomAlert.ButtonType.OK)
+                Exit Sub
+            End If
+            ' Actual API error
+            If res.resultCd <> "000" Then
+                CustomAlert.ShowAlert(Me, res.resultMsg, "Error", CustomAlert.AlertType.Error,
+                          CustomAlert.ButtonType.OK)
+                Exit Sub
+            End If
+            ' Defensive check
+            If res.data Is Nothing OrElse res.data.stockList Is Nothing Then
+                CustomAlert.ShowAlert(Me, "No stock movement data available.",
+                          "Information", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+                Exit Sub
+            End If
             For Each MoveItem In res.data.stockList
                 _stockMoveRepo.Insert(MoveItem)
             Next
@@ -243,12 +260,9 @@ Public Class Stocks
             .ValueMember = "Code",
             .DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton
         }
-
         Dim pkgRepo As New PackagingUnitRepository(_conn)
         pkgUnitCol.DataSource = Await pkgRepo.GetAll()
-
         DgvStockMoveItems.Columns.Add(pkgUnitCol)
-
         DgvStockMoveItems.Columns.Add("pkg", "Package Qty")
         Dim qtyUnitCol As New DataGridViewComboBoxColumn With {
             .Name = "qty_unit_cd",
@@ -258,12 +272,9 @@ Public Class Stocks
             .ValueMember = "Code",
             .DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton
         }
-
         Dim qtyRepo As New UnitOfQuantityRepository(_conn)
         qtyUnitCol.DataSource = Await qtyRepo.GetAll()
-
         DgvStockMoveItems.Columns.Add(qtyUnitCol)
-
         DgvStockMoveItems.Columns.Add("qty", "Quantity")
         DgvStockMoveItems.Columns.Add("item_expr_dt", "ExpiryDate")
         DgvStockMoveItems.Columns.Add("prc", "Price")

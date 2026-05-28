@@ -227,7 +227,6 @@ Public Class ProductManagement
                 ' --- CALCULATIONS ---
                 Dim qty As Decimal = product.ProductQuantity
                 Dim price As Decimal = product.DefaultPrice
-
                 Dim supplyAmt As Decimal = Math.Round(qty * price, 2)
                 Dim taxRate As Decimal = GetTaxRate(product.TaxTyCd)
                 Dim taxAmt As Decimal = Math.Round(supplyAmt * taxRate, 2)
@@ -250,7 +249,7 @@ Public Class ProductManagement
                     .taxAmt = taxAmt,
                     .totAmt = totalAmt
                 }
-                Dim nowStr = DateTime.Now.ToString("yyyyMMddHHmmss")
+                Dim nowStr = DateTime.Now.ToString("yyyyMMdd")
                 Dim sarNo = CInt(DateTime.Now.ToString("HHmmss"))
                 Dim moveReq As New StockMovementSaveRequest With {
                     .tin = tin,
@@ -409,35 +408,28 @@ Public Class ProductManagement
     Private Sub HeaderCheckBox_CheckedChanged(sender As Object, e As EventArgs)
         ' Remove handler to avoid recursion
         RemoveHandler DtgvItemSave.CellValueChanged, AddressOf DtgvItemSave_CellValueChanged
-
         ' Temporarily move current cell to a non-checkbox cell to exit edit mode
         Dim currentRow = DtgvItemSave.CurrentCell?.RowIndex
         Dim currentCol = DtgvItemSave.CurrentCell?.ColumnIndex
         If currentRow.HasValue AndAlso currentCol.HasValue Then
             DtgvItemSave.CurrentCell = Nothing
         End If
-
         Dim checkValue As Boolean = headerCheckBox.Checked
-
         ' Update all rows
         For Each row As DataGridViewRow In DtgvItemSave.Rows
             If Not row.IsNewRow Then
                 row.Cells("chkSelect").Value = checkValue
             End If
         Next
-
         ' Force the grid to repaint
         DtgvItemSave.Refresh()
-
         ' Restore previous current cell if needed
         If currentRow.HasValue AndAlso currentCol.HasValue Then
             DtgvItemSave.CurrentCell = DtgvItemSave.Rows(currentRow.Value).Cells(currentCol.Value)
         End If
-
         ' Reattach handler
         AddHandler DtgvItemSave.CellValueChanged, AddressOf DtgvItemSave_CellValueChanged
     End Sub
-
     ' PLACEHOLDER HANDLERS
     Private Sub SetPlaceholder(txt As TextBox, placeholder As String)
         If txt Is Nothing Then Exit Sub
