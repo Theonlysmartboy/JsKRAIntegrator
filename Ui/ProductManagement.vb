@@ -41,7 +41,8 @@ Public Class ProductManagement
                                                                                .Pin = t.Result(1),
                                                                                .BranchId = t.Result(2),
                                                                                .DeviceSerial = t.Result(3),
-                                                                               .Timeout = If(Integer.TryParse(t.Result(4), Nothing), CInt(t.Result(4)), 30)
+                                                                               .Timeout = If(Integer.TryParse(t.Result(4), Nothing), CInt(t.Result(4)),
+                                                                               30)
                                                                            }, _logger)
                                                                       End Sub)
     End Sub
@@ -70,9 +71,7 @@ Public Class ProductManagement
         Await LoadBranchesAsync()
     End Sub
 
-    '=======================================================
     ' TEXTBOX TEXT CHANGE HANDLERS
-    '=======================================================
     Private Sub TxtSearchItemSave_TextChanged(sender As Object, e As EventArgs) Handles TxtSearchItemSave.TextChanged
         If TxtSearchItemSave.ForeColor = Color.Gray Then Exit Sub
         FilterGrid(DtgvItemSave, TxtSearchItemSave.Text.Trim())
@@ -93,9 +92,7 @@ Public Class ProductManagement
         FilterGrid(DtgvImportItemRequest, TxtImportItemSearch.Text.Trim())
     End Sub
 
-    ' =========================
     ' ITEM SAVE GRID
-    ' =========================
     Private Sub SetupItemSaveGrid()
         With DtgvItemSave
             .Columns.Clear()
@@ -103,16 +100,21 @@ Public Class ProductManagement
             .ReadOnly = False
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             .Columns.Add(New DataGridViewCheckBoxColumn With {
-                .Name = "chkSelect",
-                .Width = 30
-            })
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemCd", .HeaderText = "Item Code", .DataPropertyName = "itemCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemNm", .HeaderText = "Item Name", .DataPropertyName = "itemNm"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemClsCd", .HeaderText = "Item Class", .DataPropertyName = "itemClsCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "pkgUnitCd", .HeaderText = "Package Unit", .DataPropertyName = "pkgUnitCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qtyUnitCd", .HeaderText = "Qty Unit", .DataPropertyName = "qtyUnitCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "taxTyCd", .HeaderText = "Tax Type", .DataPropertyName = "taxTyCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "dftPrc", .HeaderText = "Price", .DataPropertyName = "dftPrc"})
+                .Name = "chkSelect", .Width = 30})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemCd",
+                            .HeaderText = "Item Code", .DataPropertyName = "itemCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemNm", .HeaderText = "Item Name",
+                            .DataPropertyName = "itemNm"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemClsCd", .HeaderText = "Item Class",
+                            .DataPropertyName = "itemClsCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "pkgUnitCd", .HeaderText = "Package Unit",
+                            .DataPropertyName = "pkgUnitCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qtyUnitCd", .HeaderText = "Qty Unit",
+                            .DataPropertyName = "qtyUnitCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "taxTyCd", .HeaderText = "Tax Type",
+                            .DataPropertyName = "taxTyCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "dftPrc", .HeaderText = "Price",
+                            .DataPropertyName = "dftPrc"})
         End With
     End Sub
 
@@ -205,7 +207,7 @@ Public Class ProductManagement
                                             "Upload Failed", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
                     Exit Sub
                 End If
-                ' ITEM SAVED SUCCESSFULLY → NOW UPDATE STOCK
+                ' ITEM SAVED SUCCESSFULLY  UPDATE STOCK
                 ' --- STOCK MASTER ---
                 Dim stockMasterReq As New StockMasterSaveRequest With {
                     .tin = tin,
@@ -282,11 +284,12 @@ Public Class ProductManagement
                 If index < total Then
                     Continue For
                 End If
-                CustomAlert.ShowAlert(Me, $"All {total} items uploaded successfully.", "Upload Complete", CustomAlert.AlertType.Success,
-                                        CustomAlert.ButtonType.OK)
+                CustomAlert.ShowAlert(Me, $"All {total} items uploaded successfully.", "Upload Complete",
+                                      CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
             Next
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Sync Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            CustomAlert.ShowAlert(Me, "Sync Error: " & ex.Message, "Error",
+                                  CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
             Loader.Visible = False
             BtnSendItem.Enabled = True
@@ -301,18 +304,22 @@ Public Class ProductManagement
             .AllowUserToAddRows = False
             .ReadOnly = True
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-
             .Columns.Add(New DataGridViewCheckBoxColumn With {
-                .Name = "chkSelectReq",
-                .Width = 30
-            })
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemCd", .HeaderText = "Item Code", .DataPropertyName = "itemCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemNm", .HeaderText = "Item Name", .DataPropertyName = "itemNm"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemClsCd", .HeaderText = "Item Class", .DataPropertyName = "itemClsCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "taxTyCd", .HeaderText = "Tax Type", .DataPropertyName = "taxTyCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "pkgUnitCd", .HeaderText = "Pkg Unit", .DataPropertyName = "pkgUnitCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qtyUnitCd", .HeaderText = "Qty Unit", .DataPropertyName = "qtyUnitCd"})
-            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "dftPrc", .HeaderText = "Price", .DataPropertyName = "dftPrc"})
+                .Name = "chkSelectReq", .Width = 30})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemCd", .HeaderText = "Item Code",
+                            .DataPropertyName = "itemCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemNm", .HeaderText = "Item Name",
+                            .DataPropertyName = "itemNm"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "itemClsCd", .HeaderText = "Item Class",
+                            .DataPropertyName = "itemClsCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "taxTyCd", .HeaderText = "Tax Type",
+                            .DataPropertyName = "taxTyCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "pkgUnitCd", .HeaderText = "Pkg Unit",
+                            .DataPropertyName = "pkgUnitCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "qtyUnitCd", .HeaderText = "Qty Unit",
+                            .DataPropertyName = "qtyUnitCd"})
+            .Columns.Add(New DataGridViewTextBoxColumn With {.Name = "dftPrc", .HeaderText = "Price",
+                            .DataPropertyName = "dftPrc"})
         End With
     End Sub
 
@@ -329,7 +336,8 @@ Public Class ProductManagement
             }
             Dim res = Await _integrator.GetItemAsync(req)
             If res Is Nothing OrElse res.resultCd <> "000" Then
-                CustomAlert.ShowAlert(Me, "No new item data returned from KRA.", "Info", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+                CustomAlert.ShowAlert(Me, "No new item data returned from KRA.", "Info",
+                                      CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
                 Exit Sub
             Else
                 Dim items = res.data.itemList
@@ -347,7 +355,8 @@ Public Class ProductManagement
                 Await _settingsManager.SetSettingAsync("last_item_request_dt", DateTime.Now.ToString("yyyyMMddHHmmss"))
             End If
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Unexpected error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            CustomAlert.ShowAlert(Me, "Unexpected error: " & ex.Message, "Error",
+                                  CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         Finally
             Loader.Visible = False
             BtnItemRequest.Enabled = True
@@ -589,11 +598,12 @@ Public Class ProductManagement
             saveCount += 1
         Next
         If saveCount = 0 Then
-            CustomAlert.ShowAlert(Me, "No valid records to save.", "Info", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+            CustomAlert.ShowAlert(Me, "No valid records to save.", "Info",
+                                  CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
             Return
         End If
-        CustomAlert.ShowAlert(Me,
-        $"{saveCount} record(s) saved successfully.", "Success", CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
+        CustomAlert.ShowAlert(Me, $"{saveCount} record(s) saved successfully.", "Success",
+                              CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
         LoadImportStatusGrid()
     End Sub
 
@@ -606,7 +616,8 @@ Public Class ProductManagement
             Dim bhfId = Await _settingsManager.GetSettingAsync("branch_id")
             ' Get selected row from grid
             If DtgvImportItemUpload.CurrentRow Is Nothing Then
-                CustomAlert.ShowAlert(Me, "Select an item first.", "Warning", CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
+                CustomAlert.ShowAlert(Me, "Select an item first.", "Warning", CustomAlert.AlertType.Warning,
+                                      CustomAlert.ButtonType.OK)
                 Exit Sub
             End If
             Dim repo As New BranchImportItemStatusRepository(_connString)
@@ -651,11 +662,12 @@ Public Class ProductManagement
                     Exit Sub
                 End If
             Next
-            CustomAlert.ShowAlert(Me, "Selected records uploaded successfully.", "Success", CustomAlert.AlertType.Success,
-                            CustomAlert.ButtonType.OK)
+            CustomAlert.ShowAlert(Me, "Selected records uploaded successfully.", "Success",
+                                  CustomAlert.AlertType.Success, CustomAlert.ButtonType.OK)
             LoadImportStatusGrid()
         Catch ex As Exception
-            CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
+            CustomAlert.ShowAlert(Me, "Error: " & ex.Message, "Error", CustomAlert.AlertType.Error,
+                                  CustomAlert.ButtonType.OK)
         Finally
             Loader.Visible = False
             BtnImportItemUpload.Enabled = True
@@ -820,7 +832,6 @@ Public Class ProductManagement
             Await Task.Yield()
             Dim req = BuildCompositionRequest(entity)
             Dim resp = Await _integrator.SaveItemCompositionAsync(req)
-
             If resp IsNot Nothing AndAlso resp.resultCd = "000" Then
                 repo.MarkAsUploaded(
                     entity.Tin,
