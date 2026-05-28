@@ -49,7 +49,7 @@ Public Class UserAccounts
 
     Private Sub CmbBranches_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbBranches.SelectedIndexChanged
         If CmbBranches.SelectedIndex <= 0 Then
-            ' Default selection
+            ' Default selection used when no selection has been made
             txtTin.Text = ""
             txtBhfId.Text = ""
             Return

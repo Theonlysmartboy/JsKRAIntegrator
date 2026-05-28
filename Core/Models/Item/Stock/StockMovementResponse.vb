@@ -50,7 +50,7 @@ Namespace Models.Item.Stock
         Public Property totAmt As Decimal
         Public Property toUpload As Boolean
 
-        ' Ignore ONLY during serialization
+        ' Ignore during serialization
         Public Function ShouldSerializeId() As Boolean
             Return False
         End Function
