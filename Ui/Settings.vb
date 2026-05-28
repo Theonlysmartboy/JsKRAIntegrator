@@ -78,6 +78,7 @@ Public Class Settings
 
     ' --- Save DB Settings from DataGridView ---
     Private Async Sub btnSaveDB_Click(sender As Object, e As EventArgs) Handles btnSaveDB.Click
+        toggleGridView(False)
         Try
             For Each row As DataGridViewRow In dgvSettings.Rows
                 If Not row.IsNewRow Then
@@ -99,6 +100,7 @@ Public Class Settings
         Catch ex As Exception
             CustomAlert.ShowAlert(Me, "Error saving database settings: " & ex.Message, "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
         End Try
+        toggleGridView(True)
     End Sub
 
     '--- Handle Delete Button Click in DataGridView ---
@@ -107,6 +109,7 @@ Public Class Settings
         If dgvSettings.Columns(e.ColumnIndex).Name = "Delete" Then
             Dim key As String = dgvSettings.Rows(e.RowIndex).Cells("Key").Value?.ToString()
             If String.IsNullOrEmpty(key) Then Exit Sub
+            toggleGridView(False)
             Dim confirm = CustomAlert.ShowAlert(Me, $"Are you sure you want to delete '{key}'?" & vbCrLf & "This action cannot be undone.",
                 "Confirm Delete", CustomAlert.AlertType.Confirm, CustomAlert.ButtonType.OK)
             If confirm = DialogResult.OK Then
@@ -120,10 +123,12 @@ Public Class Settings
                 End Try
             End If
         End If
+        toggleGridView(True)
     End Sub
 
     ' --- Save System Settings ---
     Private Sub btnSaveSystem_Click(sender As Object, e As EventArgs) Handles btnSaveSystem.Click
+        toggleGridView(False)
         ' Save system settings to application settings
         My.Settings("db_server") = txtDbServer.Text
         My.Settings("db_user") = txtDbUser.Text
@@ -139,6 +144,7 @@ Public Class Settings
         If result = DialogResult.Yes Then
             RestartApplication()
         End If
+        toggleGridView(True)
     End Sub
 
     ' --- For exposing system settings to core application ---
@@ -168,7 +174,9 @@ Public Class Settings
             copiedText.AppendLine($"{dgvSettings.Columns(cell.ColumnIndex).HeaderText}: {cell.Value}")
         Next
         Clipboard.SetText(copiedText.ToString())
+        toggleGridView(False)
         CustomAlert.ShowAlert(Me, "Row copied to clipboard!", "Copied", CustomAlert.AlertType.Info, CustomAlert.ButtonType.OK)
+        toggleGridView(True)
     End Sub
 
     Private Sub RestartApplication()
@@ -180,5 +188,8 @@ Public Class Settings
         Catch ex As Exception
             MessageBox.Show("Failed to restart application: " & ex.Message)
         End Try
+    End Sub
+    Private Sub toggleGridView(status As Boolean)
+        dgvSettings.Enabled = status
     End Sub
 End Class
