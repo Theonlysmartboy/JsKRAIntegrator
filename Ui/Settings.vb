@@ -51,8 +51,8 @@ Public Class Settings
             Next
         Catch ex As Exception
             ' Show error if DB cannot be reached
-            CustomAlert.ShowAlert(Settings.ActiveForm, "Cannot load DB settings: " & ex.Message, "Error", CustomAlert.AlertType.Error,
-                                  CustomAlert.ButtonType.OK)
+            CustomAlert.ShowAlert(Settings.ActiveForm, "Cannot load DB settings: " & ex.Message,
+                                  "Error", CustomAlert.AlertType.Error, CustomAlert.ButtonType.OK)
             TabPageDB.Enabled = False
         End Try
         If dgvSettings.Columns("Delete") Is Nothing Then

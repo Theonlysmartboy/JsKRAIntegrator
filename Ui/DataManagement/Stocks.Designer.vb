@@ -29,7 +29,6 @@ Partial Class Stocks
         Me.Label2 = New System.Windows.Forms.Label()
         Me.BtnFetchStockMove = New System.Windows.Forms.Button()
         Me.TxtSearchStockMovement = New System.Windows.Forms.TextBox()
-        Me.BtnUploadStockMoves = New System.Windows.Forms.Button()
         Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.DgvStockMoveItems = New System.Windows.Forms.DataGridView()
@@ -93,14 +92,12 @@ Partial Class Stocks
         '
         'TableLayoutPanel2
         '
-        Me.TableLayoutPanel2.ColumnCount = 3
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
+        Me.TableLayoutPanel2.ColumnCount = 2
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40.0!))
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60.0!))
         Me.TableLayoutPanel2.Controls.Add(Me.Label2, 1, 1)
         Me.TableLayoutPanel2.Controls.Add(Me.BtnFetchStockMove, 0, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.TxtSearchStockMovement, 1, 0)
-        Me.TableLayoutPanel2.Controls.Add(Me.BtnUploadStockMoves, 2, 0)
         Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel2.Location = New System.Drawing.Point(3, 3)
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
@@ -115,9 +112,9 @@ Partial Class Stocks
         Me.Label2.AutoSize = True
         Me.Label2.Dock = System.Windows.Forms.DockStyle.Top
         Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(294, 34)
+        Me.Label2.Location = New System.Drawing.Point(468, 34)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(576, 12)
+        Me.Label2.Size = New System.Drawing.Size(693, 12)
         Me.Label2.TabIndex = 5
         Me.Label2.Text = "Stock Movement Header"
         Me.Label2.TextAlign = System.Drawing.ContentAlignment.TopCenter
@@ -127,7 +124,7 @@ Partial Class Stocks
         Me.BtnFetchStockMove.Dock = System.Windows.Forms.DockStyle.Top
         Me.BtnFetchStockMove.Location = New System.Drawing.Point(3, 3)
         Me.BtnFetchStockMove.Name = "BtnFetchStockMove"
-        Me.BtnFetchStockMove.Size = New System.Drawing.Size(285, 20)
+        Me.BtnFetchStockMove.Size = New System.Drawing.Size(459, 20)
         Me.BtnFetchStockMove.TabIndex = 0
         Me.BtnFetchStockMove.Text = "Fetch"
         Me.BtnFetchStockMove.UseVisualStyleBackColor = True
@@ -135,20 +132,10 @@ Partial Class Stocks
         'TxtSearchStockMovement
         '
         Me.TxtSearchStockMovement.Dock = System.Windows.Forms.DockStyle.Top
-        Me.TxtSearchStockMovement.Location = New System.Drawing.Point(294, 3)
+        Me.TxtSearchStockMovement.Location = New System.Drawing.Point(468, 3)
         Me.TxtSearchStockMovement.Name = "TxtSearchStockMovement"
-        Me.TxtSearchStockMovement.Size = New System.Drawing.Size(576, 20)
+        Me.TxtSearchStockMovement.Size = New System.Drawing.Size(693, 20)
         Me.TxtSearchStockMovement.TabIndex = 1
-        '
-        'BtnUploadStockMoves
-        '
-        Me.BtnUploadStockMoves.Dock = System.Windows.Forms.DockStyle.Top
-        Me.BtnUploadStockMoves.Location = New System.Drawing.Point(876, 3)
-        Me.BtnUploadStockMoves.Name = "BtnUploadStockMoves"
-        Me.BtnUploadStockMoves.Size = New System.Drawing.Size(285, 20)
-        Me.BtnUploadStockMoves.TabIndex = 4
-        Me.BtnUploadStockMoves.Text = "Upload"
-        Me.BtnUploadStockMoves.UseVisualStyleBackColor = True
         '
         'TableLayoutPanel3
         '
@@ -269,7 +256,6 @@ Partial Class Stocks
     Friend WithEvents TableLayoutPanel2 As TableLayoutPanel
     Friend WithEvents BtnFetchStockMove As Button
     Friend WithEvents TxtSearchStockMovement As TextBox
-    Friend WithEvents BtnUploadStockMoves As Button
     Friend WithEvents TableLayoutPanel3 As TableLayoutPanel
     Friend WithEvents DgvStockMoveHeader As DataGridView
     Friend WithEvents TabControl1 As TabControl
