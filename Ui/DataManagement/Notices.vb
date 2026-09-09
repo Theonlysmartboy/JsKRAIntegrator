@@ -78,18 +78,18 @@ Public Class Notices
                 Exit Sub
             End If
             ' Map API model → Entity
-            Dim entities = response.data.noticeList.
-        Select(Function(n) New VscuNotice With {
-            .NoticeNo = n.noticeNo,
-            .Title = n.title,
-            .Content = n.cont,
-            .DetailUrl = n.dtlUrl,
-            .RegisteredBy = n.regrNm,
-            .RegDt = ParseKraDate(n.regDt),
-            .ResultDt = ParseKraDate(response.resultDt)
-        }).ToList()
+            Dim entities = response.data.noticeList.Select(Function(n) New VscuNotice With {
+                .NoticeNo = n.noticeNo,
+                .Title = n.title,
+                .Content = n.cont,
+                .DetailUrl = n.dtlUrl,
+                .RegisteredBy = n.regrNm,
+                .RegDt = ParseKraDate(n.regDt),
+                .ResultDt = ParseKraDate(response.resultDt)
+            }).ToList()
             Await _repo.SaveAsync(entities)
-            Dim dt = Await _repo.GetAllAsync()
+            Dim noticeNumbers As List(Of Integer) = entities.Select(Function(n) n.NoticeNo).Distinct().ToList()
+            Dim dt = Await _repo.GetByNoticeNumbersAsync(noticeNumbers)
             OriginalTables(DgvNotices) = dt.Copy()
             DgvNotices.DataSource = dt
             DgvNotices.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
