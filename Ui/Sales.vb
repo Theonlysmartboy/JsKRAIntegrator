@@ -264,8 +264,7 @@ Public Class Sales
             BtnSendSales.Text = "Send Invoice"
         End Try
         If capturedEx IsNot Nothing Then
-            Dim fullError As String =
-                $"Message: {capturedEx.Message}{Environment.NewLine}" &
+            Dim fullError As String = $"Message: {capturedEx.Message}{Environment.NewLine}" &
                 $"StackTrace: {capturedEx.StackTrace}{Environment.NewLine}" &
                 If(capturedEx.InnerException IsNot Nothing, $"InnerException: {capturedEx.InnerException.Message}{Environment.NewLine}{capturedEx.InnerException.StackTrace}",
                 "InnerException: None")
