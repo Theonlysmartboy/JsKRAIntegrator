@@ -17,35 +17,47 @@ Namespace Repo.BranchRepo
         End Sub
 
         Public Sub Save(items As List(Of ImportItem)) Implements IBranchImportItemRepository.Save
+            If items Is Nothing OrElse items.Count = 0 Then
+                Return
+            End If
             Using conn As New MySqlConnection(_connectionString)
                 conn.Open()
                 For Each Item As ImportItem In items
-                    Dim sql As String = "INSERT INTO BranchImportItem (TaskCd, DclDe, ItemSeq, DclNo, HsCd, ItemNm, ImptItemSttsCd, OrgnNatCd, " &
-                                        "ExptNatCd, Pkg, PkgUnitCd, Qty, QtyUnitCd, TotWt, NetWt, SpplrNm, AgntNm, InvcFcurAmt, InvcFcurCd, " &
-                                        "InvcFcurExcrt) VALUES (@TaskCd, @DclDe, @ItemSeq, @DclNo, @HsCd, @ItemNm, @Status, @Orgn, @Expt, @Pkg, " &
-                                        "@PkgUnit, @Qty, @QtyUnit, @TotWt, @NetWt, @Spplr, @Agnt, @Amt, @Cur, @Excrt)"
-                    Dim cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@TaskCd", Item.taskCd)
-                    cmd.Parameters.AddWithValue("@DclDe", Item.dclDe)
-                    cmd.Parameters.AddWithValue("@ItemSeq", Item.itemSeq)
-                    cmd.Parameters.AddWithValue("@DclNo", Item.dclNo)
-                    cmd.Parameters.AddWithValue("@HsCd", Item.hsCd)
-                    cmd.Parameters.AddWithValue("@ItemNm", Item.itemNm)
-                    cmd.Parameters.AddWithValue("@Status", Item.imptItemsttsCd)
-                    cmd.Parameters.AddWithValue("@Orgn", Item.orgnNatCd)
-                    cmd.Parameters.AddWithValue("@Expt", Item.exptNatCd)
-                    cmd.Parameters.AddWithValue("@Pkg", Item.pkg)
-                    cmd.Parameters.AddWithValue("@PkgUnit", Item.pkgUnitCd)
-                    cmd.Parameters.AddWithValue("@Qty", Item.qty)
-                    cmd.Parameters.AddWithValue("@QtyUnit", Item.qtyUnitCd)
-                    cmd.Parameters.AddWithValue("@TotWt", Item.totWt)
-                    cmd.Parameters.AddWithValue("@NetWt", Item.netWt)
-                    cmd.Parameters.AddWithValue("@Spplr", Item.spplrNm)
-                    cmd.Parameters.AddWithValue("@Agnt", Item.agntNm)
-                    cmd.Parameters.AddWithValue("@Amt", Item.invcFcurAmt)
-                    cmd.Parameters.AddWithValue("@Cur", Item.invcFcurCd)
-                    cmd.Parameters.AddWithValue("@Excrt", Item.invcFcurExcrt)
-                    cmd.ExecuteNonQuery()
+                    Dim sql As String = "INSERT INTO BranchImportItem (TaskCd, DclDe, ItemSeq, DclNo, " &
+                            "HsCd, ItemNm, ImptItemSttsCd, OrgnNatCd, ExptNatCd, Pkg, PkgUnitCd, Qty,  " &
+                            "QtyUnitCd, TotWt, NetWt, SpplrNm, AgntNm, InvcFcurAmt, InvcFcurCd, InvcFcurExcrt)  " &
+                            "VALUES (@TaskCd, @DclDe, @ItemSeq, @DclNo, @HsCd, @ItemNm, @Status, @Orgn, @Expt,  " &
+                            "@Pkg, @PkgUnit, @Qty, @QtyUnit, @TotWt, @NetWt, @Spplr, @Agnt, @Amt, @Cur, @Excrt)  " &
+                            "ON DUPLICATE KEY UPDATE DclDe = VALUES(DclDe), ItemSeq = VALUES(ItemSeq),  " &
+                            "ItemNm = VALUES(ItemNm), ImptItemSttsCd = VALUES(ImptItemSttsCd),  " &
+                            "OrgnNatCd = VALUES(OrgnNatCd), ExptNatCd = VALUES(ExptNatCd), Pkg = VALUES(Pkg),  " &
+                            "PkgUnitCd = VALUES(PkgUnitCd), Qty = VALUES(Qty), QtyUnitCd = VALUES(QtyUnitCd),  " &
+                            "TotWt = VALUES(TotWt), NetWt = VALUES(NetWt), SpplrNm = VALUES(SpplrNm),  " &
+                            "AgntNm = VALUES(AgntNm), InvcFcurAmt = VALUES(InvcFcurAmt),  " &
+                            "InvcFcurCd = VALUES(InvcFcurCd), InvcFcurExcrt = VALUES(InvcFcurExcrt)"
+                    Using cmd As New MySqlCommand(sql, conn)
+                        cmd.Parameters.AddWithValue("@TaskCd", Item.taskCd)
+                        cmd.Parameters.AddWithValue("@DclDe", Item.dclDe)
+                        cmd.Parameters.AddWithValue("@ItemSeq", Item.itemSeq)
+                        cmd.Parameters.AddWithValue("@DclNo", Item.dclNo)
+                        cmd.Parameters.AddWithValue("@HsCd", Item.hsCd)
+                        cmd.Parameters.AddWithValue("@ItemNm", Item.itemNm)
+                        cmd.Parameters.AddWithValue("@Status", Item.imptItemsttsCd)
+                        cmd.Parameters.AddWithValue("@Orgn", Item.orgnNatCd)
+                        cmd.Parameters.AddWithValue("@Expt", Item.exptNatCd)
+                        cmd.Parameters.AddWithValue("@Pkg", Item.pkg)
+                        cmd.Parameters.AddWithValue("@PkgUnit", Item.pkgUnitCd)
+                        cmd.Parameters.AddWithValue("@Qty", Item.qty)
+                        cmd.Parameters.AddWithValue("@QtyUnit", Item.qtyUnitCd)
+                        cmd.Parameters.AddWithValue("@TotWt", Item.totWt)
+                        cmd.Parameters.AddWithValue("@NetWt", Item.netWt)
+                        cmd.Parameters.AddWithValue("@Spplr", Item.spplrNm)
+                        cmd.Parameters.AddWithValue("@Agnt", Item.agntNm)
+                        cmd.Parameters.AddWithValue("@Amt", Item.invcFcurAmt)
+                        cmd.Parameters.AddWithValue("@Cur", Item.invcFcurCd)
+                        cmd.Parameters.AddWithValue("@Excrt", Item.invcFcurExcrt)
+                        cmd.ExecuteNonQuery()
+                    End Using
                 Next
             End Using
         End Sub
