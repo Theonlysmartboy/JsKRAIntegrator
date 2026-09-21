@@ -264,8 +264,7 @@ Public Class Sales
             BtnSendSales.Text = "Send Invoice"
         End Try
         If capturedEx IsNot Nothing Then
-            Dim fullError As String =
-                $"Message: {capturedEx.Message}{Environment.NewLine}" &
+            Dim fullError As String = $"Message: {capturedEx.Message}{Environment.NewLine}" &
                 $"StackTrace: {capturedEx.StackTrace}{Environment.NewLine}" &
                 If(capturedEx.InnerException IsNot Nothing, $"InnerException: {capturedEx.InnerException.Message}{Environment.NewLine}{capturedEx.InnerException.StackTrace}",
                 "InnerException: None")
@@ -431,7 +430,7 @@ Public Class Sales
         ' If you add a real print button in the designer, hook it to this handler.
         If fullReceiptBitmap Is Nothing Then
             CustomAlert.ShowAlert(Me, "No receipt to print. Send invoice first.", "Print",
-                                  CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
+                                CustomAlert.AlertType.Warning, CustomAlert.ButtonType.OK)
             Return
         End If
         Dim dlg As New PrintDialog()
@@ -461,8 +460,7 @@ Public Class Sales
         Using sliceBmp As New Bitmap(fullReceiptBitmap.Width, sliceHeightSource)
             Using gSlice As Graphics = Graphics.FromImage(sliceBmp)
                 gSlice.DrawImage(fullReceiptBitmap, New Rectangle(0, 0, sliceBmp.Width, sliceBmp.Height),
-                                 New Rectangle(0, currentPrintY, sliceBmp.Width, sliceHeightSource),
-                                 GraphicsUnit.Pixel)
+                        New Rectangle(0, currentPrintY, sliceBmp.Width, sliceHeightSource), GraphicsUnit.Pixel)
             End Using
             ' Draw scaled slice onto page
             e.Graphics.DrawImage(sliceBmp, e.MarginBounds.Left, e.MarginBounds.Top, pageWidth, CInt(sliceHeightSource * scale))
@@ -500,8 +498,9 @@ Public Class Sales
             Return Nothing
         End If
         Dim result As DateTime
-        If DateTime.TryParseExact(value, "yyyyMMddHHmmss", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None,
-                              result) Then
+        If DateTime.TryParseExact(value, "yyyyMMddHHmmss",
+                Globalization.CultureInfo.InvariantCulture,
+                Globalization.DateTimeStyles.None, result) Then
             Return result
         End If
         Return Nothing

@@ -182,7 +182,7 @@ Public Class Settings
     Private Sub RestartApplication()
         Try
             ' Optional: clean up resources
-            Application.ExitThread() ' closes all forms cleanly
+            Application.ExitThread() ' close all forms cleanly
             ' Restart application
             Application.Restart()
         Catch ex As Exception
